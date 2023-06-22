@@ -1,0 +1,138 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "hoursOfOperation" : {
+      "type" : ["null", "string"]
+    },
+    "primaryLocationTrailingYearPatients" : {
+      "type" : ["null", "integer"]
+    },
+    "callForwardedReferral" : {
+      "type" : ["null", "string"]
+    },
+    "contacts" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "active" : {
+            "type" : ["null", "string"]
+          },
+          "email" : {
+            "type" : ["null", "string"]
+          },
+          "firstName" : {
+            "type" : ["null", "string"]
+          },
+          "lastName" : {
+            "type" : ["null", "string"]
+          },
+          "id" : {
+            "type" : ["null", "number"]
+          },
+          "isDecisionMaker" : {
+            "type" : ["null", "boolean"]
+          },
+          "name" : {
+            "type" : ["null", "string"]
+          },
+          "notes" : {
+            "type" : ["null", "string"]
+          },
+          "phoneNumber" : {
+            "type" : ["null", "string"]
+          },
+          "preferredUpdateMethod" : {
+            "type" : ["null", "string"]
+          }
+        }
+      }
+    },
+    "id" : {
+      "type" : ["null", "string"]
+    },
+    "faxNumber" : {
+      "type" : ["null", "string"]
+    },
+    "addressLine2" : {
+      "type" : ["null", "string"]
+    },
+    "phoneNumber" : {
+      "type" : ["null", "string"]
+    },
+    "lastVisitDate" : {
+      "type" : ["null", "string"],
+      "format" : "date-time"
+    },
+    "city" : {
+      "type" : ["null", "string"]
+    },
+    "transferOxygenDependent" : {
+      "type" : ["null", "boolean"]
+    },
+    "numberOfTrailingYearPatients" : {
+      "type" : "null"
+    },
+    "isActive" : {
+      "type" : ["null", "boolean"]
+    },
+    "hasWebsiteReferral" : {
+      "type" : ["null", "boolean"]
+    },
+    "website" : {
+      "type" : ["null", "string"]
+    },
+    "transferContactMethod" : {
+      "type" : ["null", "string"]
+    },
+    "milesAway" : {
+      "type" : ["null", "string"]
+    },
+    "notes" : {
+      "type" : ["null", "string"]
+    },
+    "hasCallForwarding" : {
+      "type" : ["null", "boolean"]
+    },
+    "country" : {
+      "type" : ["null", "string"]
+    },
+    "email" : {
+      "type" : ["null", "string"]
+    },
+    "addressLine1" : {
+      "type" : ["null", "string"]
+    },
+    "postalCode" : {
+      "type" : ["null", "string"]
+    },
+    "numberOfVisitsLastNinetyDays" : {
+      "type" : ["null", "number"]
+    },
+    "numberOfVets" : {
+      "type" : ["null", "number"]
+    },
+    "transferPostOpSurgeries" : {
+      "type" : ["null", "boolean"]
+    },
+    "name" : {
+      "type" : ["null", "string"]
+    },
+    "websiteReferral" : {
+      "type" : ["null", "string"]
+    },
+    "transferUnstableCases" : {
+      "type" : ["null", "boolean"]
+    },
+    "state" : {
+      "type" : ["null", "string"]
+    },
+    "marketingNotes" : {
+      "type" : ["null", "string"]
+    },
+    "transferNeededSurgeries" : {
+      "type" : ["null", "boolean"]
+    }
+  }
+}
