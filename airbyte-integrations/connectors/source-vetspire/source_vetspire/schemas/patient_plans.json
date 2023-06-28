@@ -1,0 +1,209 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "amountCharged" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "autoRenew" : {
+      "type" : [
+        "null",
+        "boolean"
+      ]
+    },
+    "cancelled" : {
+      "type" : [
+        "null",
+        "boolean"
+      ]
+    },
+    "deferred" : {
+      "type" : [
+        "null",
+        "boolean"
+      ]
+    },
+    "deferredRevenue" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "endDate" : {
+      "type" : [
+        "null",
+        "string"
+      ],
+      "format" : "date"
+    },
+    "id" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "items" : {
+      "type" : [
+        "null",
+        "array"
+      ],
+      "items" : {
+        "type" : [
+          "null",
+          "object"
+        ],
+        "properties" : {
+          "id" : {
+            "type" : [
+              "string",
+              "null"
+            ]
+          },
+          "name" : {
+            "type" : [
+              "null",
+              "string"
+            ]
+          },
+          "quantity" : {
+            "type" : [
+              "null",
+              "number"
+            ]
+          },
+          "quantityUsed" : {
+            "type" : [
+              "null",
+              "number"
+            ]
+          },
+          "unitTotal" : {
+            "type" : [
+              "null",
+              "number"
+            ]
+          },
+          "package" : {
+            "type" : [
+              "null",
+              "array"
+            ],
+            "properties" : {
+              "id" : {
+                "type" : [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "startDate" : {
+      "type" : [
+        "null",
+        "string"
+      ],
+      "format" : "date"
+    },
+    "location" : {
+      "type" : [
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "patient" : {
+      "type" : [
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "paymentDate" : {
+      "type" : [
+        "null",
+        "string"
+      ],
+      "format" : "date"
+    },
+    "planDiscountPercent" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "planInterval" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "preventionPlan" : {
+      "type" : [
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "renewalPlan" : {
+      "type" : [
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "shouldHaveCharged" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "total" : {
+      "type" : [
+        "null",
+        "number"
+      ]
+    },
+    "usedRevenue" : {
+      "type" : [
+        "null",
+        "number"
+      ]
+    },
+    "value" : {
+      "type" : [
+        "null",
+        "number"
+      ]
+    }
+  }
+}

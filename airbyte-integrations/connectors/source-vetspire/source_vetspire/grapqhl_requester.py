@@ -19,15 +19,18 @@ from abc import ABC, abstractmethod
 @dataclass
 class VetspireGraphqlRequester(HttpRequester):
     NESTED_OBJECTS_LIMIT_MAX_VALUE = 100
-
+    a: int = 0
     limit: Union[InterpolatedString, str, int] = None
     offset: Union[InterpolatedString, str, int] = None
+    next_page_token: Union[InterpolatedString, str, int] = 0
+    # check if adding the next_page_offset even though it's probabliy
+    # instantiated prior to hitting this requester.
 
     def __post_init__(self, parameters: Mapping[str, Any]):
         super(VetspireGraphqlRequester, self).__post_init__(parameters)
-
         self.limit = InterpolatedString.create(self.limit, parameters=parameters)
         self.name = parameters.get("name", "").lower()
+        self.next_page_token = InterpolatedString.create(self.limit, parameters=parameters)
 
     def _ensure_type(self, t: Type, o: Any):
         """
@@ -52,6 +55,7 @@ class VetspireGraphqlRequester(HttpRequester):
             field_schema (dict): configured catalog schema for current stream
             object_arguments (dict): arguments such as limit, page, ids, ... etc to be passed for given object
         """
+        self.a += 1
         fields = []
         for field, nested_schema in field_schema.items():
             nested_fields = nested_schema.get("properties", nested_schema.get("items", {}).get("properties"))
@@ -161,24 +165,22 @@ class VetspireGraphqlRequester(HttpRequester):
         Combines queries to a single GraphQL query.
         """
         limit = self.limit.eval(self.config)
-        # offset = next_page_token and next_page_token[self.next_page_offset]
-        offset=0
+        next_page_token = next_page_token or {"offset": "0"}
+        offset = next_page_token
         # page = next_page_token and next_page_token[self.NEXT_PAGE_TOKEN_FIELD_NAME]
-        if self.name == "items":
-            # `items` stream use a separate pagination strategy where first level pages are across `boards` and sub-pages are across `items`
-            page, sub_page = page if page else (None, None)
-            query_builder = partial(self._build_items_query, sub_page=sub_page)
-        elif self.name == "teams":
-            query_builder = self._build_teams_query
-        else:
-            query_builder = self._build_query
+        query_builder = self._build_query
         query = query_builder(
             object_name=self.name,
             field_schema=self._get_schema_root_properties(),
             limit=limit or None,
-            offset=offset or None,
+            offset=next_page_token['offset'] or None,
         )
         return {"query": f"query{{{query}}}"}
+
+    # pretty sure we tried this once, but to no avail.
+    def next_page_token(self):
+        print('hi')
+
 
     # We are using an LRU cache in should_retry() method which requires all incoming arguments (including self) to be hashable.
     # Dataclasses by default are not hashable, so we need to define __hash__(). Alternatively, we can set @dataclass(frozen=True),

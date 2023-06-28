@@ -12,6 +12,7 @@ WARNING: Do not modify this file.
 
 
 # Declarative Source
-class SourceVetspire(YamlDeclarativeSource):
+class SourceVetspire_(YamlDeclarativeSource):
     def __init__(self):
         super().__init__(**{"path_to_yaml": "manifest.yaml"})
+

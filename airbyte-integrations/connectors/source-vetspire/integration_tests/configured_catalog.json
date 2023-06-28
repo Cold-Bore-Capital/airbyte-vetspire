@@ -2,16 +2,7 @@
   "streams": [
     {
       "stream": {
-        "name": "providers",
-        "json_schema": {},
-        "supported_sync_modes": ["incremental"]
-      },
-      "sync_mode": "incremental",
-      "destination_sync_mode": "overwrite"
-    },
-    {
-      "stream": {
-        "name": "rdvms",
+        "name": "patient_plans",
         "json_schema": {},
         "supported_sync_modes": ["full_refresh"]
       },

@@ -14,17 +14,16 @@ class VetPageIncrement(PageIncrement):
         page_size (int): the number of records to request
         start_from_page (int): number of the initial page
     """
+    def __post_init__(self, parameters: Mapping[str, Any]):
+        self._offset = 0
 
-    limit: int
-    parameters: InitVar[Mapping[str, Any]]
-    offset: int = 0
-
+    @abstractmethod
     def next_page_token(self, response: requests.Response, last_records: List[Mapping[str, Any]]) -> Optional[Any]:
         if len(last_records) == self.limit:
-            return None
-        else:
             self._offset += self.limit
-            return {'offset' : self._offset}
+            return {'offset': self._offset}
+        else:
+            return None
 
     def reset(self):
         self._offset = 0

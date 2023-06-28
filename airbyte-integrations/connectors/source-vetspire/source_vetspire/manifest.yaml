@@ -24,10 +24,15 @@ definitions:
     paginator:
       type: "DefaultPaginator"
       pagination_strategy:
-#        type: "PageIncrement"
-        type: "CustomPaginationStrategy"
         class_name: "source_vetspire.pagination.VetPageIncrement"
         limit: 300
+      page_token_option:
+        type: RequestOption
+        inject_into: "body_data"
+        field_name: "page"
+      page_size_option:
+        inject_into: "body_data"
+        field_name: "page_size"
 #        type: "PageIncrement"
 #        start_from_page: 1
 #        page_size: 100
@@ -52,7 +57,7 @@ definitions:
       name: "providers"
       path: ""
       limit: "300"
-  #      items_per_page: 100
+      next_page_token: "0"
 
   rdvms_stream:
     $ref: "#/definitions/base_stream"
@@ -60,7 +65,7 @@ definitions:
       name: "rdvms"
       path: ""
       limit: "300"
-#      items_per_page: 100
+      next_page_token: "0"
 
 streams:
   - "#/definitions/rdvms_stream"

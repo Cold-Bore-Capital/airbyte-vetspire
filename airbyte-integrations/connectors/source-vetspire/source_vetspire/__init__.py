@@ -3,6 +3,6 @@
 #
 
 
-from .source import SourceVetspire
-
+# from .source import SourceVetspire
+from .streams import SourceVetspire
 __all__ = ["SourceVetspire"]

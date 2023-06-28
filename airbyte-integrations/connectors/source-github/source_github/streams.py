@@ -309,7 +309,41 @@ class SemiIncrementalMixin:
                 break
 
     def stream_slices(self, **kwargs) -> Iterable[Optional[Mapping[str, Any]]]:
-        self._starting_point_cache.clear()
+
+        def _get_request_options(
+                self,
+                stream_slice: Optional[StreamSlice],
+                next_page_token: Optional[Mapping[str, Any]],
+                requester_method,
+                paginator_method,
+                stream_slicer_method,
+        ):
+            """
+            Get the request_option from the requester and from the paginator
+            Raise a ValueError if there's a key collision
+            Returned merged mapping otherwise
+            :param stream_slice:
+            :param next_page_token:
+            :param requester_method:
+            :param paginator_method:
+            :return:
+            """
+
+            requester_mapping = requester_method(stream_state=self.state, stream_slice=stream_slice, next_page_token=next_page_token)
+            requester_mapping_keys = set(requester_mapping.keys())
+            paginator_mapping = paginator_method(stream_state=self.state, stream_slice=stream_slice, next_page_token=next_page_token)
+            paginator_mapping_keys = set(paginator_mapping.keys())
+            stream_slicer_mapping = stream_slicer_method(stream_slice=stream_slice)
+            stream_slicer_mapping_keys = set(stream_slicer_mapping.keys())
+
+            intersection = (
+                    (requester_mapping_keys & paginator_mapping_keys)
+                    | (requester_mapping_keys & stream_slicer_mapping_keys)
+                    | (paginator_mapping_keys & stream_slicer_mapping_keys)
+            )
+            if intersection:
+                raise ValueError(f"Duplicate keys found: {intersection}")
+            return {**requester_mapping, **paginator_mapping, **stream_slicer_mapping}
         yield from super().stream_slices(**kwargs)
 
 
