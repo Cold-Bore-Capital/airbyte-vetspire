@@ -1,0 +1,24 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : ["null", "string"]
+    },
+    "isDisabled" : {
+      "type" : ["boolean", "null"]
+    },
+    "isEmbeddable" : {
+      "type" : ["boolean","null"]
+    },
+    "isSurgery" : {
+      "type": ["boolean", "null"]
+    },
+    "name" : {
+      "type" : ["null", "string"]
+    },
+    "private" : {
+      "type" : ["null", "string"]
+    }
+  }
+}

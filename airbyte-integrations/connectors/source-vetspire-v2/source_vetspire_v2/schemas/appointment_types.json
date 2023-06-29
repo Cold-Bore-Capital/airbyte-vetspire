@@ -1,0 +1,99 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "canBookOnline": {
+      "type": "boolean"
+    },
+    "color": {
+      "type": "string"
+    },
+    "defaultProducts": {
+      "type": "array",
+      "items": {}
+    },
+    "deleted": {
+      "type": "boolean"
+    },
+    "deletedAt": {
+      "type": "null"
+    },
+    "description": {
+      "type": "string"
+    },
+    "doubleBookableAppointmentTypes": {
+      "type": "array",
+      "items": {}
+    },
+    "doubleBookingConstraint": {
+      "type": "null"
+    },
+    "dropoffTime": {
+      "type": "null"
+    },
+    "duration": {
+      "type": "integer"
+    },
+    "encounterTypeId": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "insertedAt": {
+      "type": "string"
+    },
+    "isBlockoff": {
+      "type": "boolean"
+    },
+    "isDaycare": {
+      "type": "boolean"
+    },
+    "isDefault": {
+      "type": "boolean"
+    },
+    "isDropoff": {
+      "type": "boolean"
+    },
+    "isExam": {
+      "type": "boolean"
+    },
+    "isSurgery": {
+      "type": "boolean"
+    },
+    "isTelemedicine": {
+      "type": "boolean"
+    },
+    "isUniversal": {
+      "type": "boolean"
+    },
+    "locations": {
+      "type": "array",
+      "items": {}
+    },
+    "name": {
+      "type": "string"
+    },
+    "position": {
+      "type": "integer"
+    },
+    "remindersDisabled": {
+      "type": "boolean"
+    },
+    "revenueCenter": {
+      "type": "null"
+    },
+    "scheduleName": {
+      "type": "string"
+    },
+    "showOnKiosk": {
+      "type": "boolean"
+    },
+    "steps": {
+      "type": "null"
+    },
+    "updatedAt": {
+      "type": "string"
+    }
+  }
+}

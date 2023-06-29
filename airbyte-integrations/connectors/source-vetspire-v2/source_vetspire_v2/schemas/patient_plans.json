@@ -1,0 +1,86 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "amountCharged" : {"type" : ["null", "string"]},
+    "autoRenew" : {"type" : ["null", "boolean"]},
+    "cancelled" : {"type" : ["null", "boolean"]},
+    "deferred" : {"type" : ["null", "boolean"]},
+    "deferredRevenue" : {"type" : ["null", "string"]},
+    "endDate" : {"type" : ["null", "string"], "format" : "date"},
+    "id" : {"type" : ["null", "string"]},
+    "items" : {
+      "type" : ["null", "array"],
+      "items" : {
+        "type" : ["null", "object"],
+        "properties" : {
+          "id" : {"type" : ["string", "null"]},
+          "name" : {"type" : ["null", "string"]},
+          "package" : {
+            "type" : ["null","array"],
+            "properties" : {
+              "id" : {
+                "type" : ["string", "null"]
+              }
+            }
+          },
+          "product" : {
+            "type" : ["null","array"],
+            "properties" : {
+              "id" : {
+                "type" : ["string", "null"]
+              }
+            }
+          },
+          "quantity" : {"type" : ["null", "number"]},
+          "quantityUsed" : {"type" : ["null", "number"]},
+          "unitTotal" : {"type" : ["null", "number"]}
+        }
+      }
+    },
+    "includedProductIds" : {"type" : ["null", "string"]},
+    "startDate" : {"type" : ["null", "string"], "format" : "date"},
+    "isActive" : {"type" : ["null", "boolean"]},
+    "name" : {"type" : ["null", "string"]},
+    "location" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "patient" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "paymentDate": {"type" : ["null", "string"], "format" : "date"},
+    "planDiscountPercent" : {"type" : ["null", "string"]},
+    "planInterval" : {"type" : ["null", "string"]},
+    "preventionPlan" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "renewalPlan" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "shouldHaveCharged" : {"type" : ["null", "string"]},
+    "total" : {"type" : ["null", "number"]},
+    "usedRevenue": {"type" : ["null", "number"]},
+    "value" : {"type" : ["null", "number"]}
+  }
+}
+

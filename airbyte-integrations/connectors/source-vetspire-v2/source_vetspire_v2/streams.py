@@ -1,13 +1,22 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from airbyte_cdk.models import SyncMode
 from airbyte_cdk.sources.declarative.schema.json_file_schema_loader import JsonFileSchemaLoader
 from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.utils.transform import TransformConfig, TypeTransformer
-from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Union
+from airbyte_cdk.sources.streams.core import Stream, StreamData
+from airbyte_cdk.sources.streams import Stream, IncrementalMixin
+from airbyte_cdk.sources.streams.http.auth.core import HttpAuthenticator
+from datetime import datetime
+from typing import Any, Callable, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Union
 import requests
+import pendulum
+from pendulum import DateTime
+from requests.auth import AuthBase
 from airbyte_cdk.sources.declarative.retrievers.simple_retriever import SimpleRetriever
 from urllib.parse import parse_qsl, urlparse
+import copy
 
 """
 TODO: Most comments in this class are instructive and should be deleted after the source is implemented.
@@ -53,15 +62,15 @@ class VetspireV2Stream(HttpStream, ABC):
     See the reference docs for the full list of configurable options.
     """
 
-    # url_base = "https://api2.vetspire.com/graphql"
-    # transformer: TypeTransformer = TypeTransformer(TransformConfig.DefaultSchemaNormalization | TransformConfig.CustomSchemaNormalization)
+    transformer: TypeTransformer = TypeTransformer(TransformConfig.DefaultSchemaNormalization | TransformConfig.CustomSchemaNormalization)
     url_base = "https://api2.vetspire.com/graphql"
+    state_checkpoint_interval = 300
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
         self._next_page_token = None
-        self.limit = kwargs.get("limit", "300")
-        self.offset = kwargs.get("offset", "300")
+        # self.limit = kwargs.get("limit", "300")
+        # self.offset = kwargs.get("offset", "0")
 
     @property
     def data_field(self):
@@ -70,6 +79,15 @@ class VetspireV2Stream(HttpStream, ABC):
     @property
     def http_method(self) -> str:
         return "POST"
+
+    @property
+    def state(self) -> Mapping[str, Any]:
+        return {'offset': str(self.offset)}
+
+    @state.setter
+    def state(self, value: Mapping[str, Any]):
+        self._cursor_value = value[self.cursor_field]
+        self._offset_value = value[self.cursor_field]
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
         """
@@ -92,27 +110,13 @@ class VetspireV2Stream(HttpStream, ABC):
             next_page_params = {"offset": str(self.offset)}
             return next_page_params
 
-    def request_params(
-            self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
-    ) -> MutableMapping[str, Any]:
-        """
-        TODO: Override this method to define any query parameters to be set. Remove this method if you don't need to define request params.
-        Usually contains common params e.g. pagination size etc.
-        """
-        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
-        params["PageSize"] = self.page_size
-        if next_page_token:
-            params.update(**next_page_token)
-        return params
-
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
         """
         TODO: Override this method to define how a response is parsed.
         :return an iterable containing each record in the response
         """
         records = response.json()['data'].get(self.object_name, [])
-        for record in records:
-            yield from record
+        yield from records
 
     def _get_schema_root_properties(self):
         schema_loader = JsonFileSchemaLoader(config=self.config, parameters={"name": self.name})
@@ -120,7 +124,17 @@ class VetspireV2Stream(HttpStream, ABC):
         return schema["properties"]
 
     def _get_object_arguments(self, **object_arguments) -> str:
-        return ",".join([f"{argument}:{value}" for argument, value in object_arguments.items() if value is not None])
+        object_list = []
+        if len(object_arguments.items()) > 0:
+            for k in object_arguments.keys():
+                if k in ['updatedAtStart', 'updatedAtEnd']:
+                    object_list.append(f'{k}: "{object_arguments[k]}"')
+                elif k == "offset" and object_arguments[k] is None:
+                    pass
+                else:
+                    object_list.append(f'{k}: {object_arguments[k]}')
+        return ",".join(object_list)
+        # return ",".join([f"{argument}:{value}" for argument, value in object_arguments.items() if value is not None])
 
     def _build_query(self, object_name: str, field_schema: dict, **object_arguments) -> str:
         """
@@ -142,19 +156,7 @@ class VetspireV2Stream(HttpStream, ABC):
         arguments = f"({arguments})" if arguments else ""
         fields = ",".join(fields)
 
-        # Add offset and limit to the filter part of the query
-        filter_arguments = object_arguments.get("filter", {})
-        offset = filter_arguments.get("offset")
-        limit = filter_arguments.get("limit")
-        filter_arguments_str = ""
-        if offset is not None:
-            filter_arguments_str += f"offset: {offset}, "
-        if limit is not None:
-            filter_arguments_str += f"limit: {limit}, "
-        if filter_arguments_str:
-            filter_arguments_str = filter_arguments_str.rstrip(", ")
-
-        return f"{object_name}{arguments}{{{filter_arguments_str}{fields}}}"
+        return f"{object_name}{arguments}{{{fields}}}"
 
     def request_body_data(
             self,
@@ -163,29 +165,14 @@ class VetspireV2Stream(HttpStream, ABC):
             next_page_token: Mapping[str, Any] = None,
     ) -> Optional[Union[Mapping, str]]:
         query = self._build_query(
-            object_name= self.object_name,
-            field_schema= self._get_schema_root_properties(),
-            limit= self.limit or None,
-            offset= next_page_token,
+            object_name=self.object_name,
+            field_schema=self._get_schema_root_properties(),
+            limit=self.limit or None,
+            offset=stream_state.get('offset', None),
+            updatedAtStart=stream_slice['updatedAtStart'],
+            updatedAtEnd=stream_slice['updatedAtEnd']
         )
         return {"query": f"query{{{query}}}"}
-
-
-class PatientPlans(VetspireV2Stream):
-    """
-    TODO: Change class name to match the table/data source this stream corresponds to.
-    """
-
-    # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
-    primary_key = "id"
-
-    def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
-        self.config = stream_kwargs
-        self._authenticator = authenticator
-        self.object_name = 'patientPlans'
 
     def path(
             self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None, next_page_token: Mapping[str, Any] = None
@@ -196,72 +183,224 @@ class PatientPlans(VetspireV2Stream):
         """
         return None
 
+    def _read_pages(
+            self,
+            records_generator_fn: Callable[
+                [requests.PreparedRequest, requests.Response, Mapping[str, Any], Mapping[str, Any]], Iterable[StreamData]
+            ],
+            stream_slice: Mapping[str, Any] = None,
+            stream_state: Mapping[str, Any] = None,
+    ) -> Iterable[StreamData]:
+        stream_state = stream_state or {}
+        pagination_complete = False
+        next_page_token = None
+        while not pagination_complete:
+            request, response = self._fetch_next_page(stream_slice, stream_state, next_page_token)
 
-# Basic incremental stream
-class IncrementalVetspireV2Stream(VetspireV2Stream, ABC):
-    """
-    TODO fill in details of this class to implement functionality related to incremental syncs for your connector.
-         if you do not need to implement incremental sync for any streams, remove this class.
-    """
+            yield from records_generator_fn(request, response, stream_state, stream_slice)
 
-    # TODO: Fill in to checkpoint stream reads after N records. This prevents re-reading of data if the stream fails for any reason.
-    state_checkpoint_interval = None
+            # next_page_token = self.next_page_token(response)
+            # if not next_page_token:
+            if len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
+                self.offset = str(int(self.offset) + int(self.limit))
+                stream_state['offset'] = self.offset
+            else:
+                stream_state['offset'] = '0'
+                pagination_complete = True
 
-    @property
-    def cursor_field(self) -> str:
-        """
-        TODO
-        Override to return the cursor field used by this stream e.g: an API entity might always use created_at as the cursor field. This is
-        usually id or date based. This field's presence tells the framework this in an incremental stream. Required for incremental.
-
-        :return str: The name of the cursor field.
-        """
-        return []
-
-    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
-        """
-        Override to determine the latest state after reading the latest record. This typically compared the cursor_field from the latest record and
-        the current state and picks the 'most' recent cursor. This is how a stream's state is determined. Required for incremental.
-        """
-        return {}
+        # Always return an empty generator just in case no records were ever yielded
+        yield from []
 
 
-class Employees(IncrementalVetspireV2Stream):
+class PatientPlans(VetspireV2Stream):
     """
     TODO: Change class name to match the table/data source this stream corresponds to.
     """
+    primary_key = "id"
 
-    # TODO: Fill in the cursor_field. Required.
-    cursor_field = "start_date"
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.config = stream_kwargs
+        self._authenticator = authenticator
+        self.object_name = 'patientPlans'
 
-    # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
-    primary_key = "employee_id"
-
-    def path(self, **kwargs) -> str:
+    def request_params(
+            self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+    ) -> MutableMapping[str, Any]:
         """
-        TODO: Override this method to define the path this stream corresponds to. E.g. if the url is https://example-api.com/v1/employees then this should
-        return "single". Required.
+        TODO: Override this method to define any query parameters to be set. Remove this method if you don't need to define request params.
+        Usually contains common params e.g. pagination size etc.
         """
-        return "employees"
+        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
+        return params
 
-    def stream_slices(self, stream_state: Mapping[str, Any] = None, **kwargs) -> Iterable[Optional[Mapping[str, any]]]:
+
+# Basic incremental stream
+class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
+    time_filter_template = "YYYY-MM-DDTHH:mm:ss[Z]"
+    # This attribute allows balancing between sync speed and memory consumption.
+    # The greater a slice is - the bigger memory consumption and the faster syncs are since fewer requests are made.
+    slice_step_default = pendulum.duration(days=1)
+    # time gap between when previous slice ends and current slice begins
+    slice_granularity = pendulum.duration(microseconds=1)
+    state_checkpoint_interval = 300
+    sync_mode = SyncMode.incremental
+
+    def __init__(
+            self,
+            authenticator: Union[AuthBase, HttpAuthenticator],
+            start_datetime: str = "2023-04-01T00:00:00Z",
+            start_date: str = "2023-04-01",
+            slice_step_map: Mapping[str, int] = None,
+            limit: int = None,
+            offset: int = None,
+    ):
+        super().__init__(authenticator)
+        slice_step = (slice_step_map or {}).get(self.name)
+        self._slice_step = slice_step and pendulum.duration(days=slice_step)
+        self._start_datetime = start_datetime
+        self._start_date = start_date
+        self._cursor_value = start_datetime
+
+    @property
+    def state(self) -> Mapping[str, Any]:
+        if self._cursor_value:
+            return {self.cursor_field: self._cursor_value}
+
+    @state.setter
+    def state(self, value: Mapping[str, Any]):
+        self._cursor_value = datetime.strptime(value[self.cursor_field], self.dateformat)
+
+    @property
+    def sync_mode(self):
+        return SyncMode.incremental
+
+    @property
+    def supported_sync_modes(self):
+        return [SyncMode.incremental]
+
+    @property
+    def slice_step(self):
+        return self._slice_step or self.slice_step_default
+
+    @property
+    # @abstractmethod
+    def lower_boundary_filter_field(self) -> str:
         """
-        TODO: Optionally override this method to define this stream's slices. If slicing is not needed, delete this method.
-
-        Slices control when state is saved. Specifically, state is saved after a slice has been fully read.
-        This is useful if the API offers reads by groups or filters, and can be paired with the state object to make reads efficient. See the "concepts"
-        section of the docs for more information.
-
-        The function is called before reading any records in a stream. It returns an Iterable of dicts, each containing the
-        necessary data to craft a request for a slice. The stream state is usually referenced to determine what slices need to be created.
-        This means that data in a slice is usually closely related to a stream's cursor_field and stream_state.
-
-        An HTTP request is made for each returned slice. The same slice can be accessed in the path, request_params and request_header functions to help
-        craft that specific request.
-
-        For example, if https://example-api.com/v1/employees offers a date query params that returns data for that particular day, one way to implement
-        this would be to consult the stream state object for the last synced date, then return a slice containing each date from the last synced date
-        till now. The request_params function would then grab the date from the stream_slice and make it part of the request by injecting it into
-        the date query param.
+        return: date filter query parameter name
         """
-        raise NotImplementedError("Implement stream slices or delete this method!")
+
+    @property
+    # @abstractmethod
+    def upper_boundary_filter_field(self) -> str:
+        """
+        return: date filter query parameter name
+        """
+
+    def generate_date_ranges(self) -> Iterable[Optional[MutableMapping[str, Any]]]:
+        def align_to_dt_format(dt: DateTime) -> DateTime:
+            return pendulum.parse(dt.format(self.time_filter_template))
+
+        end_datetime = pendulum.now("utc")
+        start_datetime = min(end_datetime, pendulum.parse(self.state.get(self.cursor_field, self._start_datetime)))
+        current_start = start_datetime
+        current_end = start_datetime
+        # Aligning to a datetime format is done to avoid the following scenario:
+        # start_dt = 2021-11-14T00:00:00, end_dt (now) = 2022-11-14T12:03:01, time_filter_template = "YYYY-MM-DD"
+        # First slice: (2021-11-14, 2022-11-14)
+        # (!) Second slice: (2022-11-15, 2022-11-14) - because 2022-11-14T00:00:00 (prev end) < 2022-11-14T12:03:01,
+        # so we have to compare dates, not date-times to avoid yielding that last slice
+        while align_to_dt_format(current_end) < align_to_dt_format(end_datetime):
+            current_end = min(end_datetime, current_start + self.slice_step)
+            slice_ = {
+                self.lower_boundary_filter_field: current_start.format(self.time_filter_template),
+                self.upper_boundary_filter_field: current_end.format(self.time_filter_template),
+            }
+            yield slice_
+            current_start = current_end + self.slice_granularity
+
+    def stream_slices(
+            self, sync_mode: SyncMode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None
+    ) -> Iterable[Optional[Mapping[str, Any]]]:
+        for super_slice in super().stream_slices(sync_mode=sync_mode, cursor_field=cursor_field, stream_state=stream_state):
+            for dt_range in self.generate_date_ranges():
+                slice_ = copy.deepcopy(super_slice) if super_slice else {}
+                slice_.update(dt_range)
+                yield slice_
+
+    def request_params(
+            self,
+            stream_state: Mapping[str, Any],
+            stream_slice: Mapping[str, Any] = None,
+            next_page_token: Mapping[str, Any] = None,
+    ) -> MutableMapping[str, Any]:
+        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
+        lower_bound = stream_slice and stream_slice.get(self.lower_boundary_filter_field)
+        upper_bound = stream_slice and stream_slice.get(self.upper_boundary_filter_field)
+        if lower_bound:
+            params[self.lower_boundary_filter_field] = lower_bound
+        if upper_bound:
+            params[self.upper_boundary_filter_field] = upper_bound
+        return params
+
+    def read_records(
+            self,
+            sync_mode: SyncMode,
+            cursor_field: List[str] = None,
+            stream_slice: Mapping[str, Any] = None,
+            stream_state: Mapping[str, Any] = None,
+    ) -> Iterable[Mapping[str, Any]]:
+        unsorted_records = []
+        for record in super().read_records(sync_mode, cursor_field, stream_slice, stream_state):
+            record[self.cursor_field] = pendulum.parse(record[self.cursor_field], strict=False).to_iso8601_string()
+            unsorted_records.append(record)
+        sorted_records = sorted(unsorted_records, key=lambda x: x[self.cursor_field])
+        for record in sorted_records:
+            if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_date):
+                self._cursor_value = record[self.cursor_field]
+                yield record
+
+
+class Appointments(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    sync_mode = SyncMode.incremental
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.config = stream_kwargs
+        self._authenticator = authenticator
+        self.object_name = 'appointments'
+
+class Clients(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    # sync_mode = SyncMode.incremental
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.config = stream_kwargs
+        # self._authenticator = authenticator
+        self.object_name = 'clients'
+    #
+    # def request_params(
+    #         self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+    # ) -> MutableMapping[str, Any]:
+    #     """
+    #     TODO: Override this method to define any query parameters to be set. Remove this method if you don't need to define request params.
+    #     Usually contains common params e.g. pagination size etc.
+    #     """
+    #     params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
+    #     return params

@@ -3,11 +3,26 @@
 #
 
 
-from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Dict
+from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Dict, Union
 from airbyte_cdk.sources import AbstractSource
-from airbyte_cdk.sources.streams import Stream
+from airbyte_cdk.sources.streams import Stream, IncrementalMixin
+from airbyte_cdk.sources.streams.core import StreamData
 from airbyte_cdk.sources.streams.http.requests_native_auth.abstract_token import AbstractHeaderAuthenticator
-from source_vetspire_v2.streams import PatientPlans
+from airbyte_cdk.sources.utils.record_helper import stream_data_to_airbyte_message
+from airbyte_cdk.models import (
+    AirbyteCatalog,
+    AirbyteConnectionStatus,
+    AirbyteLogMessage,
+    AirbyteMessage,
+    AirbyteStateMessage,
+    AirbyteStreamStatus,
+    ConfiguredAirbyteCatalog,
+    ConfiguredAirbyteStream,
+    Level,
+    Status,
+    SyncMode,
+)
+from source_vetspire_v2.streams import PatientPlans, Appointments, Clients, IncrementalVetspireV2Stream, VetspireV2Stream
 
 class VetAuth(AbstractHeaderAuthenticator):
     """
@@ -46,6 +61,15 @@ class SourceVetspireV2(AbstractSource):
         """
         return True, None
 
+    def _get_message(self, record_data_or_message: Union[StreamData, AirbyteMessage], stream: Stream):
+        """
+        Converts the input to an AirbyteMessage if it is a StreamData. Returns the input as is if it is already an AirbyteMessage
+        """
+        if isinstance(record_data_or_message, AirbyteMessage):
+            return record_data_or_message
+        else:
+            return stream_data_to_airbyte_message(stream.name, record_data_or_message, stream.transformer, stream.get_json_schema())
+
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         """
         TODO: Replace the streams below with your own streams.
@@ -63,4 +87,4 @@ class SourceVetspireV2(AbstractSource):
                          "limit": config.get("limit", "300"),
                          "offset": config.get("offset", "0"),
                          }
-        return [PatientPlans(authenticator=auth, **stream_kwargs)]
+        return [Clients(authenticator=auth, **stream_kwargs), Appointments(authenticator=auth, **stream_kwargs),PatientPlans(authenticator=auth, **stream_kwargs)]

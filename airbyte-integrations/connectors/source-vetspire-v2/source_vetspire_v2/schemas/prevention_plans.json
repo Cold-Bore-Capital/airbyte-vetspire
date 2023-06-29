@@ -1,0 +1,53 @@
+{"$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "dynamicPrice" : {"type" : ["null", "boolean"]},
+    "enrollmentFee" : {"type" : ["null", "number"]},
+    "includedProductIds": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {"type": ["null", "integer"]}
+          }
+        }
+      ]
+    },
+    "id" : {"type" : ["null", "integer"]},
+    "name" : {"type" : ["null", "string"]},
+    "options" : {
+      "type" : "array",
+      "items" : [
+        {
+          "type" : "object",
+          "properties" : {
+            "name" : {"type" : ["null", "string"]},
+            "package" : {"type" : ["null", "string"]},
+            "packageId" : {"type" : ["null", "integer"]},
+            "product" : {
+              "type" : "object",
+              "properties" : {
+                "dispenseFee" : {"type" : ["null", "number"]},
+                "id" : {"type" : ["null", "number"]},
+                "prices" : {
+                  "type" : "array",
+                  "items" : [
+                    {
+                      "type" : "object",
+                      "properties" : {
+                        "unitFixedPrice" : {
+                          "type" : "null"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

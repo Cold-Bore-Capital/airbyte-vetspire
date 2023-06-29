@@ -1,0 +1,355 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "additionalProviders" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "appointment" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "category" : {
+      "type" : ["string", "null"]
+    },
+    "checkedInBy" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "clientConsents" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "diagnostics" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        },
+        "productId" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "encounterProducts" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "encounterType" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "encounterVersions" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "estimates" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["number", "null"]
+        },
+        "totalPaid" : {
+          "type" : ["number", "null"]
+        }
+      }
+    },
+    "historicalId" : {
+      "type" : ["integer", "null"]
+    },
+    "id" : {
+      "type" : ["string", "null"]
+    },
+    "immunizations" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "insertedAt" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "labOrders" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "labResults" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "linkedClinicalNotes" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "linkedEncounters" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "location" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "medications" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "metadata" : {
+      "type" : ["string", "null"]
+    },
+    "nextVisitDate" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "nextVisitReason" : {
+      "type" : ["string", "null"]
+    },
+    "order" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "org" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "patient" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "patientComplications" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "problems" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "provider" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "requiredSectionsNotFilledOut" : {
+      "type" : ["string", "null"]
+    },
+    "sections" : {
+      "type" : "array",
+      "properties" : {
+        "addable" : {
+          "type" : ["string", "null"]
+        },
+        "educable" : {
+          "type" : ["string", "null"]
+        },
+        "immunable" : {
+          "type" : ["string", "null"]
+        },
+        "isAttachments" : {
+          "type" : ["string", "null"]
+        },
+        "isComplications" : {
+          "type" : ["string", "null"]
+        },
+        "isConsents" : {
+          "type" : ["string", "null"]
+        },
+        "isDiagnostics" : {
+          "type" : ["string", "null"]
+        },
+        "isDischarge" : {
+          "type" : ["string", "null"]
+        },
+        "isFollowup" : {
+          "type" : ["string", "null"]
+        },
+        "isImmunizations" : {
+          "type" : ["string", "null"]
+        },
+        "isIntake" : {
+          "type" : ["string", "null"]
+        },
+        "isLinkedEncounters" : {
+          "type" : ["string", "null"]
+        },
+        "isMedications" : {
+          "type" : ["string", "null"]
+        },
+        "isMonitoring" : {
+          "type" : ["string", "null"]
+        },
+        "isOrders" : {
+          "type" : ["string", "null"]
+        },
+        "isPrivate" : {
+          "type" : ["string", "null"]
+        },
+        "isProblems" : {
+          "type" : ["string", "null"]
+        },
+        "isRequired" : {
+          "type" : ["string", "null"]
+        },
+        "labable" : {
+          "type" : ["string", "null"]
+        },
+        "medicable" : {
+          "type" : ["string", "null"]
+        },
+        "metadata" : {
+          "type" : ["string", "null"]
+        },
+        "name" : {
+          "type" : ["string", "null"]
+        },
+        "onReferral" : {
+          "type" : ["string", "null"]
+        },
+        "treatable" : {
+          "type" : ["string", "null"]
+        },
+        "vitals" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "signed" : {
+      "type" : ["boolean", "null"]
+    },
+    "signedDatetime" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "signer" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "start" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "surveyLinkSent" : {
+      "type" : ["boolean", "null"]
+    },
+    "tasks" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "technician" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "title" : {
+      "type" : ["string", "null"]
+    },
+    "treatments" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "updatedAt" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "vitals" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    }
+  }
+}

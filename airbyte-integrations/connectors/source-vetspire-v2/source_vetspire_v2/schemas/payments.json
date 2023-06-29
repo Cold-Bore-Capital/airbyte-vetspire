@@ -1,0 +1,71 @@
+{"$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "amount" : {
+      "type" : ["null","number"]
+    },
+    "client" : {
+      "type" : ["null","number"]
+    },
+    "datetime" : {
+      "type" : ["null","string"],
+      "format" : "date-time"
+    },
+    "donation" : {
+      "type" : ["null","string"]
+    },
+    "estimates" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : ["null", "string"]
+        },
+        "totalPaid" : {
+          "type" : ["null", "string"]
+        }
+      }
+    },
+    "hasVoidPayment" : {
+      "type" : ["null","boolean"]
+    },
+    "hasVoidedPayment" : {
+      "type" : ["null","boolean"]
+    },
+    "historicalId" : {
+      "type" : ["null","number"]
+    },
+    "id" : {
+      "type" : ["null","string"]
+    },
+    "insertedAt" : {
+      "type" : ["null","string"]
+    },
+    "location" : {
+      "type" : ["null","number"]
+    },
+    "methodType" : {
+      "type" : ["null","string"]
+    },
+    "notes" : {
+      "type" : ["null","string"]
+    },
+    "orders" : {
+      "type" : ["null","number"]
+    },
+    "provider" : {
+      "type" : ["null","number"]
+    },
+    "reference" : {
+      "type" : ["null","string"]
+    },
+    "refundedAmount" : {
+      "type" : ["null","number"]
+    },
+    "tip" : {
+      "type" : ["null","string"]
+    },
+    "updatedAt" : {
+      "type" : ["null","string"], "format" : "date-time"
+    }
+  }
+}

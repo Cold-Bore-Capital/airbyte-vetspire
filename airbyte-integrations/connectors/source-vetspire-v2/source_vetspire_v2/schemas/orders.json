@@ -1,0 +1,129 @@
+{
+  "type" : "object",
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "properties" : {
+    "locationId" : {"type" : ["string", "null"]},
+    "historicalId" : {"type" : ["string", "null"]},
+    "totalNotRenderedCents" : {"type" : ["integer", "null"]},
+    "note" : {"type" : ["string", "null"]},
+    "id" : {"type" : ["string", "null"]},
+    "totalDiscountCents" : {"type" : ["integer", "null"]},
+    "totalBeforeTaxCents" : {"type" : ["integer", "null"]},
+    "isAccountCredit" : {"type" : ["boolean", "null"]},
+    "items" : {
+      "type" : ["null", "array"],
+      "items" : {
+        "type" : ["null", "object"],
+        "properties" : {
+          "historicalId" : {"type" : ["string", "null"]},
+          "lineDiscountReason" : {"type" : ["string", "null"]},
+          "planDiscountCents" : {"type" : ["number", "null"]},
+          "discountAmount" : {"type" : ["number", "null"]},
+          "discounted" : {"type" : ["boolean", "null"]},
+          "dispenseFee" : {"type" : ["number", "null"]},
+          "id" : {"type" : ["string", "null"]},
+          "productId" : {"type" : ["string", "null"]},
+          "inPackage" : {"type" : ["boolean", "null"]},
+          "itemDiscountWithOrderDiscountCents" : {"type" : ["integer", "null"]},
+          "itemDiscountWithoutOrderDiscountCents" : {"type" : ["integer", "null"]},
+          "memberDiscountCents" : {"type" : ["number", "null"]},
+          "name" : {"type" : ["string", "null"]},
+          "quantity" : {"type" : ["number", "null"]},
+          "quantityRemaining" : {"type" : ["number", "null"]},
+          "quantityCredited" : {"type" : ["number", "null"]},
+          "refunded" : {"type" : ["boolean", "null"]},
+          "refundedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+          "refundedQuantity" : {"type" : ["number", "null"]},
+          "subtotalCents" : {"type" : ["integer", "null"]},
+          "totalBeforeTaxCents" : {"type" : ["integer", "null"]},
+          "totalAfterTaxCents" : {"type" : ["integer", "null"]},
+          "totalDiscountCents" : {"type" : ["integer", "null"]},
+          "volumeTiers" : {
+            "type" : "array",
+            "properties" : {
+              "tier" : {"type" : ["integer", "null"]},
+              "unitFee" : {"type" : ["string", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "status" : {"type" : ["string", "null"]},
+    "discountType" : {"type" : ["string", "null"]},
+    "patient" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "subtotalCents" : {"type" : ["integer", "null"]},
+    "cityTaxCents" : {"type" : ["integer", "null"]},
+    "totalCreditedCents" : {"type" : ["integer", "null"]},
+    "otherTaxCents" : {"type" : ["integer", "null"]},
+    "itemDiscountWithoutOrderDiscountCents" : {"type" : ["integer", "null"]},
+    "invoiceReference" : {"type" : ["string", "null"]},
+    "datetime" : {"type" : ["string", "null"], "format" : "date-time"},
+    "estimate" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "isCredit" : {"type" : ["boolean", "null"]},
+    "orderDiscountCents" : {"type" : ["integer", "null"]},
+    "invoicedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "updatedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "flags" : {
+      "type" : "array",
+      "properties" : {
+        "name" : {"type" : ["string", "null"]}
+      }
+    },
+    "planDiscountCents" : {"type" : ["integer", "null"]},
+    "isNotRendered" : {"type" : ["boolean", "null"]},
+    "itemDiscountWithOrderDiscountCents" : {"type" : ["integer", "null"]},
+    "encounters" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "memberDiscountCents" : {"type" : ["integer", "null"]},
+    "stateTaxCents" : {"type" : ["integer", "null"]},
+    "provider" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "discount" : {"type" : ["number", "null"]},
+    "client" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "invoiced" : {"type" : ["boolean", "null"]},
+    "paymentDueCents" : {"type" : ["integer", "null"]},
+    "taxRate" : {"type" : ["number", "null"]},
+    "totalPaid" : {"type" : ["number", "null"]},
+    "totalAfterTaxCents" : {"type" : ["integer", "null"]},
+    "insertedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "posted" : {"type" : ["boolean", "null"]},
+    "appliedCoupons" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "payments" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "countyTaxCents" : {"type" : ["integer", "null"]},
+    "statusChangeAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "verbiage" : {"type" : ["string", "null"]}
+  }
+}

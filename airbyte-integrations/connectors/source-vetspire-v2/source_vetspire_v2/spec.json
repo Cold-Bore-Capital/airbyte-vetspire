@@ -14,7 +14,7 @@
         "airbyte_secret" : true,
         "order" : 0
       },
-      "start_datetime" : {
+      "4" : {
         "title" : "Start Datetime to pull from ",
         "type" : "string",
         "format": "date-time",

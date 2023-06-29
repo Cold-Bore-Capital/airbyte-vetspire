@@ -1,0 +1,161 @@
+{"$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "historicalId" : {"type" : ["null", "string"]},
+    "prices" : {
+      "type" : ["null", "array"],
+      "items" : {
+        "type" : ["null", "object"],
+        "properties" : {
+          "id" : {"type" : ["string", "null"]},
+          "dispenseFee" : {"type" : ["null", "number"]},
+          "insertedAt" : {
+            "type" : ["null", "string"],
+            "format" : "date-time"
+          },
+          "isActive" : {"type" : ["null", "boolean"]},
+          "locationId" : {
+            "type" : "array",
+            "properties" : {
+              "id" : {"type" : ["string", "null"]}
+            }
+          },
+          "minimumPrice" : {"type" : ["null", "number"]},
+          "type" : {"type" : ["null", "string"]},
+          "unitFixedPrice" : {"type" : ["null", "number"]},
+          "unitMarkupPercent" : {"type" : ["null", "number"]},
+          "updatedAt" : {"type" : ["null", "string"], "format" : "date-time"},
+          "volumeTiers" : {
+            "type" : ["null", "array"],
+            "items" : {
+              "type" : ["null", "object"],
+              "properties" : {
+                "tier" : {"type" : ["integer", "null"],
+                  "unitFee" : {"type" : ["null", "string"]}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "enabledLocations" : {"type" : ["null", "number"]},
+    "id" : {"type" : ["null", "string"]},
+    "dispenseFee" : {"type" : ["null", "number"]},
+    "isControlledDrug" : {"type" : ["null", "boolean"]},
+    "inventoryBucket" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]},
+        "name" : {"type" : ["string", "null"]}
+      }
+    },
+    "buyingQuantity" : {"type" : ["null", "integer"]},
+    "unitMarkupPercent" : {"type" : ["null", "number"]},
+    "minimumPrice" : {"type" : ["null", "number"]},
+    "createdBy" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "unitCost" : {"type" : ["null", "number"]},
+    "unitDurationDays" : {"type" : ["null", "number"]},
+    "linkedProducts" : {
+      "type" : ["null", "array"],
+      "items" : {
+        "type" : ["null", "object"],
+        "properties" : {
+          "id" : {"type" : ["string", "null"]}
+        }
+      }
+    },
+    "lastUsedDate" : {"type" : ["null", "string"]},
+    "units" : {"type" : ["null", "string"]},
+    "defaultSite" : {"type" : ["null", "string"]},
+    "productCategories" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]},
+        "name" : {"type" : ["string", "null"]}
+      }
+    },
+    "url" : {"type" : ["null", "string"]},
+    "onlyInventory" : {"type" : ["null", "boolean"]},
+    "ageRestriction" : {"type" : ["null", "string"]},
+    "useDefault" : {"type" : ["null", "boolean"]},
+    "maxOrderLimit" : {"type" : ["null", "number"]},
+    "realUnitCost" : {"type" : ["null", "number"]},
+    "suggestedProducts" : {"type" : ["null", "string"]},
+    "disabledLocations" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "fulfillmentSources" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]},
+        "isExternal" : {"type" : ["boolean", "null"]},
+        "name" : {"type" : ["string", "null"]}
+      }
+    },
+    "productTypeId" : {"type" : ["null", "string"]},
+    "code" : {"type" : ["null", "string"]},
+    "invoiceBlurb" : {"type" : ["null", "string"]},
+    "applicationType" : {"type" : ["null", "string"]},
+    "restrictToOnlyNonNeutered" : {"type" : ["null", "boolean"]},
+    "undeletable" : {"type" : ["null", "boolean"]},
+    "defaultRoute" : {"type" : ["null", "string"]},
+    "updatedAt" : {"type" : ["null", "string"], "format" : "date-time"},
+    "vetsourceId" : {"type" : ["null", "number"]},
+    "promptsTip" : {"type" : ["null", "number"]},
+    "isNonCompensated" : {"type" : ["null", "boolean"]},
+    "alternativeName" : {"type" : ["null", "string"]},
+    "fixed" : {"type" : ["null", "boolean"]},
+    "diagnosticCode" : {"type" : ["null", "string"]},
+    "defaultSig" : {"type" : ["null", "string"]},
+    "disabled" : {"type" : ["null", "boolean"]},
+    "manufacturer" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]},
+        "name" : {"type" : ["string", "null"]}
+      }
+    },
+    "sellingQuantity" : {"type" : ["null", "integer"]},
+    "metadataFields" : {"type" : ["null", "string"]},
+    "orderItems" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "trackInventory" : {"type" : ["null", "boolean"]},
+    "description" : {"type" : ["null", "string"]},
+    "revenueCenter" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "packageOnly" : {"type" : ["null", "boolean"]},
+    "dischargeInstructions" : {"type" : ["null", "string"]},
+    "insertedAt" : {"type" : ["null", "string"], "format" : "date-time"},
+    "coerceIntegerQuantity" : {"type" : ["null", "boolean"]},
+    "isNeuter" : {"type" : ["null", "boolean"]},
+    "isEuthanasia" : {"type" : ["null", "boolean"]},
+    "unitFixedPrice" : {"type" : ["null", "number"]},
+    "name" : {"type" : ["null", "string"]},
+    "packageOnlyLocations" : {
+      "type" : "array",
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "parentProductId" : {"type" : ["null", "number"]},
+    "lowStockThresholds" : {"type" : ["null", "number"]},
+    "minimumUnitPrice" : {"type" : ["null", "number"]}
+  }
+}
