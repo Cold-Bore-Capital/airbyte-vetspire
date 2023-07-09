@@ -48,9 +48,9 @@
       "type" : ["null","boolean"]
     },
     "licenses" : {
-      "type" : "array",
+      "type" : ["array","null"],
       "items" : {
-        "type" : "object",
+        "type" : ["object","null"],
         "properties" : {
           "id" : {
             "type" : ["null","integer"]

@@ -4,7 +4,7 @@
     "dynamicPrice" : {"type" : ["null", "boolean"]},
     "enrollmentFee" : {"type" : ["null", "number"]},
     "includedProductIds": {
-      "type": "array",
+      "type": ["array","null"],
       "items": [
         {
           "type": "object",
@@ -17,24 +17,24 @@
     "id" : {"type" : ["null", "integer"]},
     "name" : {"type" : ["null", "string"]},
     "options" : {
-      "type" : "array",
+      "type" : ["array","null"],
       "items" : [
         {
-          "type" : "object",
+          "type" : ["object", "null"],
           "properties" : {
             "name" : {"type" : ["null", "string"]},
             "package" : {"type" : ["null", "string"]},
             "packageId" : {"type" : ["null", "integer"]},
             "product" : {
-              "type" : "object",
+              "type" : ["object", "null"],
               "properties" : {
                 "dispenseFee" : {"type" : ["null", "number"]},
                 "id" : {"type" : ["null", "number"]},
                 "prices" : {
-                  "type" : "array",
+                  "type" : ["array","null"],
                   "items" : [
                     {
-                      "type" : "object",
+                      "type" : ["object", "null"],
                       "properties" : {
                         "unitFixedPrice" : {
                           "type" : "null"

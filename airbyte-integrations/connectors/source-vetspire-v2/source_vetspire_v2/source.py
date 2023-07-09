@@ -22,7 +22,21 @@ from airbyte_cdk.models import (
     Status,
     SyncMode,
 )
-from source_vetspire_v2.streams import PatientPlans, Appointments, Clients, IncrementalVetspireV2Stream, VetspireV2Stream
+from source_vetspire_v2.streams import (
+    Appointments,
+    Clients,
+    Encounters,
+    Orders,
+    Patients,
+    PatientPlans,
+    PreventionPlans,
+    Products,
+    ProductTypes,
+    ProductPackages,
+    IncrementalVetspireV2Stream,
+    VetspireV2Stream,
+)
+
 
 class VetAuth(AbstractHeaderAuthenticator):
     """
@@ -45,6 +59,7 @@ class VetAuth(AbstractHeaderAuthenticator):
     @property
     def token(self) -> str:
         return f"{self._token}"
+
 
 # Source
 class SourceVetspireV2(AbstractSource):
@@ -82,9 +97,20 @@ class SourceVetspireV2(AbstractSource):
         """
         auth = VetAuth(config)
         stream_kwargs = {
-                         "start_date": config["start_date"],
-                         "start_datetime": config.get("start_datetime", 0),
-                         "limit": config.get("limit", "300"),
-                         "offset": config.get("offset", "0"),
-                         }
-        return [Clients(authenticator=auth, **stream_kwargs), Appointments(authenticator=auth, **stream_kwargs),PatientPlans(authenticator=auth, **stream_kwargs)]
+            "limit": config.get("limit", "300"),
+            "offset": config.get("offset", "0"),
+        }
+        stream_kwargs_no_limit = {
+            "limit": None,
+            "offset": None
+        }
+        return [Appointments(authenticator=auth, **stream_kwargs),
+                Clients(authenticator=auth, **stream_kwargs),
+                Encounters(authenticator=auth, **stream_kwargs),
+                Orders(authenticator=auth, **stream_kwargs),
+                PreventionPlans(authenticator=auth, **stream_kwargs_no_limit),
+                ProductPackages(authenticator=auth, **stream_kwargs_no_limit),
+                ProductTypes(authenticator=auth, **stream_kwargs_no_limit),
+                Patients(authenticator=auth, **stream_kwargs),
+                PatientPlans(authenticator=auth, **stream_kwargs),
+                ]

@@ -8,7 +8,7 @@
     "deferred" : {"type" : ["null", "boolean"]},
     "deferredRevenue" : {"type" : ["null", "string"]},
     "endDate" : {"type" : ["null", "string"], "format" : "date"},
-    "id" : {"type" : ["null", "string"]},
+    "id" : {"type" : ["null", "integer"]},
     "items" : {
       "type" : ["null", "array"],
       "items" : {
@@ -17,18 +17,18 @@
           "id" : {"type" : ["string", "null"]},
           "name" : {"type" : ["null", "string"]},
           "package" : {
-            "type" : ["null","array"],
+            "type" : ["object","null"],
             "properties" : {
               "id" : {
-                "type" : ["string", "null"]
+                "type" : ["integer", "null"]
               }
             }
           },
           "product" : {
-            "type" : ["null","array"],
+            "type" : ["object","null"],
             "properties" : {
               "id" : {
-                "type" : ["string", "null"]
+                "type" : ["integer", "null"]
               }
             }
           },
@@ -38,23 +38,20 @@
         }
       }
     },
-    "includedProductIds" : {"type" : ["null", "string"]},
     "startDate" : {"type" : ["null", "string"], "format" : "date"},
-    "isActive" : {"type" : ["null", "boolean"]},
-    "name" : {"type" : ["null", "string"]},
     "location" : {
-      "type" : "array",
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
-          "type" : ["string", "null"]
+          "type" : ["integer", "null"]
         }
       }
     },
     "patient" : {
-      "type" : "array",
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
-          "type" : ["string", "null"]
+          "type" : ["integer", "null"]
         }
       }
     },
@@ -62,18 +59,18 @@
     "planDiscountPercent" : {"type" : ["null", "string"]},
     "planInterval" : {"type" : ["null", "string"]},
     "preventionPlan" : {
-      "type" : "array",
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
-          "type" : ["string", "null"]
+          "type" : ["integer", "null"]
         }
       }
     },
     "renewalPlan" : {
-      "type" : "array",
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
-          "type" : ["string", "null"]
+          "type" : ["integer", "null"]
         }
       }
     },

@@ -14,11 +14,21 @@
         "airbyte_secret" : true,
         "order" : 0
       },
-      "4" : {
-        "title" : "Start Datetime to pull from ",
+      "start_datetime" : {
+        "title" : "Start Datetime ",
+        "description": "Start Datetime to pull from ",
         "type" : "string",
         "format": "date-time",
-        "examples":  ["2021-01-01T00:00:00"]
+        "examples":  ["2021-01-01T00:00:00"],
+        "order": 1
+      },
+      "start_date" : {
+        "title" : "Start Date",
+        "description": "Start Date to pull from",
+        "type" : "string",
+        "format": "date",
+        "examples":  ["2021-01-01"],
+        "order": 2
       }
     }
   }

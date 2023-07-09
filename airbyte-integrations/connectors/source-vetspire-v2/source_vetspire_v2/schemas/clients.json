@@ -72,9 +72,7 @@
       "properties" : {
         "name" : {
           "type" : [
-            "null",
-            "string"
-          ]
+            "string"]
         }
       }
     },
@@ -91,13 +89,11 @@
       ]
     },
     "addresses" : {
-      "type" : "array",
+      "type" : ["null","array"],
       "properties" : {
         "id" : {
           "type" : [
-            "null",
-            "string"
-          ]
+            "string"]
         }
       }
     },
@@ -137,9 +133,7 @@
       "properties" : {
         "value" : {
           "type" : [
-            "null",
-            "string"
-          ]
+            "string"]
         }
       }
     },
@@ -226,14 +220,11 @@
     "coowners" : {
       "type" : [
         "array",
-        "null"
-      ],
+        "null"],
       "properties" : {
         "id" : {
           "type" : [
-            "null",
-            "string"
-          ]
+            "string"]
         }
       }
     },
@@ -246,14 +237,11 @@
     "clientRdvms" : {
       "type" : [
         "array",
-        "null"
-      ],
+        "null"],
       "properties" : {
         "id" : {
           "type" : [
-            "null",
-            "string"
-          ]
+            "string"]
         }
       }
     }

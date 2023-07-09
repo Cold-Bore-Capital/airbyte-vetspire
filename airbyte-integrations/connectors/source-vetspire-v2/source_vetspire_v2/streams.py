@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from airbyte_cdk.models import SyncMode
+from airbyte_cdk.models import SyncMode, AirbyteMessage
 from airbyte_cdk.sources.declarative.schema.json_file_schema_loader import JsonFileSchemaLoader
 from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.utils.transform import TransformConfig, TypeTransformer
@@ -17,6 +17,8 @@ from requests.auth import AuthBase
 from airbyte_cdk.sources.declarative.retrievers.simple_retriever import SimpleRetriever
 from urllib.parse import parse_qsl, urlparse
 import copy
+from airbyte_cdk.logger import AirbyteLogger
+from dateutil import parser
 
 """
 TODO: Most comments in this class are instructive and should be deleted after the source is implemented.
@@ -65,6 +67,7 @@ class VetspireV2Stream(HttpStream, ABC):
     transformer: TypeTransformer = TypeTransformer(TransformConfig.DefaultSchemaNormalization | TransformConfig.CustomSchemaNormalization)
     url_base = "https://api2.vetspire.com/graphql"
     state_checkpoint_interval = 300
+    # extra_logger = AirbyteLogger()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
@@ -119,7 +122,7 @@ class VetspireV2Stream(HttpStream, ABC):
         yield from records
 
     def _get_schema_root_properties(self):
-        schema_loader = JsonFileSchemaLoader(config=self.config, parameters={"name": self.name})
+        schema_loader = JsonFileSchemaLoader(config={}, parameters={"name": self.name})
         schema = schema_loader.get_json_schema()
         return schema["properties"]
 
@@ -129,12 +132,11 @@ class VetspireV2Stream(HttpStream, ABC):
             for k in object_arguments.keys():
                 if k in ['updatedAtStart', 'updatedAtEnd']:
                     object_list.append(f'{k}: "{object_arguments[k]}"')
-                elif k == "offset" and object_arguments[k] is None:
+                elif k in ["limit", "offset"] and object_arguments[k] is None:
                     pass
                 else:
                     object_list.append(f'{k}: {object_arguments[k]}')
         return ",".join(object_list)
-        # return ",".join([f"{argument}:{value}" for argument, value in object_arguments.items() if value is not None])
 
     def _build_query(self, object_name: str, field_schema: dict, **object_arguments) -> str:
         """
@@ -167,11 +169,12 @@ class VetspireV2Stream(HttpStream, ABC):
         query = self._build_query(
             object_name=self.object_name,
             field_schema=self._get_schema_root_properties(),
-            limit=self.limit or None,
-            offset=stream_state.get('offset', None),
-            updatedAtStart=stream_slice['updatedAtStart'],
-            updatedAtEnd=stream_slice['updatedAtEnd']
+            limit=self.limit,
+            offset=self.offset,
+            updatedAtStart=stream_slice.get('updatedAtStart', None),
+            updatedAtEnd=stream_slice.get('updatedAtEnd', None)
         )
+
         return {"query": f"query{{{query}}}"}
 
     def path(
@@ -200,19 +203,34 @@ class VetspireV2Stream(HttpStream, ABC):
             yield from records_generator_fn(request, response, stream_state, stream_slice)
 
             # next_page_token = self.next_page_token(response)
-            # if not next_page_token:
-            if len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
-                self.offset = str(int(self.offset) + int(self.limit))
-                stream_state['offset'] = self.offset
-            else:
-                stream_state['offset'] = '0'
+            # Check if self.limit is being used. For example, ProductPackages doesn't have a limit argument.
+            try:
+                if len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
+                    self.offset = str(int(self.offset) + int(self.limit))
+                    stream_state['offset'] = self.offset
+                else:
+                    stream_state['offset'] = '0'
+                    pagination_complete = True
+            except:
                 pagination_complete = True
 
         # Always return an empty generator just in case no records were ever yielded
         yield from []
 
 
-class PatientPlans(VetspireV2Stream):
+class VetspireV2StreamWithReq(VetspireV2Stream):
+    def request_params(
+            self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+    ) -> MutableMapping[str, Any]:
+        """
+        TODO: Override this method to define any query parameters to be set. Remove this method if you don't need to define request params.
+        Usually contains common params e.g. pagination size etc.
+        """
+        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
+        return params
+
+
+class PatientPlans(VetspireV2StreamWithReq):
     """
     TODO: Change class name to match the table/data source this stream corresponds to.
     """
@@ -223,18 +241,21 @@ class PatientPlans(VetspireV2Stream):
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.config = stream_kwargs
-        self._authenticator = authenticator
         self.object_name = 'patientPlans'
 
-    def request_params(
-            self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
-    ) -> MutableMapping[str, Any]:
-        """
-        TODO: Override this method to define any query parameters to be set. Remove this method if you don't need to define request params.
-        Usually contains common params e.g. pagination size etc.
-        """
-        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
-        return params
+
+class providers(VetspireV2StreamWithReq):
+    """
+    TODO: Change class name to match the table/data source this stream corresponds to.
+    """
+    primary_key = "id"
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.config = stream_kwargs
+        self.object_name = 'providers'
 
 
 # Basic incremental stream
@@ -263,6 +284,7 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
         self._start_datetime = start_datetime
         self._start_date = start_date
         self._cursor_value = start_datetime
+        self.dateformat = "%Y-%m-%dT%H:%M:%SZ"
 
     @property
     def state(self) -> Mapping[str, Any]:
@@ -304,8 +326,15 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             return pendulum.parse(dt.format(self.time_filter_template))
 
         end_datetime = pendulum.now("utc")
-        start_datetime = min(end_datetime, pendulum.parse(self.state.get(self.cursor_field, self._start_datetime)))
-        current_start = start_datetime
+        try:
+            start_datetime = min(end_datetime, pendulum.parse(self.state.get(self.cursor_field, self._start_datetime)))
+        except:
+            try:
+                self.logger.debug("Date field fails here: ", extra={"date field": self.state.get(self.cursor_field, self._start_datetime)})
+                start_datetime = min(end_datetime, pendulum.parse(self.state.get(self.cursor_field, self._start_datetime)))
+            except:
+                self.logger.debug("Date field fails here after parser: ", extra={"date field": parser.parse(self.state.get(self.cursor_field, self._start_datetime))})
+                start_datetime = min(end_datetime, pendulum.parse(parser.parse(self.state.get(self.cursor_field, self._start_datetime))))
         current_end = start_datetime
         # Aligning to a datetime format is done to avoid the following scenario:
         # start_dt = 2021-11-14T00:00:00, end_dt (now) = 2022-11-14T12:03:01, time_filter_template = "YYYY-MM-DD"
@@ -375,9 +404,8 @@ class Appointments(IncrementalVetspireV2Stream):
         super().__init__(authenticator)
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
-        self.config = stream_kwargs
-        self._authenticator = authenticator
         self.object_name = 'appointments'
+
 
 class Clients(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
@@ -385,22 +413,107 @@ class Clients(IncrementalVetspireV2Stream):
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
-    # sync_mode = SyncMode.incremental
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator)
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
-        self.config = stream_kwargs
-        # self._authenticator = authenticator
         self.object_name = 'clients'
-    #
-    # def request_params(
-    #         self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
-    # ) -> MutableMapping[str, Any]:
-    #     """
-    #     TODO: Override this method to define any query parameters to be set. Remove this method if you don't need to define request params.
-    #     Usually contains common params e.g. pagination size etc.
-    #     """
-    #     params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
-    #     return params
+
+
+class Encounters(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'encounters'
+
+
+class Orders(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'orders'
+
+
+class Patients(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'patients'
+
+
+class Products(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'products'
+
+
+class PreventionPlans(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'preventionPlans'
+
+
+class ProductTypes(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'productTypes'
+
+
+class ProductPackages(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'productPackages'

@@ -12,7 +12,7 @@
     "highTotalTaxCents" : {"type" : ["null", "integer"]},
     "lowTotalAfterTaxCents" : {"type" : ["null", "integer"]},
     "items" : {
-      "type" : "array",
+      "type" : ["array","null"],
       "items" : [
         {
           "type" : "object",
@@ -67,7 +67,7 @@
                   "format" : "date-time"},
     "encounter" : {"type" : ["null", "string"]},
     "patients" : {
-      "type" : "array",
+      "type" : ["array","null"],
       "items" : [
         {
           "type" : "object",
@@ -84,9 +84,9 @@
           "properties" : {"id" : {"type" : ["null", "string"]}}}]
     },
     "estimateType" : {"type" : ["null", "string"]},
-    "discount" : {"type" : "null"},
+    "discount" : {"type" : ["null", "string"]},
     "client" : {
-      "type" : "array",
+      "type" : ["object","null"],
       "properties" : {"id" : {"type" : ["null", "string"]}}
     },
     "lowTotalTaxCents" : {"type" : ["null", "integer"]},
@@ -94,12 +94,14 @@
     "ordered" : {"type" : ["null", "boolean"]},
     "totalPaid" : {"type" : ["null", "string"]},
     "insertedAt" : {"type" : ["null", "string"]},
-    "appliedCoupons" : {"type" : "array", "items" : {}},
+    "appliedCoupons" : {"type" : "array",
+      "additionalProperties" : true,
+      "items" : {}},
     "payments" :
-    {"type" : "array",
+    {"type" : ["array","null"],
       "items" : [{"type" : "object", "properties" : {"id" : {"type" : ["null", "string"]}}}]
       },
-    "clientConsents" : {"type" : "array",
+    "clientConsents" : {"type" : ["array","null"],
       "items" : [{"type" : "object", "properties" : {"id" : {"type" : ["null", "string"]}}}]
       },
     "highTotalAfterTaxCents" : {"type" : ["null", "integer"]},

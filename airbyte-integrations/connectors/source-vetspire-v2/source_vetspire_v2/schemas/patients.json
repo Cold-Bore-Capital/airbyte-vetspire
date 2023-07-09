@@ -18,10 +18,10 @@
     "clientId" : {"type" : ["null", "string"]},
     "age" : {"type" : ["null", "integer"]},
     "immunizations" : {
-      "type" : "array",
+      "type" : ["array","null"],
       "items" : [
         {
-          "type" : "object",
+          "type" : ["object", "null"],
           "properties" : {
             "id" : {"type" : ["null", "integer"]},
             "administered" : {"type" : ["null", "boolean"]},
@@ -42,7 +42,7 @@
     "species" : {"type" : ["null", "string"]},
     "sex" : {"type" : ["null", "string"]},
     "patientSubscription": {
-      "type" : "array",
+      "type" : ["null","object"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }

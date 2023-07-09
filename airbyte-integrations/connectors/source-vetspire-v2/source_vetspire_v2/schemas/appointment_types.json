@@ -8,10 +8,6 @@
     "color": {
       "type": "string"
     },
-    "defaultProducts": {
-      "type": "array",
-      "items": {}
-    },
     "deleted": {
       "type": "boolean"
     },

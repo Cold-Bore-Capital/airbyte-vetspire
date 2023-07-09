@@ -13,7 +13,7 @@
       "format" : "date-time"
     },
     "comments" : {
-      "type" : ["null","array"],
+      "type" : ["array","null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
