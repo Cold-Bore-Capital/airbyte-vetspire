@@ -91,10 +91,14 @@
     "addresses" : {
       "type" : ["null","array"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string"]
-        }
+        "id" : {"type" : ["string","null"]},
+        "city" : {"type" : ["string","null"]},
+        "isPrimary" : {"type" : ["boolean","null"]},
+        "line1" : {"type" : ["string","null"]},
+        "line2" : {"type" : ["string","null"]},
+        "postalCode" : {"type" : ["string","null"]},
+        "state" : {"type" : ["string","null"]},
+        "use" : {"type" : ["string","null"]}
       }
     },
     "accountCredit" : {
@@ -131,10 +135,9 @@
     "preferredPhoneNumber" : {
       "type" : ["array","null"],
       "properties" : {
-        "value" : {
-          "type" : [
-            "string"]
-        }
+        "value" : {"type" : ["string","null"]},
+        "name" : {"type" : ["string","null"]},
+        "preferred" : {"type" : ["boolean","null"]}
       }
     },
     "lastSyncedAt" : {
