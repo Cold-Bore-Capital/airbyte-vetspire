@@ -9,30 +9,24 @@ from airbyte_cdk.sources.streams import Stream, IncrementalMixin
 from airbyte_cdk.sources.streams.core import StreamData
 from airbyte_cdk.sources.streams.http.requests_native_auth.abstract_token import AbstractHeaderAuthenticator
 from airbyte_cdk.sources.utils.record_helper import stream_data_to_airbyte_message
-from airbyte_cdk.models import (
-    AirbyteCatalog,
-    AirbyteConnectionStatus,
-    AirbyteLogMessage,
-    AirbyteMessage,
-    AirbyteStateMessage,
-    AirbyteStreamStatus,
-    ConfiguredAirbyteCatalog,
-    ConfiguredAirbyteStream,
-    Level,
-    Status,
-    SyncMode,
-)
+from airbyte_cdk.models import AirbyteMessage
+
 from source_vetspire_v2.streams import (
     Appointments,
+    AppointmentTypes,
     Clients,
     Encounters,
+    EncounterTypes,
+    Locations,
     Orders,
     Patients,
     PatientPlans,
+    Payments,
     PreventionPlans,
     Products,
     ProductTypes,
     ProductPackages,
+    Providers,
     IncrementalVetspireV2Stream,
     VetspireV2Stream,
 )
@@ -97,20 +91,27 @@ class SourceVetspireV2(AbstractSource):
         """
         auth = VetAuth(config)
         stream_kwargs = {
+            "start_datetime": config.get("start_datetime", None),
             "limit": config.get("limit", "300"),
             "offset": config.get("offset", "0"),
         }
         stream_kwargs_no_limit = {
+            "start_datetime": config.get("start_datetime", None),
             "limit": None,
             "offset": None
         }
         return [Appointments(authenticator=auth, **stream_kwargs),
+                AppointmentTypes(authenticator=auth, **stream_kwargs),
                 Clients(authenticator=auth, **stream_kwargs),
                 Encounters(authenticator=auth, **stream_kwargs),
+                EncounterTypes(authenticator=auth, **stream_kwargs_no_limit),
+                Locations(authenticator=auth, **stream_kwargs_no_limit),
                 Orders(authenticator=auth, **stream_kwargs),
+                Patients(authenticator=auth, **stream_kwargs),
+                PatientPlans(authenticator=auth, **stream_kwargs),
                 PreventionPlans(authenticator=auth, **stream_kwargs_no_limit),
                 ProductPackages(authenticator=auth, **stream_kwargs_no_limit),
                 ProductTypes(authenticator=auth, **stream_kwargs_no_limit),
-                Patients(authenticator=auth, **stream_kwargs),
-                PatientPlans(authenticator=auth, **stream_kwargs),
+                Products(authenticator=auth, **stream_kwargs),
+                Providers(authenticator=auth, **stream_kwargs_no_limit),
                 ]

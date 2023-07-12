@@ -12,7 +12,7 @@
     "highTotalTaxCents" : {"type" : ["null", "integer"]},
     "lowTotalAfterTaxCents" : {"type" : ["null", "integer"]},
     "items" : {
-      "type" : ["object","null"],
+      "type" : ["array","null"],
       "items" : [
         {
           "type" : "object",
@@ -78,13 +78,15 @@
     "provider" : {"id" : {"type" : ["null", "string"]}},
     "lowSubtotalCents" : {"type" : ["null", "integer"]},
     "boardRows" : {
-      "type" : ["array","null"],
-      "properties" : {"id" : {"type" : ["null", "string"]}}
+      "type" : "array",
+      "items" : [
+        {"type" : "object",
+          "properties" : {"id" : {"type" : ["null", "string"]}}}]
     },
     "estimateType" : {"type" : ["null", "string"]},
     "discount" : {"type" : ["null", "string"]},
     "client" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {"id" : {"type" : ["null", "string"]}}
     },
     "lowTotalTaxCents" : {"type" : ["null", "integer"]},

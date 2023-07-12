@@ -8,17 +8,13 @@ from airbyte_cdk.sources.utils.transform import TransformConfig, TypeTransformer
 from airbyte_cdk.sources.streams.core import Stream, StreamData
 from airbyte_cdk.sources.streams import Stream, IncrementalMixin
 from airbyte_cdk.sources.streams.http.auth.core import HttpAuthenticator
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Callable, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Union
 import requests
 import pendulum
-from pendulum import DateTime
 from requests.auth import AuthBase
-from airbyte_cdk.sources.declarative.retrievers.simple_retriever import SimpleRetriever
-from urllib.parse import parse_qsl, urlparse
 import copy
-from airbyte_cdk.logger import AirbyteLogger
-from dateutil import parser
+import time
 
 """
 TODO: Most comments in this class are instructive and should be deleted after the source is implemented.
@@ -63,17 +59,13 @@ class VetspireV2Stream(HttpStream, ABC):
 
     See the reference docs for the full list of configurable options.
     """
-
     transformer: TypeTransformer = TypeTransformer(TransformConfig.DefaultSchemaNormalization | TransformConfig.CustomSchemaNormalization)
     url_base = "https://api2.vetspire.com/graphql"
     state_checkpoint_interval = 300
-    # extra_logger = AirbyteLogger()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
         self._next_page_token = None
-        # self.limit = kwargs.get("limit", "300")
-        # self.offset = kwargs.get("offset", "0")
 
     @property
     def data_field(self):
@@ -85,12 +77,13 @@ class VetspireV2Stream(HttpStream, ABC):
 
     @property
     def state(self) -> Mapping[str, Any]:
-        return {'offset': str(self.offset)}
+        #return {'offset': str(self.offset)}
+        return {self.cursor_field: str(self._cursor_value)}
 
     @state.setter
     def state(self, value: Mapping[str, Any]):
         self._cursor_value = value[self.cursor_field]
-        self._offset_value = value[self.cursor_field]
+        # self._offset_value = value[self.cursor_field]
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
         """
@@ -129,13 +122,17 @@ class VetspireV2Stream(HttpStream, ABC):
     def _get_object_arguments(self, **object_arguments) -> str:
         object_list = []
         if len(object_arguments.items()) > 0:
+            if self.object_name == 'patientPlans':
+                object_list.append("filters: {startAfter: \"" + object_arguments["startAfter"] + "\", startBefore: \"" + object_arguments["startBefore"]+"\"}")
             for k in object_arguments.keys():
                 if k in ['updatedAtStart', 'updatedAtEnd']:
                     object_list.append(f'{k}: "{object_arguments[k]}"')
                 elif k in ["limit", "offset"] and object_arguments[k] is None:
                     pass
-                else:
+                elif k in ["limit", "offset"]:
                     object_list.append(f'{k}: {object_arguments[k]}')
+                # else:
+                #     raise Exception(f"Unknown argument {k} for object {self.object_name}")
         return ",".join(object_list)
 
     def _build_query(self, object_name: str, field_schema: dict, **object_arguments) -> str:
@@ -148,6 +145,8 @@ class VetspireV2Stream(HttpStream, ABC):
         """
         fields = []
         for field, nested_schema in field_schema.items():
+            if isinstance(nested_schema, List):
+                raise Exception(f"Nested lists are not supported: {nested_schema}")
             nested_fields = nested_schema.get("properties", nested_schema.get("items", {}).get("properties"))
             if nested_fields:
                 fields.append(self._build_query(field, nested_fields))
@@ -166,15 +165,37 @@ class VetspireV2Stream(HttpStream, ABC):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> Optional[Union[Mapping, str]]:
-        query = self._build_query(
+
+        if self.object_name == 'patientPlans':
+            query = self._build_query(
             object_name=self.object_name,
             field_schema=self._get_schema_root_properties(),
             limit=self.limit,
             offset=self.offset,
-            updatedAtStart=stream_slice.get('updatedAtStart', None),
-            updatedAtEnd=stream_slice.get('updatedAtEnd', None)
+            startAfter=stream_slice.get('startAfter', None),
+            startBefore=stream_slice.get('startBefore', None)
         )
-
+        elif self.object_name in ['encounterTypes','appointmentTypes','productPackages','preventionPlans','productTypes','providers','locations']:
+            query = self._build_query(
+                object_name=self.object_name,
+                field_schema=self._get_schema_root_properties(),
+                limit=self.limit,
+                offset=self.offset
+            )
+        elif self.object_name in ['appointmentTypes']:
+            query = self._build_query(
+                object_name=self.object_name,
+                field_schema=self._get_schema_root_properties()
+            )
+        else:
+            query = self._build_query(
+                object_name=self.object_name,
+                field_schema=self._get_schema_root_properties(),
+                limit=self.limit,
+                offset=self.offset,
+                updatedAtStart=stream_slice.get('updatedAtStart', None),
+                updatedAtEnd=stream_slice.get('updatedAtEnd', None)
+            )
         return {"query": f"query{{{query}}}"}
 
     def path(
@@ -204,15 +225,20 @@ class VetspireV2Stream(HttpStream, ABC):
 
             # next_page_token = self.next_page_token(response)
             # Check if self.limit is being used. For example, ProductPackages doesn't have a limit argument.
-            try:
-                if len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
-                    self.offset = str(int(self.offset) + int(self.limit))
-                    stream_state['offset'] = self.offset
-                else:
-                    stream_state['offset'] = '0'
-                    pagination_complete = True
-            except:
+            # try:
+            if response.status_code == 500:
+                time.sleep(20)
+            # Offset is not being used so set pagination to complete
+            elif self.offset is None:
                 pagination_complete = True
+            # Add limit to offset to get next set of records and continue pagination
+            elif len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
+                self.offset = str(int(self.offset) + int(self.limit))
+            else:
+                self.offset = '0'
+                pagination_complete = True
+            # except:
+            #     pagination_complete = True
 
         # Always return an empty generator just in case no records were ever yielded
         yield from []
@@ -230,37 +256,64 @@ class VetspireV2StreamWithReq(VetspireV2Stream):
         return params
 
 
-class PatientPlans(VetspireV2StreamWithReq):
+
+class Providers(VetspireV2StreamWithReq):
     """
     TODO: Change class name to match the table/data source this stream corresponds to.
     """
     primary_key = "id"
+    name = 'providers'
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator)
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
-        self.config = stream_kwargs
-        self.object_name = 'patientPlans'
-
-
-class providers(VetspireV2StreamWithReq):
-    """
-    TODO: Change class name to match the table/data source this stream corresponds to.
-    """
-    primary_key = "id"
-
-    def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
-        self.config = stream_kwargs
         self.object_name = 'providers'
+
+class AppointmentTypes(VetspireV2StreamWithReq):
+    """
+    TODO: Change class name to match the table/data source this stream corresponds to.
+    """
+    primary_key = "id"
+    name = 'appointment_types'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = None
+        self.limit = None
+        self.object_name = 'appointmentTypes'
+
+class EncounterTypes(VetspireV2StreamWithReq):
+    """
+    TODO: Change class name to match the table/data source this stream corresponds to.
+    """
+    primary_key = "id"
+    name = 'encounter_types'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'encounterTypes'
+
+class Locations(VetspireV2StreamWithReq):
+    """
+    TODO: Change class name to match the table/data source this stream corresponds to.
+    """
+    primary_key = "id"
+    name = 'locations'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator)
+        self.offset = None
+        self.limit = None
+        self.object_name = 'locations'
 
 
 # Basic incremental stream
 class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
-    time_filter_template = "YYYY-MM-DDTHH:mm:ss[Z]"
+    time_filter_template = "YYYY-MM-DDTHH:mm:ssZ"
+    time_filter_template_patient_plans = "YYYY-MM-DD"
     # This attribute allows balancing between sync speed and memory consumption.
     # The greater a slice is - the bigger memory consumption and the faster syncs are since fewer requests are made.
     slice_step_default = pendulum.duration(days=1)
@@ -272,28 +325,24 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
     def __init__(
             self,
             authenticator: Union[AuthBase, HttpAuthenticator],
-            start_datetime: str = "2023-04-01T00:00:00Z",
-            start_date: str = "2023-04-01",
-            slice_step_map: Mapping[str, int] = None,
-            limit: int = None,
-            offset: int = None,
+            start_datetime: str = None,
+            slice_step_map: Mapping[str, int] = None
     ):
         super().__init__(authenticator)
         slice_step = (slice_step_map or {}).get(self.name)
         self._slice_step = slice_step and pendulum.duration(days=slice_step)
-        self._start_datetime = start_datetime
-        self._start_date = start_date
-        self._cursor_value = start_datetime
-        self.dateformat = "%Y-%m-%dT%H:%M:%SZ"
+        self._start_datetime = pendulum.parse(start_datetime if start_datetime is not None else "2023-07-01T00:00:00Z")
 
     @property
     def state(self) -> Mapping[str, Any]:
         if self._cursor_value:
             return {self.cursor_field: self._cursor_value}
 
+        return {}
+
     @state.setter
     def state(self, value: Mapping[str, Any]):
-        self._cursor_value = datetime.strptime(value[self.cursor_field], self.dateformat)
+        self._cursor_value = pendulum.parse(value[self.cursor_field]).in_timezone('UTC')
 
     @property
     def sync_mode(self):
@@ -322,31 +371,28 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
         """
 
     def generate_date_ranges(self) -> Iterable[Optional[MutableMapping[str, Any]]]:
-        def align_to_dt_format(dt: DateTime) -> DateTime:
-            return pendulum.parse(dt.format(self.time_filter_template))
-
         end_datetime = pendulum.now("utc")
-        try:
-            start_datetime = min(end_datetime, pendulum.parse(self.state.get(self.cursor_field, self._start_datetime)))
-        except:
-            try:
-                self.logger.debug("Date field fails here: ", extra={"date field": self.state.get(self.cursor_field, self._start_datetime)})
-                start_datetime = min(end_datetime, pendulum.parse(self.state.get(self.cursor_field, self._start_datetime)))
-            except:
-                self.logger.debug("Date field fails here after parser: ", extra={"date field": parser.parse(self.state.get(self.cursor_field, self._start_datetime))})
-                start_datetime = min(end_datetime, pendulum.parse(parser.parse(self.state.get(self.cursor_field, self._start_datetime))))
+        start_datetime = min(end_datetime, self.state.get(self.cursor_field, self._start_datetime))
+
+        current_start = start_datetime
         current_end = start_datetime
         # Aligning to a datetime format is done to avoid the following scenario:
         # start_dt = 2021-11-14T00:00:00, end_dt (now) = 2022-11-14T12:03:01, time_filter_template = "YYYY-MM-DD"
         # First slice: (2021-11-14, 2022-11-14)
         # (!) Second slice: (2022-11-15, 2022-11-14) - because 2022-11-14T00:00:00 (prev end) < 2022-11-14T12:03:01,
         # so we have to compare dates, not date-times to avoid yielding that last slice
-        while align_to_dt_format(current_end) < align_to_dt_format(end_datetime):
+        while current_end < end_datetime:
             current_end = min(end_datetime, current_start + self.slice_step)
-            slice_ = {
-                self.lower_boundary_filter_field: current_start.format(self.time_filter_template),
-                self.upper_boundary_filter_field: current_end.format(self.time_filter_template),
-            }
+            if self.object_name == 'patientPlans':
+                slice_ = {
+                    self.lower_boundary_filter_field: current_start.format(self.time_filter_template_patient_plans),
+                    self.upper_boundary_filter_field: current_end.format(self.time_filter_template_patient_plans),
+                }
+            else:
+                slice_ = {
+                    self.lower_boundary_filter_field: current_start.format(self.time_filter_template),
+                    self.upper_boundary_filter_field: current_end.format(self.time_filter_template),
+                }
             yield slice_
             current_start = current_end + self.slice_granularity
 
@@ -387,10 +433,27 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             unsorted_records.append(record)
         sorted_records = sorted(unsorted_records, key=lambda x: x[self.cursor_field])
         for record in sorted_records:
-            if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_date):
+            if isinstance(record[self.cursor_field],str):
+                record[self.cursor_field] = pendulum.parse(record[self.cursor_field])
+
+            if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_datetime):
                 self._cursor_value = record[self.cursor_field]
                 yield record
 
+class PatientPlans(IncrementalVetspireV2Stream):
+    cursor_field = "startDate"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "startAfter"
+    upper_boundary_filter_field = "startBefore"
+    sync_mode = SyncMode.incremental
+    name = 'patient_plans'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'][:10])
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'patientPlans'
 
 class Appointments(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
@@ -399,9 +462,10 @@ class Appointments(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     sync_mode = SyncMode.incremental
+    name = 'appointments'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'appointments'
@@ -413,9 +477,10 @@ class Clients(IncrementalVetspireV2Stream):
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
+    name = 'clients'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'clients'
@@ -427,9 +492,10 @@ class Encounters(IncrementalVetspireV2Stream):
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
+    name = 'encounters'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'encounters'
@@ -441,9 +507,10 @@ class Orders(IncrementalVetspireV2Stream):
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
+    name = 'orders'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'orders'
@@ -455,13 +522,27 @@ class Patients(IncrementalVetspireV2Stream):
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
+    name = 'patients'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'patients'
 
+class Payments(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    name = 'payments'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'payments'
 
 class Products(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
@@ -469,23 +550,25 @@ class Products(IncrementalVetspireV2Stream):
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
+    name = 'products'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'products'
 
 
 class PreventionPlans(IncrementalVetspireV2Stream):
-    cursor_field = "updatedAt"
+    cursor_field = "insertedAt"
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
+    name = 'prevention_plans'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'preventionPlans'
@@ -497,23 +580,25 @@ class ProductTypes(IncrementalVetspireV2Stream):
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
+    name = 'product_types'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
+        self.offset = None
+        self.limit = None
         self.object_name = 'productTypes'
 
 
 class ProductPackages(IncrementalVetspireV2Stream):
-    cursor_field = "updatedAt"
+    cursor_field = "insertedAt"
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
+    name = 'product_packages'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator)
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'productPackages'

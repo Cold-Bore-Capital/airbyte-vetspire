@@ -6,7 +6,7 @@
       "type" : ["null", "string"]
     },
     "primaryLocationTrailingYearPatients" : {
-      "type" : ["null", "integer"]
+      "type" : ["null", "string"]
     },
     "callForwardedReferral" : {
       "type" : ["null", "string"]
@@ -61,6 +61,9 @@
     "phoneNumber" : {
       "type" : ["null", "string"]
     },
+    "primaryLocation" : {
+      "type" : ["null", "string"]
+    },
     "lastVisitDate" : {
       "type" : ["null", "string"],
       "format" : "date-time"
@@ -74,17 +77,61 @@
     "numberOfTrailingYearPatients" : {
       "type" : "null"
     },
+    "locations" : {
+      "type" : ["null", "string"]
+    },
     "isActive" : {
       "type" : ["null", "boolean"]
     },
     "hasWebsiteReferral" : {
       "type" : ["null", "boolean"]
     },
+    "tags" : {
+      "type" : ["null", "string"]
+    },
     "website" : {
       "type" : ["null", "string"]
     },
     "transferContactMethod" : {
       "type" : ["null", "string"]
+    },
+    "visits" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "active" : {
+            "type" : ["null", "string"]
+          },
+          "email" : {
+            "type" : ["null", "string"]
+          },
+          "firstName" : {
+            "type" : ["null", "string"]
+          },
+          "lastName" : {
+            "type" : ["null", "string"]
+          },
+          "id" : {
+            "type" : ["null", "number"]
+          },
+          "isDecisionMaker" : {
+            "type" : ["null", "boolean"]
+          },
+          "name" : {
+            "type" : ["null", "string"]
+          },
+          "notes" : {
+            "type" : ["null", "string"]
+          },
+          "phoneNumber" : {
+            "type" : ["null", "string"]
+          },
+          "preferredUpdateMethod" : {
+            "type" : ["null", "string"]
+          }
+        }
+      }
     },
     "milesAway" : {
       "type" : ["null", "string"]

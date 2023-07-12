@@ -69,7 +69,7 @@
     "repeatingEvent" : {
       "type" : [
         "null",
-        "array"
+        "object"
       ],
       "properties" : {
         "id" : {
@@ -96,7 +96,7 @@
     "type" : {
       "type" : [
         "null",
-        "array"
+        "object"
       ],
       "properties" : {
         "id" : {
@@ -123,7 +123,7 @@
     "vitals" : {
       "type" : [
         "null",
-        "array"
+        "object"
       ],
       "properties" : {
         "id" : {
@@ -169,7 +169,7 @@
     "location" : {
       "type" : [
         "null",
-        "array"
+        "object"
       ],
       "properties" : {
         "id" : {
@@ -229,7 +229,7 @@
     "cage" : {
       "type" : [
         "null",
-        "array"
+        "object"
       ],
       "properties" : {
         "id" : {
@@ -276,7 +276,7 @@
     "creator" : {
       "type" : [
         "null",
-        "array"
+        "object"
       ],
       "properties" : {
         "id" : {
@@ -341,7 +341,7 @@
     "deletedBy" : {
       "type" : [
         "null",
-        "array"
+        "object"
       ],
       "properties" : {
         "id" : {

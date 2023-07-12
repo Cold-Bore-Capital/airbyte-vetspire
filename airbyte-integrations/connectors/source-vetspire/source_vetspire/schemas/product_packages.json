@@ -52,9 +52,12 @@
     "isTaxedState" : {"type" : ["null", "boolean"]},
     "items" : {
       "type" : ["null","array"],
-      "properties" : {
+      "items" : {
+        "type" : ["null", "object"],
+        "properties" : {
           "id" : {"type" : ["null", "string"]}
         }
+      }
     },
     "name" : {"type" : ["null", "string"]},
     "priceType" : {"type" : ["null", "string"]},

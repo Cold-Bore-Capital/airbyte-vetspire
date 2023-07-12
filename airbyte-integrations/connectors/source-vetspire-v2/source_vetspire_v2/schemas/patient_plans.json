@@ -10,14 +10,12 @@
     "endDate" : {"type" : ["null", "string"], "format" : "date"},
     "id" : {"type" : ["null", "integer"]},
     "items" : {
-      "type" : ["null", "array"],
-      "items" : {
-        "type" : ["null", "object"],
+        "type" : ["null", "array"],
         "properties" : {
           "id" : {"type" : ["string", "null"]},
           "name" : {"type" : ["null", "string"]},
           "package" : {
-            "type" : ["object","null"],
+            "type" : ["array","null"],
             "properties" : {
               "id" : {
                 "type" : ["integer", "null"]
@@ -25,7 +23,7 @@
             }
           },
           "product" : {
-            "type" : ["object","null"],
+            "type" : ["array","null"],
             "properties" : {
               "id" : {
                 "type" : ["integer", "null"]
@@ -36,11 +34,10 @@
           "quantityUsed" : {"type" : ["null", "number"]},
           "unitTotal" : {"type" : ["null", "number"]}
         }
-      }
     },
     "startDate" : {"type" : ["null", "string"], "format" : "date"},
     "location" : {
-      "type" : ["object","null"],
+      "type" : ["array","null"],
       "properties" : {
         "id" : {
           "type" : ["integer", "null"]
@@ -48,7 +45,7 @@
       }
     },
     "patient" : {
-      "type" : ["object","null"],
+      "type" : ["array","null"],
       "properties" : {
         "id" : {
           "type" : ["integer", "null"]
@@ -59,7 +56,7 @@
     "planDiscountPercent" : {"type" : ["null", "string"]},
     "planInterval" : {"type" : ["null", "string"]},
     "preventionPlan" : {
-      "type" : ["object","null"],
+      "type" : ["array","null"],
       "properties" : {
         "id" : {
           "type" : ["integer", "null"]
@@ -67,7 +64,7 @@
       }
     },
     "renewalPlan" : {
-      "type" : ["object","null"],
+      "type" : ["array","null"],
       "properties" : {
         "id" : {
           "type" : ["integer", "null"]

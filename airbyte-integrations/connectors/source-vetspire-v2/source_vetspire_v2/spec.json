@@ -21,14 +21,6 @@
         "format": "date-time",
         "examples":  ["2021-01-01T00:00:00"],
         "order": 1
-      },
-      "start_date" : {
-        "title" : "Start Date",
-        "description": "Start Date to pull from",
-        "type" : "string",
-        "format": "date",
-        "examples":  ["2021-01-01"],
-        "order": 2
       }
     }
   }

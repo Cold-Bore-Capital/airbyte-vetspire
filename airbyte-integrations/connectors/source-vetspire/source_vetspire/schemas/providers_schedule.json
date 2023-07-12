@@ -9,7 +9,7 @@
       "type" : ["null", "integer"]
     },
     "provider" : {
-      "type" : ["array","null"],
+      "type" : "object",
       "properties" : {
         "id" : {
           "type" : ["null", "integer"]
@@ -23,8 +23,7 @@
       }
     },
     "start" : {
-      "type" : ["null", "string"],
-      "format": "date-time"
+      "type" : ["null", "string"]
     },
     "scheduleTemplate" : {
       "type" : ["array"]

@@ -49,8 +49,6 @@
     },
     "licenses" : {
       "type" : ["array","null"],
-      "items" : {
-        "type" : ["object","null"],
         "properties" : {
           "id" : {
             "type" : ["null","integer"]
@@ -63,7 +61,6 @@
             "format" : "date-time"
           }
         }
-      }
     },
     "missingVetLicense" : {
       "type" : ["null","boolean"]

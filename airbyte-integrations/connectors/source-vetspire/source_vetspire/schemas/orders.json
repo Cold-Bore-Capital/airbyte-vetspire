@@ -11,7 +11,7 @@
     "totalBeforeTaxCents" : {"type" : ["integer", "null"]},
     "isAccountCredit" : {"type" : ["boolean", "null"]},
     "items" : {
-      "type" : ["null", "object"],
+      "type" : ["null", "array"],
         "properties" : {
           "historicalId" : {"type" : ["string", "null"]},
           "lineDiscountReason" : {"type" : ["string", "null"]},
@@ -48,7 +48,7 @@
     "status" : {"type" : ["string", "null"]},
     "discountType" : {"type" : ["string", "null"]},
     "patient" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
@@ -61,7 +61,7 @@
     "invoiceReference" : {"type" : ["string", "null"]},
     "datetime" : {"type" : ["string", "null"], "format" : "date-time"},
     "estimate" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
@@ -88,14 +88,14 @@
     "memberDiscountCents" : {"type" : ["integer", "null"]},
     "stateTaxCents" : {"type" : ["integer", "null"]},
     "provider" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
     },
     "discount" : {"type" : ["number", "null"]},
     "client" : {
-      "type" : ["null","array"],
+      "type" : ["null","object"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }

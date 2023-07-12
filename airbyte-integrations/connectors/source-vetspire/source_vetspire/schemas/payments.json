@@ -15,7 +15,7 @@
       "type" : ["null","string"]
     },
     "estimates" : {
-      "type" : ["array","null"],
+      "type" : "object",
       "properties" : {
         "id" : {
           "type" : ["null", "string"]

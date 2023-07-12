@@ -67,7 +67,7 @@
     "clientReferralSource" : {
       "type" : [
         "null",
-        "array"
+        "object"
       ],
       "properties" : {
         "name" : {
@@ -129,7 +129,7 @@
       "type" : "boolean"
     },
     "preferredPhoneNumber" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "value" : {
           "type" : [

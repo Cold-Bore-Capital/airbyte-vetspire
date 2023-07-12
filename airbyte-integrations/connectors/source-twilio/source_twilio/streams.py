@@ -189,7 +189,7 @@ class IncrementalTwilioStream(TwilioStream, IncrementalMixin):
             slice_ = {
                 self.lower_boundary_filter_field: current_start.format(self.time_filter_template),
                 self.upper_boundary_filter_field: current_end.format(self.time_filter_template),
-            }
+             }
             yield slice_
             current_start = current_end + self.slice_granularity
 
