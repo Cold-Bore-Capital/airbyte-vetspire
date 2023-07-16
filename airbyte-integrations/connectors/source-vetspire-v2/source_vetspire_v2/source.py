@@ -19,6 +19,7 @@ from source_vetspire_v2.streams import (
     EncounterTypes,
     Locations,
     Orders,
+    OrderItems,
     Patients,
     PatientPlans,
     Payments,
@@ -27,6 +28,7 @@ from source_vetspire_v2.streams import (
     ProductTypes,
     ProductPackages,
     Providers,
+    Tasks,
     IncrementalVetspireV2Stream,
     VetspireV2Stream,
 )
@@ -95,6 +97,12 @@ class SourceVetspireV2(AbstractSource):
             "limit": config.get("limit", "300"),
             "offset": config.get("offset", "0"),
         }
+        stream_kwargs_with_locations = {
+            "start_datetime": config.get("start_datetime", None),
+            "limit": config.get("limit", "300"),
+            "offset": config.get("offset", "0"),
+            "locations": ["23768","23860","23861","23862","23597","23069","23863","23864","23857","23858","23895","23768","23769","23770","23771","23079"]
+        }
         stream_kwargs_no_limit = {
             "start_datetime": config.get("start_datetime", None),
             "limit": None,
@@ -103,10 +111,11 @@ class SourceVetspireV2(AbstractSource):
         return [Appointments(authenticator=auth, **stream_kwargs),
                 AppointmentTypes(authenticator=auth, **stream_kwargs),
                 Clients(authenticator=auth, **stream_kwargs),
-                Encounters(authenticator=auth, **stream_kwargs),
+                Encounters(authenticator=auth, **stream_kwargs_with_locations),
                 EncounterTypes(authenticator=auth, **stream_kwargs_no_limit),
                 Locations(authenticator=auth, **stream_kwargs_no_limit),
-                Orders(authenticator=auth, **stream_kwargs),
+                Orders(authenticator=auth, **stream_kwargs_with_locations),
+                OrderItems(authenticator=auth, **stream_kwargs_with_locations),
                 Patients(authenticator=auth, **stream_kwargs),
                 PatientPlans(authenticator=auth, **stream_kwargs),
                 PreventionPlans(authenticator=auth, **stream_kwargs_no_limit),
@@ -114,4 +123,5 @@ class SourceVetspireV2(AbstractSource):
                 ProductTypes(authenticator=auth, **stream_kwargs_no_limit),
                 Products(authenticator=auth, **stream_kwargs),
                 Providers(authenticator=auth, **stream_kwargs_no_limit),
+                Tasks(authenticator=auth, **stream_kwargs)
                 ]

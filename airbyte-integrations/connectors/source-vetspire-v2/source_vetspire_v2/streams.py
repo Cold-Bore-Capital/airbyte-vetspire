@@ -8,6 +8,8 @@ from airbyte_cdk.sources.utils.transform import TransformConfig, TypeTransformer
 from airbyte_cdk.sources.streams.core import Stream, StreamData
 from airbyte_cdk.sources.streams import Stream, IncrementalMixin
 from airbyte_cdk.sources.streams.http.auth.core import HttpAuthenticator
+from airbyte_cdk.sources.streams.http.rate_limiting import default_backoff_handler, user_defined_backoff_handler
+from airbyte_cdk.sources.streams.http.exceptions import DefaultBackoffException, RequestBodyException, UserDefinedBackoffException
 from datetime import datetime, timezone
 from typing import Any, Callable, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Union
 import requests
@@ -15,6 +17,10 @@ import pendulum
 from requests.auth import AuthBase
 import copy
 import time
+
+
+# list of all possible HTTP methods which can be used for sending of request bodies
+BODY_REQUEST_METHODS = ("GET", "POST", "PUT", "PATCH")
 
 """
 TODO: Most comments in this class are instructive and should be deleted after the source is implemented.
@@ -62,10 +68,20 @@ class VetspireV2Stream(HttpStream, ABC):
     transformer: TypeTransformer = TypeTransformer(TransformConfig.DefaultSchemaNormalization | TransformConfig.CustomSchemaNormalization)
     url_base = "https://api2.vetspire.com/graphql"
     state_checkpoint_interval = 300
+    backoff_sleep = 30
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
         self._next_page_token = None
+
+    def backoff_time(self, response: requests.Response):
+        """
+        The rate limit is 10 requests per minute, so we sleep
+        for defined backoff_sleep time (default is 60 sec) before we continue.
+
+        See https://support.dixa.help/en/articles/174-export-conversations-via-api
+        """
+        return self.backoff_sleep
 
     @property
     def data_field(self):
@@ -77,7 +93,7 @@ class VetspireV2Stream(HttpStream, ABC):
 
     @property
     def state(self) -> Mapping[str, Any]:
-        #return {'offset': str(self.offset)}
+        # return {'offset': str(self.offset)}
         return {self.cursor_field: str(self._cursor_value)}
 
     @state.setter
@@ -100,7 +116,10 @@ class VetspireV2Stream(HttpStream, ABC):
         :return If there is another page in the result, a mapping (e.g: dict) containing information needed to query the next page in the response.
                 If there are no more pages in the result, return None.
         """
-        records = response.json()['data'].get(self.object_name, [])
+        try:
+            records = response.json()['data'].get(self.object_name, [])
+        except:
+            raise Exception(f'The json returns as follows {response.json()}')
         if len(records) == self.limit:
             self.offset = str(int(self.limit) + int(self.offset))
             next_page_params = {"offset": str(self.offset)}
@@ -111,7 +130,10 @@ class VetspireV2Stream(HttpStream, ABC):
         TODO: Override this method to define how a response is parsed.
         :return an iterable containing each record in the response
         """
-        records = response.json()['data'].get(self.object_name, [])
+        try:
+            records = response.json()['data'].get(self.object_name, [])
+        except:
+            raise Exception(f'The json returns as follows {response.json()}')
         yield from records
 
     def _get_schema_root_properties(self):
@@ -122,8 +144,14 @@ class VetspireV2Stream(HttpStream, ABC):
     def _get_object_arguments(self, **object_arguments) -> str:
         object_list = []
         if len(object_arguments.items()) > 0:
+            try:
+                if self.locations:
+                    object_list.append(f"locationIds: [{','.join(self.locations)}]")
+            except:
+                pass
             if self.object_name == 'patientPlans':
-                object_list.append("filters: {startAfter: \"" + object_arguments["startAfter"] + "\", startBefore: \"" + object_arguments["startBefore"]+"\"}")
+                object_list.append("filters: {startAfter: \"" + object_arguments["startAfter"] + "\", startBefore: \"" + object_arguments[
+                    "startBefore"] + "\"}")
             for k in object_arguments.keys():
                 if k in ['updatedAtStart', 'updatedAtEnd']:
                     object_list.append(f'{k}: "{object_arguments[k]}"')
@@ -165,17 +193,26 @@ class VetspireV2Stream(HttpStream, ABC):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> Optional[Union[Mapping, str]]:
-
         if self.object_name == 'patientPlans':
             query = self._build_query(
-            object_name=self.object_name,
-            field_schema=self._get_schema_root_properties(),
-            limit=self.limit,
-            offset=self.offset,
-            startAfter=stream_slice.get('startAfter', None),
-            startBefore=stream_slice.get('startBefore', None)
-        )
-        elif self.object_name in ['encounterTypes','appointmentTypes','productPackages','preventionPlans','productTypes','providers','locations']:
+                object_name=self.object_name,
+                field_schema=self._get_schema_root_properties(),
+                limit=self.limit,
+                offset=self.offset,
+                startAfter=stream_slice.get('startAfter', None),
+                startBefore=stream_slice.get('startBefore', None)
+            )
+        elif self.object_name == 'tasks':
+            query = self._build_query(
+                object_name=self.object_name,
+                field_schema=self._get_schema_root_properties(),
+                limit=self.limit,
+                offset=self.offset,
+                startAfter=stream_slice.get('start', None),
+                startBefore=stream_slice.get('end', None)
+            )
+        elif self.object_name in ['encounterTypes', 'appointmentTypes', 'productPackages', 'preventionPlans', 'productTypes', 'providers',
+                                  'locations']:
             query = self._build_query(
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties(),
@@ -220,16 +257,13 @@ class VetspireV2Stream(HttpStream, ABC):
         next_page_token = None
         while not pagination_complete:
             request, response = self._fetch_next_page(stream_slice, stream_state, next_page_token)
-
+            if response == 500:
+                self.offset = str(int(self.offset) + 1)
+                continue
             yield from records_generator_fn(request, response, stream_state, stream_slice)
 
-            # next_page_token = self.next_page_token(response)
-            # Check if self.limit is being used. For example, ProductPackages doesn't have a limit argument.
-            # try:
-            if response.status_code == 500:
-                time.sleep(20)
-            # Offset is not being used so set pagination to complete
-            elif self.offset is None:
+
+            if self.offset is None:
                 pagination_complete = True
             # Add limit to offset to get next set of records and continue pagination
             elif len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
@@ -237,11 +271,55 @@ class VetspireV2Stream(HttpStream, ABC):
             else:
                 self.offset = '0'
                 pagination_complete = True
-            # except:
-            #     pagination_complete = True
 
         # Always return an empty generator just in case no records were ever yielded
         yield from []
+
+    def _send(self, request: requests.PreparedRequest, request_kwargs: Mapping[str, Any]) -> requests.Response:
+        """
+        Wraps sending the request in rate limit and error handlers.
+        Please note that error handling for HTTP status codes will be ignored if raise_on_http_errors is set to False
+
+        This method handles two types of exceptions:
+            1. Expected transient exceptions e.g: 429 status code.
+            2. Unexpected transient exceptions e.g: timeout.
+
+        To trigger a backoff, we raise an exception that is handled by the backoff decorator. If an exception is not handled by the decorator will
+        fail the sync.
+
+        For expected transient exceptions, backoff time is determined by the type of exception raised:
+            1. CustomBackoffException uses the user-provided backoff value
+            2. DefaultBackoffException falls back on the decorator's default behavior e.g: exponential backoff
+
+        Unexpected transient exceptions use the default backoff parameters.
+        Unexpected persistent exceptions are not handled and will cause the sync to fail.
+        """
+        self.logger.debug(
+            "Making outbound API request", extra={"headers": request.headers, "url": request.url, "request_body": request.body}
+        )
+        response: requests.Response = self._session.send(request, **request_kwargs)
+
+        # Evaluation of response.text can be heavy, for example, if streaming a large response
+        # Do it only in debug mode
+        if response.status_code == 500:
+            return response.status_code
+        if self.should_retry(response):
+            custom_backoff_time = self.backoff_time(response)
+            error_message = self.error_message(response)
+            if custom_backoff_time:
+                raise UserDefinedBackoffException(
+                    backoff=custom_backoff_time, request=request, response=response, error_message=error_message
+                )
+            else:
+                raise DefaultBackoffException(request=request, response=response, error_message=error_message)
+        elif self.raise_on_http_errors:
+            # Raise any HTTP exceptions that happened in case there were unexpected ones
+            try:
+                response.raise_for_status()
+            except requests.HTTPError as exc:
+                self.logger.error(response.text)
+                raise exc
+        return response
 
 
 class VetspireV2StreamWithReq(VetspireV2Stream):
@@ -254,7 +332,6 @@ class VetspireV2StreamWithReq(VetspireV2Stream):
         """
         params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
         return params
-
 
 
 class Providers(VetspireV2StreamWithReq):
@@ -270,6 +347,7 @@ class Providers(VetspireV2StreamWithReq):
         self.limit = stream_kwargs['limit']
         self.object_name = 'providers'
 
+
 class AppointmentTypes(VetspireV2StreamWithReq):
     """
     TODO: Change class name to match the table/data source this stream corresponds to.
@@ -283,6 +361,7 @@ class AppointmentTypes(VetspireV2StreamWithReq):
         self.limit = None
         self.object_name = 'appointmentTypes'
 
+
 class EncounterTypes(VetspireV2StreamWithReq):
     """
     TODO: Change class name to match the table/data source this stream corresponds to.
@@ -295,6 +374,7 @@ class EncounterTypes(VetspireV2StreamWithReq):
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'encounterTypes'
+
 
 class Locations(VetspireV2StreamWithReq):
     """
@@ -312,8 +392,8 @@ class Locations(VetspireV2StreamWithReq):
 
 # Basic incremental stream
 class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
-    time_filter_template = "YYYY-MM-DDTHH:mm:ssZ"
-    time_filter_template_patient_plans = "YYYY-MM-DD"
+    datetime_filter_template = "YYYY-MM-DDTHH:mm:ssZ"
+    date_filter_template = "YYYY-MM-DD"
     # This attribute allows balancing between sync speed and memory consumption.
     # The greater a slice is - the bigger memory consumption and the faster syncs are since fewer requests are made.
     slice_step_default = pendulum.duration(days=1)
@@ -383,15 +463,16 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
         # so we have to compare dates, not date-times to avoid yielding that last slice
         while current_end < end_datetime:
             current_end = min(end_datetime, current_start + self.slice_step)
-            if self.object_name == 'patientPlans':
+            if (self.object_name == 'patientPlans' or
+                self.object_name == 'tasks'):
                 slice_ = {
-                    self.lower_boundary_filter_field: current_start.format(self.time_filter_template_patient_plans),
-                    self.upper_boundary_filter_field: current_end.format(self.time_filter_template_patient_plans),
+                    self.lower_boundary_filter_field: current_start.format(self.date_filter_template),
+                    self.upper_boundary_filter_field: current_end.format(self.date_filter_template),
                 }
             else:
                 slice_ = {
-                    self.lower_boundary_filter_field: current_start.format(self.time_filter_template),
-                    self.upper_boundary_filter_field: current_end.format(self.time_filter_template),
+                    self.lower_boundary_filter_field: current_start.format(self.datetime_filter_template),
+                    self.upper_boundary_filter_field: current_end.format(self.datetime_filter_template),
                 }
             yield slice_
             current_start = current_end + self.slice_granularity
@@ -433,15 +514,16 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             unsorted_records.append(record)
         sorted_records = sorted(unsorted_records, key=lambda x: x[self.cursor_field])
         for record in sorted_records:
-            if isinstance(record[self.cursor_field],str):
+            if isinstance(record[self.cursor_field], str):
                 record[self.cursor_field] = pendulum.parse(record[self.cursor_field])
 
             if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_datetime):
                 self._cursor_value = record[self.cursor_field]
                 yield record
 
+
 class PatientPlans(IncrementalVetspireV2Stream):
-    cursor_field = "startDate"
+    cursor_field = "updatedAt"
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "startAfter"
@@ -454,6 +536,7 @@ class PatientPlans(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'patientPlans'
+
 
 class Appointments(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
@@ -514,6 +597,23 @@ class Orders(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'orders'
+        self.locations = stream_kwargs['locations']
+
+
+class OrderItems(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    name = 'order_items'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'orderItems'
+        self.locations = stream_kwargs['locations']
 
 
 class Patients(IncrementalVetspireV2Stream):
@@ -530,6 +630,7 @@ class Patients(IncrementalVetspireV2Stream):
         self.limit = stream_kwargs['limit']
         self.object_name = 'patients'
 
+
 class Payments(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
     _cursor_value = None
@@ -543,6 +644,7 @@ class Payments(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'payments'
+
 
 class Products(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
@@ -602,3 +704,18 @@ class ProductPackages(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'productPackages'
+
+
+class Tasks(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    name = 'tasks'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'tasks'

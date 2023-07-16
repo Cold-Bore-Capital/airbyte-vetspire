@@ -132,7 +132,7 @@
     "isActive" : {
       "type" : "boolean"
     },
-    "preferredPhoneNumber" : {
+    "phoneNumbers" : {
       "type" : ["array","null"],
       "properties" : {
         "value" : {"type" : ["string","null"]},

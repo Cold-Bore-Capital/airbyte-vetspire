@@ -10,6 +10,41 @@
     "totalDiscountCents" : {"type" : ["integer", "null"]},
     "totalBeforeTaxCents" : {"type" : ["integer", "null"]},
     "isAccountCredit" : {"type" : ["boolean", "null"]},
+    "items" : {
+      "type" : ["null", "array"],
+        "properties" : {
+          "historicalId" : {"type" : ["string", "null"]},
+          "lineDiscountReason" : {"type" : ["string", "null"]},
+          "planDiscountCents" : {"type" : ["number", "null"]},
+          "discountAmount" : {"type" : ["number", "null"]},
+          "discounted" : {"type" : ["boolean", "null"]},
+          "dispenseFee" : {"type" : ["number", "null"]},
+          "id" : {"type" : ["string", "null"]},
+          "productId" : {"type" : ["string", "null"]},
+          "inPackage" : {"type" : ["boolean", "null"]},
+          "itemDiscountWithOrderDiscountCents" : {"type" : ["integer", "null"]},
+          "itemDiscountWithoutOrderDiscountCents" : {"type" : ["integer", "null"]},
+          "memberDiscountCents" : {"type" : ["number", "null"]},
+          "name" : {"type" : ["string", "null"]},
+          "quantity" : {"type" : ["number", "null"]},
+          "quantityRemaining" : {"type" : ["number", "null"]},
+          "quantityCredited" : {"type" : ["number", "null"]},
+          "refunded" : {"type" : ["boolean", "null"]},
+          "refundedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+          "refundedQuantity" : {"type" : ["number", "null"]},
+          "subtotalCents" : {"type" : ["integer", "null"]},
+          "totalBeforeTaxCents" : {"type" : ["integer", "null"]},
+          "totalAfterTaxCents" : {"type" : ["integer", "null"]},
+          "totalDiscountCents" : {"type" : ["integer", "null"]},
+          "volumeTiers" : {
+            "type" : ["array", "null"],
+            "properties" : {
+              "tier" : {"type" : ["integer", "null"]},
+              "unitFee" : {"type" : ["string", "null"]}
+            }
+          }
+        }
+      },
     "status" : {"type" : ["string", "null"]},
     "discountType" : {"type" : ["string", "null"]},
     "patient" : {
@@ -36,7 +71,7 @@
     "invoicedAt" : {"type" : ["string", "null"], "format" : "date-time"},
     "updatedAt" : {"type" : ["string", "null"], "format" : "date-time"},
     "flags" : {
-      "type" : ["array","null"],
+      "type" : "array",
       "properties" : {
         "name" : {"type" : ["string", "null"]}
       }
@@ -45,7 +80,7 @@
     "isNotRendered" : {"type" : ["boolean", "null"]},
     "itemDiscountWithOrderDiscountCents" : {"type" : ["integer", "null"]},
     "encounters" : {
-      "type" : ["array","null"],
+      "type" : "array",
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
@@ -79,7 +114,7 @@
       }
     },
     "payments" : {
-      "type" : ["array","null"],
+      "type" : "array",
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
