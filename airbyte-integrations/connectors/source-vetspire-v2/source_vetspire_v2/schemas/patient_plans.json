@@ -8,7 +8,7 @@
     "deferred" : {"type" : ["null", "boolean"]},
     "deferredRevenue" : {"type" : ["null", "string"]},
     "endDate" : {"type" : ["null", "string"], "format" : "date"},
-    "id" : {"type" : ["null", "integer"]},
+    "id" : {"type" : ["null", "string"]},
     "items" : {
         "type" : ["null", "array"],
         "properties" : {
@@ -26,7 +26,7 @@
             "type" : ["array","null"],
             "properties" : {
               "id" : {
-                "type" : ["integer", "null"]
+                "type" : ["string", "null"]
               }
             }
           },
@@ -40,7 +40,7 @@
       "type" : ["array","null"],
       "properties" : {
         "id" : {
-          "type" : ["integer", "null"]
+          "type" : ["string", "null"]
         }
       }
     },
@@ -48,7 +48,7 @@
       "type" : ["array","null"],
       "properties" : {
         "id" : {
-          "type" : ["integer", "null"]
+          "type" : ["string", "null"]
         }
       }
     },
@@ -59,7 +59,7 @@
       "type" : ["array","null"],
       "properties" : {
         "id" : {
-          "type" : ["integer", "null"]
+          "type" : ["string", "null"]
         }
       }
     },
@@ -67,7 +67,7 @@
       "type" : ["array","null"],
       "properties" : {
         "id" : {
-          "type" : ["integer", "null"]
+          "type" : ["string", "null"]
         }
       }
     },

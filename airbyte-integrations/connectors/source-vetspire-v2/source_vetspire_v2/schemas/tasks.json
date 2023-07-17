@@ -20,7 +20,6 @@
     "deleted" : {"type" : ["boolean", "null"]},
     "done" : {"type" : ["boolean", "null"]},
     "dueDate" : {"type" : ["string", "null"], "format":  "date-time`"},
-    "deleted" : {"type" : ["boolean", "null"]},
     "encounter" : {"type" : ["array", "null"],
           "properties" : {
           "id": {"type" : ["string", "null"]}}
@@ -33,10 +32,6 @@
         "id": {"type" : ["string", "null"]}}
     },
    "snoozeUntilDueDate" : {"type" : ["string", "null"], "format": "date-time"},
-   "patient" :
-        {"type" : ["array", "null"],
-          "properties" : {"id": {"type" : ["string", "null"]}}
-     },
     "taskCategory" :
         {"type" : ["array", "null"],
           "properties" : {"name": {"type" : ["string", "null"]}}

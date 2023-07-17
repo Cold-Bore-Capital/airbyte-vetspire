@@ -150,10 +150,12 @@ class VetspireV2Stream(HttpStream, ABC):
             except:
                 pass
             if self.object_name == 'patientPlans':
-                object_list.append("filters: {startAfter: \"" + object_arguments["startAfter"] + "\", startBefore: \"" + object_arguments[
-                    "startBefore"] + "\"}")
+                object_list.append("filters: {updatedAtStart: \"" + object_arguments["updatedAtStart"] + "\", updatedAtEnd: \"" + object_arguments[
+                    "updatedAtEnd"] + "\"}")
             for k in object_arguments.keys():
-                if k in ['updatedAtStart', 'updatedAtEnd']:
+                if k in ['updatedAtStart', 'updatedAtEnd'] and self.object_name != 'patientPlans':
+                    object_list.append(f'{k}: "{object_arguments[k]}"')
+                if k in ['start', 'end']:
                     object_list.append(f'{k}: "{object_arguments[k]}"')
                 elif k in ["limit", "offset"] and object_arguments[k] is None:
                     pass
@@ -193,23 +195,15 @@ class VetspireV2Stream(HttpStream, ABC):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> Optional[Union[Mapping, str]]:
-        if self.object_name == 'patientPlans':
+
+        if self.object_name == 'tasks':
             query = self._build_query(
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties(),
                 limit=self.limit,
                 offset=self.offset,
-                startAfter=stream_slice.get('startAfter', None),
-                startBefore=stream_slice.get('startBefore', None)
-            )
-        elif self.object_name == 'tasks':
-            query = self._build_query(
-                object_name=self.object_name,
-                field_schema=self._get_schema_root_properties(),
-                limit=self.limit,
-                offset=self.offset,
-                startAfter=stream_slice.get('start', None),
-                startBefore=stream_slice.get('end', None)
+                start=stream_slice.get('start', None),
+                end=stream_slice.get('end', None)
             )
         elif self.object_name in ['encounterTypes', 'appointmentTypes', 'productPackages', 'preventionPlans', 'productTypes', 'providers',
                                   'locations']:
@@ -463,8 +457,7 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
         # so we have to compare dates, not date-times to avoid yielding that last slice
         while current_end < end_datetime:
             current_end = min(end_datetime, current_start + self.slice_step)
-            if (self.object_name == 'patientPlans' or
-                self.object_name == 'tasks'):
+            if (self.object_name == 'tasks'):
                 slice_ = {
                     self.lower_boundary_filter_field: current_start.format(self.date_filter_template),
                     self.upper_boundary_filter_field: current_end.format(self.date_filter_template),
@@ -526,13 +519,13 @@ class PatientPlans(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
     _cursor_value = None
     primary_key = "id"
-    lower_boundary_filter_field = "startAfter"
-    upper_boundary_filter_field = "startBefore"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
     sync_mode = SyncMode.incremental
     name = 'patient_plans'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'][:10])
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
         self.offset = stream_kwargs['offset']
         self.limit = stream_kwargs['limit']
         self.object_name = 'patientPlans'
@@ -710,8 +703,8 @@ class Tasks(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
     _cursor_value = None
     primary_key = "id"
-    lower_boundary_filter_field = "updatedAtStart"
-    upper_boundary_filter_field = "updatedAtEnd"
+    lower_boundary_filter_field = "start"
+    upper_boundary_filter_field = "end"
     name = 'tasks'
 
     def __init__(self, authenticator, **stream_kwargs):
