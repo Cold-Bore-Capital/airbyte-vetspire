@@ -2,7 +2,7 @@
   "streams" : [
     {
       "stream" : {
-        "name" : "clients",
+        "name" : "appointments_deleted",
         "json_schema" : {},
         "supported_sync_modes" : ["incremental"],
         "default_cursor_field" : ["updatedAt"]

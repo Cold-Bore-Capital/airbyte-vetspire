@@ -152,6 +152,8 @@ class VetspireV2Stream(HttpStream, ABC):
             if self.object_name == 'patientPlans':
                 object_list.append("filters: {updatedAtStart: \"" + object_arguments["updatedAtStart"] + "\", updatedAtEnd: \"" + object_arguments[
                     "updatedAtEnd"] + "\"}")
+            elif self.name == 'appointments_deleted':
+                object_list.append('onlyDeleted: true')
             for k in object_arguments.keys():
                 if k in ['updatedAtStart', 'updatedAtEnd'] and self.object_name != 'patientPlans':
                     object_list.append(f'{k}: "{object_arguments[k]}"')
@@ -539,6 +541,22 @@ class Appointments(IncrementalVetspireV2Stream):
     upper_boundary_filter_field = "updatedAtEnd"
     sync_mode = SyncMode.incremental
     name = 'appointments'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
+        self.offset = stream_kwargs['offset']
+        self.limit = stream_kwargs['limit']
+        self.object_name = 'appointments'
+
+
+class AppointmentsDeleted(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    sync_mode = SyncMode.incremental
+    name = 'appointments_deleted'
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])

@@ -13,6 +13,7 @@ from airbyte_cdk.models import AirbyteMessage
 
 from source_vetspire_v2.streams import (
     Appointments,
+    AppointmentsDeleted,
     AppointmentTypes,
     Clients,
     Encounters,
@@ -109,6 +110,7 @@ class SourceVetspireV2(AbstractSource):
             "offset": None
         }
         return [Appointments(authenticator=auth, **stream_kwargs),
+                AppointmentsDeleted(authenticator=auth, **stream_kwargs),
                 AppointmentTypes(authenticator=auth, **stream_kwargs),
                 Clients(authenticator=auth, **stream_kwargs),
                 Encounters(authenticator=auth, **stream_kwargs_with_locations),
