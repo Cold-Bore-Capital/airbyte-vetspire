@@ -1,0 +1,66 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : ["object", "null"],
+  "properties" : {
+    "entries" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "client" : {
+          "type" : ["object", "null"],
+          "properties" : {"id" : {"type" : ["string", "null"]}}
+        },
+        "closed" : {
+          "type" : ["boolean", "null"]
+        },
+        "closedAt" : {
+          "type" : ["string", "null"],
+          "format" : "date-time"
+        },
+        "id" : {
+          "type" : ["string", "null"]
+        },
+        "insertedAt" : {
+          "type" : ["string", "null"],
+          "format" : "date-time"
+        },
+        "latestMessage" : {
+          "type" : ["null", "array"],
+          "properties" : {
+            "id" : {"type" : ["string", "null"]},
+            "body" : {"type" : ["string", "null"]},
+            "deliveryStatus" : {"type" : ["string", "null"]},
+            "insertedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+            "isAutomatedMessage" : {"type" : ["string", "null"]},
+            "recipientAddress" : {"type" : ["string", "null"]}
+          }
+        },
+        "location" : {
+          "type" : ["object", "null"],
+          "properties" : {
+            "id" : {
+              "type" : ["string", "null"]
+            }
+          }
+        },
+        "patient" : {
+          "type" : ["array", "null"],
+          "properties" : {
+            "id" : {
+              "type" : ["string", "null"]
+            }
+          }
+        },
+        "subject" : {"type" : ["string", "null"]}
+      }
+    },
+    "metadata" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "after" : {"type" : ["string", "null"]},
+        "before" : {"type" : [["string", "null"], "null"]},
+        "limit" : {"type" : ["integer", "null"]},
+        "totalCount" : {"type" : ["integer", "null"]}
+      }
+    }
+  }
+}

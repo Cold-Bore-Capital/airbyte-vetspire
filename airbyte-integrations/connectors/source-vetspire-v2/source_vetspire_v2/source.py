@@ -16,6 +16,7 @@ from source_vetspire_v2.streams import (
     AppointmentsDeleted,
     AppointmentTypes,
     Clients,
+    ConversationsPaginated,
     Encounters,
     EncounterTypes,
     Locations,
@@ -93,16 +94,24 @@ class SourceVetspireV2(AbstractSource):
         :param config: A Mapping of the user input configuration as defined in the connector spec.
         """
         auth = VetAuth(config)
+        locations = ["23768", "23860", "23861", "23862", "23597", "23069", "23863", "23864", "23857", "23858", "23895", "23768", "23769", "23770",
+         "23771", "23079"]
+
         stream_kwargs = {
             "start_datetime": config.get("start_datetime", None),
             "limit": config.get("limit", "300"),
             "offset": config.get("offset", "0"),
         }
+        stream_kwargs_conversations = {
+            "start_datetime": config.get("start_datetime", None),
+            "limit": config.get("limit", "1"),
+            "offset": None,
+        }
         stream_kwargs_with_locations = {
             "start_datetime": config.get("start_datetime", None),
             "limit": config.get("limit", "300"),
             "offset": config.get("offset", "0"),
-            "locations": ["23768","23860","23861","23862","23597","23069","23863","23864","23857","23858","23895","23768","23769","23770","23771","23079"]
+            "locations": locations
         }
         stream_kwargs_no_limit = {
             "start_datetime": config.get("start_datetime", None),
@@ -113,6 +122,7 @@ class SourceVetspireV2(AbstractSource):
                 AppointmentsDeleted(authenticator=auth, **stream_kwargs),
                 AppointmentTypes(authenticator=auth, **stream_kwargs),
                 Clients(authenticator=auth, **stream_kwargs),
+                ConversationsPaginated(authenticator=auth, **stream_kwargs_conversations),
                 Encounters(authenticator=auth, **stream_kwargs_with_locations),
                 EncounterTypes(authenticator=auth, **stream_kwargs_no_limit),
                 Locations(authenticator=auth, **stream_kwargs_no_limit),

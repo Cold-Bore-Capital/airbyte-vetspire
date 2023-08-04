@@ -71,6 +71,17 @@
     },
     "updatedAt": {
       "type": ["string","null"]
+    },
+    "tags": {
+      "type": ["object","null"],
+      "properties" : {
+        "id": {
+          "type": ["string","null"]
+        },
+        "name": {
+          "type": ["string","null"]
+        }
+      }
     }
   }
 }

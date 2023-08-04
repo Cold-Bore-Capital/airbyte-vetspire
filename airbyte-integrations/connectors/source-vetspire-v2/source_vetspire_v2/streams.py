@@ -18,6 +18,14 @@ from requests.auth import AuthBase
 import copy
 import time
 
+from dateutil import parser
+
+def is_valid_timestamp(timestamp_str):
+    try:
+        parser.parse(timestamp_str)
+        return True
+    except ValueError:
+        return False
 
 # list of all possible HTTP methods which can be used for sending of request bodies
 BODY_REQUEST_METHODS = ("GET", "POST", "PUT", "PATCH")
@@ -131,7 +139,11 @@ class VetspireV2Stream(HttpStream, ABC):
         :return an iterable containing each record in the response
         """
         try:
-            records = response.json()['data'].get(self.object_name, [])
+            # Note: We need to pull both entries and metadata as entries contains the data and metadata contains the next page token
+            if self.object_name == 'conversationsPaginated':
+                records = response.json()['data'][self.object_name].get('entries', [])
+            else:
+                records = response.json()['data'].get(self.object_name, [])
         except:
             raise Exception(f'The json returns as follows {response.json()}')
         yield from records
@@ -157,11 +169,9 @@ class VetspireV2Stream(HttpStream, ABC):
             for k in object_arguments.keys():
                 if k in ['updatedAtStart', 'updatedAtEnd'] and self.object_name != 'patientPlans':
                     object_list.append(f'{k}: "{object_arguments[k]}"')
-                if k in ['start', 'end']:
+                elif k in ['start', 'end','after','before','locationId'] and object_arguments[k] is not None:
                     object_list.append(f'{k}: "{object_arguments[k]}"')
-                elif k in ["limit", "offset"] and object_arguments[k] is None:
-                    pass
-                elif k in ["limit", "offset"]:
+                elif k in ["limit", "offset","excludeProtocols","excludeEmpty"] and object_arguments[k] is not None:
                     object_list.append(f'{k}: {object_arguments[k]}')
                 # else:
                 #     raise Exception(f"Unknown argument {k} for object {self.object_name}")
@@ -197,8 +207,7 @@ class VetspireV2Stream(HttpStream, ABC):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> Optional[Union[Mapping, str]]:
-
-        if self.object_name == 'tasks':
+        if self.object_name in ['tasks']:
             query = self._build_query(
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties(),
@@ -207,6 +216,40 @@ class VetspireV2Stream(HttpStream, ABC):
                 start=stream_slice.get('start', None),
                 end=stream_slice.get('end', None)
             )
+        elif self.object_name in ['conversationsPaginated']:
+            if stream_state.get('conversion_before'):
+                query = self._build_query(
+                    object_name=self.object_name,
+                    field_schema=self._get_schema_root_properties(),
+                    limit=self.limit,
+                    after=stream_state.get('conversion_after'),
+                    before=stream_state.get('conversion_before'),
+                    start=stream_slice.get('start', None),
+                    # excludeEmpty='true',
+                    # excludeProtocols='true'
+                    # locationId=stream_state.get('locationId', None),
+                )
+            elif stream_state.get('conversion_after'):
+                query = self._build_query(
+                    object_name=self.object_name,
+                    field_schema=self._get_schema_root_properties(),
+                    limit=self.limit,
+                    after=stream_state.get('conversion_after'),
+                    start=stream_slice.get('start', None),
+                    # excludeEmpty='true',
+                    # excludeProtocols='true'
+                    # locationId=stream_state.get('locationId', None),
+                )
+            else:
+                query = self._build_query(
+                    object_name=self.object_name,
+                    field_schema=self._get_schema_root_properties(),
+                    limit=self.limit,
+                    start=stream_slice.get('start', None),
+                    # excludeEmpty='true',
+                    # excludeProtocols='true'
+                    # locationId=stream_state.get('locationId', None),
+                )
         elif self.object_name in ['encounterTypes', 'appointmentTypes', 'productPackages', 'preventionPlans', 'productTypes', 'providers',
                                   'locations']:
             query = self._build_query(
@@ -251,15 +294,41 @@ class VetspireV2Stream(HttpStream, ABC):
         stream_state = stream_state or {}
         pagination_complete = False
         next_page_token = None
+        iteration_num = 0
+        ids_list = []
         while not pagination_complete:
             request, response = self._fetch_next_page(stream_slice, stream_state, next_page_token)
-            if response == 500:
-                self.offset = str(int(self.offset) + 1)
-                continue
+            if response.status_code in [500,502]:
+                if self.offset and response.status_code == 500: self.offset = str(int(self.offset) + 1)
+                else: continue # pagination_complete = True
+
             yield from records_generator_fn(request, response, stream_state, stream_slice)
 
+            if self.object_name == 'conversationsPaginated':
+                # debug print statements
+                # ids = [response.json()['data']['conversationsPaginated']['entries'][x]['id'] for x in range(0, len(response.json()['data']['conversationsPaginated']['entries']))]
+                ids_list = ids_list + [response.json()['data']['conversationsPaginated']['entries'][0]['id']]
+                ids_list = list(set(ids_list))
+                iteration_num += 1
+                # try:
+                #     if iteration_num % 1000 == 0:
+                #         print(f"Records: {len(response.json()['data'][self.object_name]['entries'])}",
+                #           f"Iteration Number: {iteration_num}",
+                #           f"IDs list: {len(ids_list)}")
+                # except:
+                #     print(response.json()['data'][self.object_name]['metadata'])
+                stream_state['conversion_after'] = response.json()['data']['conversationsPaginated']['metadata']['after']
+                stream_state['conversion_before'] = response.json()['data']['conversationsPaginated']['metadata']['before']
+                total_count = response.json()['data']['conversationsPaginated']['metadata']['totalCount']
+                if len(ids_list) >= total_count or iteration_num > total_count + 10:
+                    pagination_complete = True
+                # if there is a before token, set it to the stream state and turn after to None
+                elif stream_state['conversion_before'] and stream_state['conversion_after']:
+                    stream_state['conversion_after'] = stream_state['conversion_before']
+                    stream_state['conversion_before'] = None
+                    continue
 
-            if self.offset is None:
+            elif self.offset is None:
                 pagination_complete = True
             # Add limit to offset to get next set of records and continue pagination
             elif len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
@@ -290,15 +359,15 @@ class VetspireV2Stream(HttpStream, ABC):
         Unexpected transient exceptions use the default backoff parameters.
         Unexpected persistent exceptions are not handled and will cause the sync to fail.
         """
-        self.logger.debug(
-            "Making outbound API request", extra={"headers": request.headers, "url": request.url, "request_body": request.body}
-        )
+        # self.logger.debug(
+        #     "Making outbound API request", extra={"headers": request.headers, "url": request.url, "request_body": request.body}
+        # )
         response: requests.Response = self._session.send(request, **request_kwargs)
 
         # Evaluation of response.text can be heavy, for example, if streaming a large response
         # Do it only in debug mode
-        if response.status_code == 500:
-            return response.status_code
+        if response.status_code == 500 or response.status_code == 502:
+            return response
         if self.should_retry(response):
             custom_backoff_time = self.backoff_time(response)
             error_message = self.error_message(response)
@@ -339,8 +408,8 @@ class Providers(VetspireV2StreamWithReq):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator)
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'providers'
 
 
@@ -367,8 +436,8 @@ class EncounterTypes(VetspireV2StreamWithReq):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator)
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'encounterTypes'
 
 
@@ -503,7 +572,27 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             stream_slice: Mapping[str, Any] = None,
             stream_state: Mapping[str, Any] = None,
     ) -> Iterable[Mapping[str, Any]]:
+        stream_state = {}
         unsorted_records = []
+        # if self.object_name == 'conversationsPaginated':
+            # for l in self.locations:
+        #         stream_state['locationId'] = l
+        #         stream_state['excludeProtocols'] = 'true'
+        #         for record in super().read_records(sync_mode, cursor_field, stream_slice, stream_state):
+        #             record[self.cursor_field] = pendulum.parse(record[self.cursor_field], strict=False).to_iso8601_string()
+        #             unsorted_records.append(record)
+        #         sorted_records = sorted(unsorted_records, key=lambda x: x[self.cursor_field])
+        #         # stream_slice['start'] = '2023-07-27T13:06:44Z'
+        #         # self._cursor_value = max(record[self.cursor_field], self._cursor_value)
+        #         for record in sorted_records:
+        #             if isinstance(record[self.cursor_field], str):
+        #                 record[self.cursor_field] = pendulum.parse(record[self.cursor_field])
+        #
+        #
+        #             if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_datetime):
+        #                 self._cursor_value = record[self.cursor_field]
+        #                 yield record
+        # else:
         for record in super().read_records(sync_mode, cursor_field, stream_slice, stream_state):
             record[self.cursor_field] = pendulum.parse(record[self.cursor_field], strict=False).to_iso8601_string()
             unsorted_records.append(record)
@@ -517,6 +606,7 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
                 yield record
 
 
+
 class PatientPlans(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
     _cursor_value = None
@@ -527,10 +617,28 @@ class PatientPlans(IncrementalVetspireV2Stream):
     name = 'patient_plans'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'patientPlans'
+
+
+class ConversationsPaginated(IncrementalVetspireV2Stream):
+    cursor_field = "insertedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "start"
+    upper_boundary_filter_field = "end"
+    sync_mode = SyncMode.incremental
+    name = 'conversations_paginated'
+    slice_step = pendulum.duration(years=1)
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
+        self.object_name = 'conversationsPaginated'
+
 
 
 class Appointments(IncrementalVetspireV2Stream):
@@ -543,9 +651,9 @@ class Appointments(IncrementalVetspireV2Stream):
     name = 'appointments'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'appointments'
 
 
@@ -559,9 +667,9 @@ class AppointmentsDeleted(IncrementalVetspireV2Stream):
     name = 'appointments_deleted'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'appointments'
 
 
@@ -574,9 +682,9 @@ class Clients(IncrementalVetspireV2Stream):
     name = 'clients'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'clients'
 
 
@@ -589,9 +697,9 @@ class Encounters(IncrementalVetspireV2Stream):
     name = 'encounters'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'encounters'
 
 
@@ -604,11 +712,11 @@ class Orders(IncrementalVetspireV2Stream):
     name = 'orders'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'orders'
-        self.locations = stream_kwargs['locations']
+        self.locations = stream_kwargs.get('locations')
 
 
 class OrderItems(IncrementalVetspireV2Stream):
@@ -620,11 +728,11 @@ class OrderItems(IncrementalVetspireV2Stream):
     name = 'order_items'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'orderItems'
-        self.locations = stream_kwargs['locations']
+        self.locations = stream_kwargs.get('locations')
 
 
 class Patients(IncrementalVetspireV2Stream):
@@ -636,9 +744,9 @@ class Patients(IncrementalVetspireV2Stream):
     name = 'patients'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'patients'
 
 
@@ -651,9 +759,9 @@ class Payments(IncrementalVetspireV2Stream):
     name = 'payments'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'payments'
 
 
@@ -666,9 +774,9 @@ class Products(IncrementalVetspireV2Stream):
     name = 'products'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'products'
 
 
@@ -681,9 +789,9 @@ class PreventionPlans(IncrementalVetspireV2Stream):
     name = 'prevention_plans'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'preventionPlans'
 
 
@@ -696,7 +804,7 @@ class ProductTypes(IncrementalVetspireV2Stream):
     name = 'product_types'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = None
         self.limit = None
         self.object_name = 'productTypes'
@@ -711,9 +819,9 @@ class ProductPackages(IncrementalVetspireV2Stream):
     name = 'product_packages'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'productPackages'
 
 
@@ -726,7 +834,7 @@ class Tasks(IncrementalVetspireV2Stream):
     name = 'tasks'
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs['start_datetime'])
-        self.offset = stream_kwargs['offset']
-        self.limit = stream_kwargs['limit']
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'tasks'
