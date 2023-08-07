@@ -1,0 +1,21 @@
+{
+  "streams" : [
+    {
+      "stream" : {
+        "name" : "appointments",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "insertedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "cursor_field" : [
+        "insertedAt"
+      ],
+      "destination_sync_mode" : "append_dedup"
+    }
+  ]
+}
