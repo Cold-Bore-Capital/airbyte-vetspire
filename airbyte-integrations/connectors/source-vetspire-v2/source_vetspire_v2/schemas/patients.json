@@ -15,13 +15,21 @@
     "microchip" : {"type" : ["null", "boolean"]},
     "neuterDate" : {"type" : ["null", "string"]},
     "clientId" : {"type" : ["null", "string"]},
-    "age" : {"type" : ["null", "integer"]},
+    "age" : {"type" : ["string", "null"]},
     "immunizations" : {
       "type" : ["array","null"],
           "properties" : {
             "id" : {"type" : ["null", "string"]},
             "administered" : {"type" : ["null", "boolean"]},
             "name" : { "type" : ["null", "string"]
+          }
+        }
+    },
+    "latestWeight" : {
+      "type" : ["array","null"],
+          "properties" : {
+            "unit" : {"type" : ["null", "string"]},
+            "value" : { "type" : ["null", "number"]
           }
         }
     },
