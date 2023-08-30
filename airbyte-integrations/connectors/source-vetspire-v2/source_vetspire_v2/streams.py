@@ -16,66 +16,19 @@ import requests
 import pendulum
 from requests.auth import AuthBase
 import copy
-import time
-
-from dateutil import parser
-
-def is_valid_timestamp(timestamp_str):
-    try:
-        parser.parse(timestamp_str)
-        return True
-    except ValueError:
-        return False
-
-# list of all possible HTTP methods which can be used for sending of request bodies
-BODY_REQUEST_METHODS = ("GET", "POST", "PUT", "PATCH")
-
-"""
-TODO: Most comments in this class are instructive and should be deleted after the source is implemented.
-
-This file provides a stubbed example of how to use the Airbyte CDK to develop both a source connector which supports full refresh or and an
-incremental syncs from an HTTP API.
-
-The various TODOs are both implementation hints and steps - fulfilling all the TODOs should be sufficient to implement one basic and one incremental
-stream from a source. This pattern is the same one used by Airbyte internally to implement connectors.
-
-The approach here is not authoritative, and devs are free to use their own judgement.
-
-There are additional required TODOs in the files within the integration_tests folder and the spec.yaml file.
-"""
 
 
 # Basic full refresh stream
 # @dataclass
 class VetspireV2Stream(HttpStream, ABC):
     """
-    TODO remove this comment
-
     This class represents a stream output by the connector.
     This is an abstract base class meant to contain all the common functionality at the API level e.g: the API base URL, pagination strategy,
     parsing responses etc..
-
-    Each stream should extend this class (or another abstract subclass of it) to specify behavior unique to that stream.
-
-    Typically for REST APIs each stream corresponds to a resource in the API. For example if the API
-    contains the endpoints
-        - GET v1/customers
-        - GET v1/employees
-
-    then you should have three classes:
-    `class VetspireV2Stream(HttpStream, ABC)` which is the current class
-    `class Customers(VetspireV2Stream)` contains behavior to pull data for customers using v1/customers
-    `class Employees(VetspireV2Stream)` contains behavior to pull data for employees using v1/employees
-
-    If some streams implement incremental sync, it is typical to create another class
-    `class IncrementalVetspireV2Stream((VetspireV2Stream), ABC)` then have concrete stream implementations extend it. An example
-    is provided below.
-
-    See the reference docs for the full list of configurable options.
     """
     transformer: TypeTransformer = TypeTransformer(TransformConfig.DefaultSchemaNormalization | TransformConfig.CustomSchemaNormalization)
     url_base = "https://api2.vetspire.com/graphql"
-    state_checkpoint_interval = 300
+    # state_checkpoint_interval = 300
     backoff_sleep = 30
 
     def __init__(self, *args, **kwargs):
@@ -111,7 +64,12 @@ class VetspireV2Stream(HttpStream, ABC):
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
         """
-        TODO: Override this method to define a pagination strategy. If you will not be using pagination, no action is required - just return None.
+        Args:
+            response: the most recent response from the API
+        Returns:
+            If the number of records returned = limit, return the next page token. Otherwise, return None.
+        Raises:
+            If the response is not a valid json, raise an exception.
 
         This method should return a Mapping (e.g: dict) containing whatever information required to make paginated requests. This dict is passed
         to most other methods in this class to help you form headers, request bodies, query params, etc..
@@ -119,10 +77,6 @@ class VetspireV2Stream(HttpStream, ABC):
         For example, if the API accepts a 'page' parameter to determine which page of the result to return, and a response from the API contains a
         'page' number, then this method should probably return a dict {'page': response.json()['page'] + 1} to increment the page count by 1.
         The request_params method should then read the input next_page_token and set the 'page' param to next_page_token['page'].
-
-        :param response: the most recent response from the API
-        :return If there is another page in the result, a mapping (e.g: dict) containing information needed to query the next page in the response.
-                If there are no more pages in the result, return None.
         """
         try:
             records = response.json()['data'].get(self.object_name, [])
@@ -135,43 +89,49 @@ class VetspireV2Stream(HttpStream, ABC):
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
         """
-        TODO: Override this method to define how a response is parsed.
-        :return an iterable containing each record in the response
+        Args:
+            response: the most recent response from the API
+        Returns:
+            a list of records from the response
+        Raises:
+            If the response is not a valid json, raise an exception.
+
         """
         try:
-            # Note: We need to pull both entries and metadata as entries contains the data and metadata contains the next page token
-            if self.object_name == 'conversationsPaginated':
-                records = response.json()['data'][self.object_name].get('entries', [])
-            else:
-                records = response.json()['data'].get(self.object_name, [])
+            records = response.json()['data'].get(self.object_name, [])
         except:
             raise Exception(f'The json returns as follows {response.json()}')
         yield from records
 
     def _get_schema_root_properties(self):
+        """
+        Returns the root properties of the configured catalog schema for this stream.
+        """
         schema_loader = JsonFileSchemaLoader(config={}, parameters={"name": self.name})
         schema = schema_loader.get_json_schema()
         return schema["properties"]
 
     def _get_object_arguments(self, **object_arguments) -> str:
+        """
+        The logic below is used to create the filters for the query.
+        """
         object_list = []
         if len(object_arguments.items()) > 0:
-            try:
-                if self.locations:
-                    object_list.append(f"locationIds: [{','.join(self.locations)}]")
-            except:
-                pass
+            if self.locations:
+                object_list.append(f"locationIds: [{','.join(self.locations)}]")
+
             if self.object_name == 'patientPlans':
-                object_list.append("filters: {updatedAtStart: \"" + object_arguments["updatedAtStart"] + "\", updatedAtEnd: \"" + object_arguments[
-                    "updatedAtEnd"] + "\"}")
+                object_list.append(
+                    "filters: {updatedAtStart: \"" + object_arguments["updatedAtStart"] + "\", updatedAtEnd: \"" + object_arguments[
+                        "updatedAtEnd"] + "\"}")
             elif self.name == 'appointments_deleted':
                 object_list.append('onlyDeleted: true')
             for k in object_arguments.keys():
                 if k in ['updatedAtStart', 'updatedAtEnd'] and self.object_name != 'patientPlans':
                     object_list.append(f'{k}: "{object_arguments[k]}"')
-                elif k in ['start', 'end','after','before','locationId'] and object_arguments[k] is not None:
+                elif k in ['start', 'end', 'after', 'before', 'locationId'] and object_arguments[k] is not None:
                     object_list.append(f'{k}: "{object_arguments[k]}"')
-                elif k in ["limit", "offset","excludeProtocols","excludeEmpty"] and object_arguments[k] is not None:
+                elif k in ["limit", "offset", "excludeProtocols", "excludeEmpty"] and object_arguments[k] is not None:
                     object_list.append(f'{k}: {object_arguments[k]}')
                 # else:
                 #     raise Exception(f"Unknown argument {k} for object {self.object_name}")
@@ -207,6 +167,15 @@ class VetspireV2Stream(HttpStream, ABC):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> Optional[Union[Mapping, str]]:
+        """
+        Args:
+            stream_state: the state of the stream
+            stream_slice: the slice of the stream to read which uses dates
+            next_page_token: the next page token to use (this will be none for all requests as we are using offset to paginate)
+        Returns:
+            The request body to be used in the POST request.
+
+        """
         if self.object_name in ['tasks']:
             query = self._build_query(
                 object_name=self.object_name,
@@ -216,40 +185,6 @@ class VetspireV2Stream(HttpStream, ABC):
                 start=stream_slice.get('start', None),
                 end=stream_slice.get('end', None)
             )
-        elif self.object_name in ['conversationsPaginated']:
-            if stream_state.get('conversion_before'):
-                query = self._build_query(
-                    object_name=self.object_name,
-                    field_schema=self._get_schema_root_properties(),
-                    limit=self.limit,
-                    after=stream_state.get('conversion_after'),
-                    before=stream_state.get('conversion_before'),
-                    start=stream_slice.get('start', None),
-                    # excludeEmpty='true',
-                    # excludeProtocols='true'
-                    # locationId=stream_state.get('locationId', None),
-                )
-            elif stream_state.get('conversion_after'):
-                query = self._build_query(
-                    object_name=self.object_name,
-                    field_schema=self._get_schema_root_properties(),
-                    limit=self.limit,
-                    after=stream_state.get('conversion_after'),
-                    start=stream_slice.get('start', None),
-                    # excludeEmpty='true',
-                    # excludeProtocols='true'
-                    # locationId=stream_state.get('locationId', None),
-                )
-            else:
-                query = self._build_query(
-                    object_name=self.object_name,
-                    field_schema=self._get_schema_root_properties(),
-                    limit=self.limit,
-                    start=stream_slice.get('start', None),
-                    # excludeEmpty='true',
-                    # excludeProtocols='true'
-                    # locationId=stream_state.get('locationId', None),
-                )
         elif self.object_name in ['encounterTypes', 'appointmentTypes', 'productPackages', 'preventionPlans', 'productTypes', 'providers',
                                   'locations']:
             query = self._build_query(
@@ -278,8 +213,7 @@ class VetspireV2Stream(HttpStream, ABC):
             self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None, next_page_token: Mapping[str, Any] = None
     ) -> str:
         """
-        TODO: Override this method to define the path this stream corresponds to. E.g. if the url is https://example-api.com/v1/customers then this
-        should return "customers". Required.
+        There is no path but this method needs to be instantiated.
         """
         return None
 
@@ -291,44 +225,31 @@ class VetspireV2Stream(HttpStream, ABC):
             stream_slice: Mapping[str, Any] = None,
             stream_state: Mapping[str, Any] = None,
     ) -> Iterable[StreamData]:
+        """
+        This method is used to read all pages of a stream. It is used by the read_records method.
+        Args:
+            records_generator_fn: a function that takes in a request, response, stream_state, and stream_slice and returns a generator of records
+            stream_slice: the slice of the stream to read which uses dates
+            stream_state: the state of the stream
+        Returns:
+            A generator of records returned from the api request.
+        """
         stream_state = stream_state or {}
         pagination_complete = False
         next_page_token = None
-        iteration_num = 0
-        ids_list = []
+
         while not pagination_complete:
             request, response = self._fetch_next_page(stream_slice, stream_state, next_page_token)
-            if response.status_code in [500,502]:
-                if self.offset and response.status_code == 500: self.offset = str(int(self.offset) + 1)
-                else: continue # pagination_complete = True
+            if response.status_code in [500, 502]:
+                if self.offset and response.status_code == 500:
+                    self.offset = str(int(self.offset) + 1)
+                    continue
+                else:
+                    continue  # pagination_complete = True
 
             yield from records_generator_fn(request, response, stream_state, stream_slice)
 
-            if self.object_name == 'conversationsPaginated':
-                # debug print statements
-                # ids = [response.json()['data']['conversationsPaginated']['entries'][x]['id'] for x in range(0, len(response.json()['data']['conversationsPaginated']['entries']))]
-                ids_list = ids_list + [response.json()['data']['conversationsPaginated']['entries'][0]['id']]
-                ids_list = list(set(ids_list))
-                iteration_num += 1
-                # try:
-                #     if iteration_num % 1000 == 0:
-                #         print(f"Records: {len(response.json()['data'][self.object_name]['entries'])}",
-                #           f"Iteration Number: {iteration_num}",
-                #           f"IDs list: {len(ids_list)}")
-                # except:
-                #     print(response.json()['data'][self.object_name]['metadata'])
-                stream_state['conversion_after'] = response.json()['data']['conversationsPaginated']['metadata']['after']
-                stream_state['conversion_before'] = response.json()['data']['conversationsPaginated']['metadata']['before']
-                total_count = response.json()['data']['conversationsPaginated']['metadata']['totalCount']
-                if len(ids_list) >= total_count or iteration_num > total_count + 10:
-                    pagination_complete = True
-                # if there is a before token, set it to the stream state and turn after to None
-                elif stream_state['conversion_before'] and stream_state['conversion_after']:
-                    stream_state['conversion_after'] = stream_state['conversion_before']
-                    stream_state['conversion_before'] = None
-                    continue
-
-            elif self.offset is None:
+            if self.offset is None:
                 pagination_complete = True
             # Add limit to offset to get next set of records and continue pagination
             elif len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
@@ -342,6 +263,15 @@ class VetspireV2Stream(HttpStream, ABC):
 
     def _send(self, request: requests.PreparedRequest, request_kwargs: Mapping[str, Any]) -> requests.Response:
         """
+        Custom error handling that was used to deal with timeouts.
+        Args:
+            request: the request to be sent
+            request_kwargs: the request kwargs
+        Returns:
+            The response from the request.
+        XXXXXXXXXXXXXXXXXXXXXXXX
+        Pre-created text below
+        XXXXXXXXXXXXXXXXXXXXXXXX
         Wraps sending the request in rate limit and error handlers.
         Please note that error handling for HTTP status codes will be ignored if raise_on_http_errors is set to False
 
@@ -366,7 +296,7 @@ class VetspireV2Stream(HttpStream, ABC):
 
         # Evaluation of response.text can be heavy, for example, if streaming a large response
         # Do it only in debug mode
-        if response.status_code == 500 or response.status_code == 502:
+        if response.status_code == 500 or response.status_code == 502:  #
             return response
         if self.should_retry(response):
             custom_backoff_time = self.backoff_time(response)
@@ -401,7 +331,7 @@ class VetspireV2StreamWithReq(VetspireV2Stream):
 
 class Providers(VetspireV2StreamWithReq):
     """
-    TODO: Change class name to match the table/data source this stream corresponds to.
+    self.object_name is used to extract the data from the json response.
     """
     primary_key = "id"
     name = 'providers'
@@ -422,8 +352,8 @@ class AppointmentTypes(VetspireV2StreamWithReq):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator)
-        self.offset = None
-        self.limit = None
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'appointmentTypes'
 
 
@@ -450,21 +380,22 @@ class Locations(VetspireV2StreamWithReq):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator)
-        self.offset = None
-        self.limit = None
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'locations'
 
 
 # Basic incremental stream
 class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
+    """
+    This class represents an incremental stream output by the connector.
+    """
     datetime_filter_template = "YYYY-MM-DDTHH:mm:ssZ"
     date_filter_template = "YYYY-MM-DD"
-    # This attribute allows balancing between sync speed and memory consumption.
-    # The greater a slice is - the bigger memory consumption and the faster syncs are since fewer requests are made.
-    slice_step_default = pendulum.duration(days=1)
-    # time gap between when previous slice ends and current slice begins
+    # slice_step_default = pendulum.duration(days=1)
+    _slice_step = pendulum.duration(days=1)
     slice_granularity = pendulum.duration(microseconds=1)
-    state_checkpoint_interval = 300
+    # state_checkpoint_interval = 300
     sync_mode = SyncMode.incremental
 
     def __init__(
@@ -474,15 +405,15 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             slice_step_map: Mapping[str, int] = None
     ):
         super().__init__(authenticator)
-        slice_step = (slice_step_map or {}).get(self.name)
-        self._slice_step = slice_step and pendulum.duration(days=slice_step)
+        # slice_step = (slice_step_map or {}).get(self.name)
+        # self._slice_step = slice_step and pendulum.duration(days=slice_step)
+        # slice_step
         self._start_datetime = pendulum.parse(start_datetime if start_datetime is not None else "2023-07-01T00:00:00Z")
 
     @property
     def state(self) -> Mapping[str, Any]:
         if self._cursor_value:
             return {self.cursor_field: self._cursor_value}
-
         return {}
 
     @state.setter
@@ -499,7 +430,7 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
 
     @property
     def slice_step(self):
-        return self._slice_step or self.slice_step_default
+        return self._slice_step # or self.slice_step_default
 
     @property
     # @abstractmethod
@@ -574,25 +505,6 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
     ) -> Iterable[Mapping[str, Any]]:
         stream_state = {}
         unsorted_records = []
-        # if self.object_name == 'conversationsPaginated':
-            # for l in self.locations:
-        #         stream_state['locationId'] = l
-        #         stream_state['excludeProtocols'] = 'true'
-        #         for record in super().read_records(sync_mode, cursor_field, stream_slice, stream_state):
-        #             record[self.cursor_field] = pendulum.parse(record[self.cursor_field], strict=False).to_iso8601_string()
-        #             unsorted_records.append(record)
-        #         sorted_records = sorted(unsorted_records, key=lambda x: x[self.cursor_field])
-        #         # stream_slice['start'] = '2023-07-27T13:06:44Z'
-        #         # self._cursor_value = max(record[self.cursor_field], self._cursor_value)
-        #         for record in sorted_records:
-        #             if isinstance(record[self.cursor_field], str):
-        #                 record[self.cursor_field] = pendulum.parse(record[self.cursor_field])
-        #
-        #
-        #             if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_datetime):
-        #                 self._cursor_value = record[self.cursor_field]
-        #                 yield record
-        # else:
         for record in super().read_records(sync_mode, cursor_field, stream_slice, stream_state):
             record[self.cursor_field] = pendulum.parse(record[self.cursor_field], strict=False).to_iso8601_string()
             unsorted_records.append(record)
@@ -604,7 +516,6 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_datetime):
                 self._cursor_value = record[self.cursor_field]
                 yield record
-
 
 
 class PatientPlans(IncrementalVetspireV2Stream):
@@ -621,6 +532,7 @@ class PatientPlans(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'patientPlans'
+        self.locations = stream_kwargs.get('locations')
 
 
 class ConversationsPaginated(IncrementalVetspireV2Stream):
@@ -638,7 +550,7 @@ class ConversationsPaginated(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'conversationsPaginated'
-
+        self.locations = stream_kwargs.get('locations')
 
 
 class Appointments(IncrementalVetspireV2Stream):
@@ -655,6 +567,7 @@ class Appointments(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'appointments'
+        self.locations = stream_kwargs.get('locations')
 
 
 class AppointmentsDeleted(IncrementalVetspireV2Stream):
@@ -671,6 +584,7 @@ class AppointmentsDeleted(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'appointments'
+        self.locations = stream_kwargs.get('locations')
 
 
 class Clients(IncrementalVetspireV2Stream):
@@ -686,6 +600,7 @@ class Clients(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'clients'
+        self.locations = stream_kwargs.get('locations')
 
 
 class Encounters(IncrementalVetspireV2Stream):
@@ -701,6 +616,7 @@ class Encounters(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'encounters'
+        self.locations = stream_kwargs.get('locations')
 
 
 class Orders(IncrementalVetspireV2Stream):
@@ -714,7 +630,7 @@ class Orders(IncrementalVetspireV2Stream):
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.limit = 10
         self.object_name = 'orders'
         self.locations = stream_kwargs.get('locations')
 
@@ -748,6 +664,7 @@ class Patients(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'patients'
+        self.locations = stream_kwargs.get('locations')
 
 
 class Payments(IncrementalVetspireV2Stream):
@@ -763,6 +680,7 @@ class Payments(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'payments'
+        self.locations = stream_kwargs.get('locations')
 
 
 class Products(IncrementalVetspireV2Stream):
@@ -778,6 +696,7 @@ class Products(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'products'
+        self.locations = stream_kwargs.get('locations')
 
 
 class PreventionPlans(IncrementalVetspireV2Stream):
@@ -793,6 +712,7 @@ class PreventionPlans(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'preventionPlans'
+        self.locations = stream_kwargs.get('locations')
 
 
 class ProductTypes(IncrementalVetspireV2Stream):
@@ -808,6 +728,7 @@ class ProductTypes(IncrementalVetspireV2Stream):
         self.offset = None
         self.limit = None
         self.object_name = 'productTypes'
+        self.locations = stream_kwargs.get('locations')
 
 
 class ProductPackages(IncrementalVetspireV2Stream):
@@ -823,6 +744,7 @@ class ProductPackages(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'productPackages'
+        self.locations = stream_kwargs.get('locations')
 
 
 class Tasks(IncrementalVetspireV2Stream):
@@ -838,3 +760,4 @@ class Tasks(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'tasks'
+        self.locations = stream_kwargs.get('locations')

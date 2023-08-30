@@ -35,7 +35,7 @@ from source_vetspire_v2.streams import (
     VetspireV2Stream,
 )
 
-
+## Create authentication method used for Vetspire API
 class VetAuth(AbstractHeaderAuthenticator):
     """
     Each token in the cycle is checked against the rate limiter.
@@ -59,8 +59,9 @@ class VetAuth(AbstractHeaderAuthenticator):
         return f"{self._token}"
 
 
-# Source
+# Define Abstract Source where we m
 class SourceVetspireV2(AbstractSource):
+    # We must define check_connection even if it is not used
     def check_connection(self, logger, config) -> Tuple[bool, any]:
         """
         TODO: Implement a connection check to validate that the user-provided config can be used to connect to the underlying API
@@ -74,6 +75,7 @@ class SourceVetspireV2(AbstractSource):
         """
         return True, None
 
+    # We must define _get_message even if it is not used
     def _get_message(self, record_data_or_message: Union[StreamData, AirbyteMessage], stream: Stream):
         """
         Converts the input to an AirbyteMessage if it is a StreamData. Returns the input as is if it is already an AirbyteMessage
@@ -83,46 +85,39 @@ class SourceVetspireV2(AbstractSource):
         else:
             return stream_data_to_airbyte_message(stream.name, record_data_or_message, stream.transformer, stream.get_json_schema())
 
+    # Define streams with their unique configurations
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
-        """
-        TODO: Replace the streams below with your own streams.
-
-        :param config: A Mapping of the user input configuration as defined in the connector spec.
-        """
-        # TODO remove the authenticator if not required.
         """
         :param config: A Mapping of the user input configuration as defined in the connector spec.
         """
         auth = VetAuth(config)
-        locations = ["23768", "23860", "23861", "23862", "23597", "23069", "23863", "23864", "23857", "23858", "23895", "23768", "23769", "23770",
-         "23771", "23079"]
+        locations = ["23860", "23771", "23770", "23769", "23768", "23859", "23858", "23857", "23864", "23863", "23069", "23597", "23862", "23861"]
 
+        # Use this stream if the stream has limit and offset parameters but no location parameters
         stream_kwargs = {
             "start_datetime": config.get("start_datetime", None),
             "limit": config.get("limit", "300"),
             "offset": config.get("offset", "0"),
+            "locations": None
         }
-        stream_kwargs_conversations = {
-            "start_datetime": config.get("start_datetime", None),
-            "limit": config.get("limit", "1"),
-            "offset": None,
-        }
+        # Use this stream if the stream has limit, offset, and location parameters
         stream_kwargs_with_locations = {
             "start_datetime": config.get("start_datetime", None),
             "limit": config.get("limit", "300"),
             "offset": config.get("offset", "0"),
             "locations": locations
         }
+        # Use this stream if the stream has no limit, offset, or location parameters
         stream_kwargs_no_limit = {
             "start_datetime": config.get("start_datetime", None),
             "limit": None,
-            "offset": None
+            "offset": None,
+            "locations": None
         }
         return [Appointments(authenticator=auth, **stream_kwargs),
                 AppointmentsDeleted(authenticator=auth, **stream_kwargs),
                 AppointmentTypes(authenticator=auth, **stream_kwargs),
                 Clients(authenticator=auth, **stream_kwargs),
-                ConversationsPaginated(authenticator=auth, **stream_kwargs_conversations),
                 Encounters(authenticator=auth, **stream_kwargs_with_locations),
                 EncounterTypes(authenticator=auth, **stream_kwargs_no_limit),
                 Locations(authenticator=auth, **stream_kwargs_no_limit),

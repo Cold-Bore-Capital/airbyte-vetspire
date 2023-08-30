@@ -20,6 +20,12 @@
             "null"
           ]
         },
+        "location" : {
+        "type" : ["array","null"],
+        "properties" : {
+          "id" : {"type" : ["string", "null"]}
+          }
+        },
         "dispenseFee" : {
           "type" : [
             "null",
