@@ -1,0 +1,33 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "end" : {
+      "type" : ["null", "string"]
+    },
+    "id" : {
+      "type" : ["null", "integer"]
+    },
+    "provider" : {
+      "type" : ["array","null"],
+      "properties" : {
+        "id" : {
+          "type" : ["null", "integer"]
+        },
+        "name" : {
+          "type" : ["null", "string"]
+        },
+        "locations" : {
+          "type" : ["array"]
+        }
+      }
+    },
+    "start" : {
+      "type" : ["null", "string"],
+      "format": "date-time"
+    },
+    "scheduleTemplate" : {
+      "type" : ["array"]
+    }
+  }
+}

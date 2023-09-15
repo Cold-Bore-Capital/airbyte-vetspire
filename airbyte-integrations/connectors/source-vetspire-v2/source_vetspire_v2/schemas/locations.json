@@ -1,0 +1,35 @@
+{
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : [
+        "null",
+        "integer"
+      ]
+    },
+    "address" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "isActive" : {
+      "type" : [
+        "null",
+        "boolean"
+      ]
+    },
+    "appointmentSlotMinutes" : {
+      "type" : [
+        "null",
+        "integer"
+      ]
+    },
+    "name" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    }
+  }
+}

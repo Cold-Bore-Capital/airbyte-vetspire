@@ -82,7 +82,7 @@ class TestAuth0Stream:
         inputs = {"response": response}
         assert stream.backoff_time(**inputs) == expected_params
 
-    def test_auth0_stream_incremental_back_off_now(self, patch_base_class, url_base):
+    def test_auth0_stream_incremental__now(self, patch_base_class, url_base):
         stream = IncrementalAuth0Stream(url_base=url_base)
         response = MagicMock(requests.Response)
         response.status_code = requests.codes.TOO_MANY_REQUESTS

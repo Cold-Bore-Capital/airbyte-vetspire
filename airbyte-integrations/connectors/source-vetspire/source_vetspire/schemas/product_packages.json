@@ -1,0 +1,94 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "ageRestriction" : {"type" : ["null", "string"]},
+    "cityTaxedLocationTags" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "cityTaxedLocations" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "countyTaxedLocationTags" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "countyTaxedLocations" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "discountPercent" : {"type" : ["null", "number"]},
+    "enabledLocations" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "fixedPrice" : {"type" : ["null", "string"]},
+    "id" : {"type" : ["null", "string"]},
+    "includedPackages" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "insertedAt" : {"type" : ["null", "string"], "format" : "date-time"},
+    "isDisabled" : {"type" : ["null", "boolean"]},
+    "isLocked" : {"type" : ["null", "boolean"]},
+    "isPicklist" : {"type" : ["null", "boolean"]},
+    "isTaxedCity" : {"type" : ["null", "boolean"]},
+    "isTaxedCounty" : {"type" : ["null", "boolean"]},
+    "isTaxedOther" : {"type" : ["null", "boolean"]},
+    "isTaxedState" : {"type" : ["null", "boolean"]},
+    "items" : {
+      "type" : ["null","array"],
+      "items" : {
+        "type" : ["null", "object"],
+        "properties" : {
+          "id" : {"type" : ["null", "string"]}
+        }
+      }
+    },
+    "name" : {"type" : ["null", "string"]},
+    "priceType" : {"type" : ["null", "string"]},
+    "restrictToOnlyNonNeutered" : {"type" : ["null", "boolean"]},
+    "revenueCenterId" : {"type" : ["null", "string"]},
+    "speciesRestrictions" : {"type" : ["null", "string"]},
+    "stateTaxedLocationTags" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "stateTaxedLocations" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "taxedLocationTags" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "taxedLocations" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "weightRestriction" : {"type" : ["null","boolean"]}
+  }
+}
+

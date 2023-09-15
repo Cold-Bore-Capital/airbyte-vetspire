@@ -1,0 +1,252 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : [
+    "object",
+    "null"
+  ],
+  "properties" : {
+    "emailVerifiedDate" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "historicalId" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "title" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "id" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "primaryLocationId" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "alerts" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "billingId" : {
+      "type" : [
+        "null", "string"
+      ]
+    },
+    "familyName" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "stripeCustomerId" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "isNewRdvmNeeded" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "clientReferralSource" : {
+      "type" : [
+        "null",
+        "array"
+      ],
+      "properties" : {
+        "name" : {
+          "type" : [
+            "string"]
+        }
+      }
+    },
+    "declineEmail" : {
+      "type" : [
+        "null",
+        "boolean"
+      ]
+    },
+    "givenName" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "addresses" : {
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string","null"]},
+        "city" : {"type" : ["string","null"]},
+        "isPrimary" : {"type" : ["boolean","null"]},
+        "line1" : {"type" : ["string","null"]},
+        "line2" : {"type" : ["string","null"]},
+        "postalCode" : {"type" : ["string","null"]},
+        "state" : {"type" : ["string","null"]},
+        "use" : {"type" : ["string","null"]}
+      }
+    },
+    "accountCredit" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "taxExempt" : {
+      "type" : "boolean"
+    },
+    "dateOfBirth" : {
+      "type" : [
+        "null",
+        "string"
+      ],
+      "format" : "date-time"
+    },
+    "stopReminders" : {
+      "type" : [
+        "null",
+        "boolean"
+      ]
+    },
+    "updatedAt" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "isActive" : {
+      "type" : "boolean"
+    },
+    "phoneNumbers" : {
+      "type" : ["array","null"],
+      "properties" : {
+        "value" : {"type" : ["string","null"]},
+        "name" : {"type" : ["string","null"]},
+        "preferred" : {"type" : ["boolean","null"]}
+      }
+    },
+    "lastSyncedAt" : {
+      "type" : [
+        "null",
+        "string"
+      ],
+      "format" : "date-time"
+    },
+    "declinePhone" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "squareCardId" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "businessName" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "notes" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "email" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "verifiedAt" : {
+      "type" : [
+        "null",
+        "string"
+      ],
+      "format" : "date-time"
+    },
+    "cardconnectToken" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "identification" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "declineRdvm" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "insertedAt" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "sentEmailVerificationDate" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "cardconnectExpiry" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "coowners" : {
+      "type" : [
+        "array",
+        "null"],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string"]
+        }
+      }
+    },
+    "name" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "clientRdvms" : {
+      "type" : [
+        "array",
+        "null"],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string"]
+        }
+      }
+    }
+  }
+}

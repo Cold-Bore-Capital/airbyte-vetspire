@@ -1,0 +1,356 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "checkInLink" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "historicalId" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "checkingOutAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "comments" : {
+      "type" : [
+        "array",
+        "null"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "note" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "id" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "status" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "deleted" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "admittedAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "repeatingEvent" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "pickupTime" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "isConfirmed" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "type" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "sentPickup" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "startedAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "vitals" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "duration" : {
+      "type" : [
+        "integer",
+        "null"
+      ]
+    },
+    "scheduleId" : {
+      "type" : [
+        "integer",
+        "null"
+      ]
+    },
+    "readyAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "completedAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "selfCheckInSent" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "location" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "contagionRisk" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "teleSessionCreated" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "updatedAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "arrivalTimeAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "confirmedAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "checkedInAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "npsScore" : {
+      "type" : [
+        "integer",
+        "null"
+      ]
+    },
+    "cage" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "encounters" : {
+      "type" : [
+        "array",
+        "null"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "bookedOnline" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "checkedOutAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "providerId" : {
+      "type" : [
+        "integer",
+        "null"
+      ]
+    },
+    "creator" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "deletionReason" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "waitedAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "reason" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "start" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "insertedAt" : {
+      "type" : [
+        "string",
+        "null"
+      ],
+      "format" : "date-time"
+    },
+    "selfCheckedIn" : {
+      "type" : [
+        "boolean",
+        "null"
+      ]
+    },
+    "room" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "patientId" : {
+      "type" : [
+        "string",
+        "null"
+      ]
+    },
+    "deletedBy" : {
+      "type" : [
+        "null",
+        "object"
+      ],
+      "properties" : {
+        "id" : {
+          "type" : [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

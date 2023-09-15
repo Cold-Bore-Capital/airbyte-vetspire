@@ -1,0 +1,110 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "consentSignature" : {"type" : ["null", "string"]},
+    "historicalId" : {"type" : ["null","number"]},
+    "title" : {"type" : ["null", "string"]},
+    "note" : {"type" : ["null", "string"]},
+    "id" : {"type" : ["null",  "string"]},
+    "closed" : {"type" : ["null", "boolean"]},
+    "highTotalDiscountCents" : {"type" : ["null", "integer"]},
+    "highTotalTaxCents" : {"type" : ["null", "integer"]},
+    "lowTotalAfterTaxCents" : {"type" : ["null", "integer"]},
+    "items" : {
+      "type" : ["array","null"],
+      "items" : [
+        {
+          "type" : "object",
+          "properties" : {
+          "declined" : {"type" : ["null", "boolean"]},
+          "discounted" : {"type" : ["null", "boolean"]},
+          "dispenseFee" : {"type" : ["null", "string"]},
+          "hidden" : {"type" : ["null", "boolean"]},
+          "highPrice" : {"type" : ["null", "string"]},
+          "highQuantity" : {"type" : ["null", "string"]},
+          "highSubtotalCents" : {"type" : ["null", "integer"]},
+          "highTotalBeforeTaxCents" : {"type" : ["null", "integer"]},
+          "id" : {"type" : ["null", "string"]},
+          "inPackage" : {"type" : ["null", "boolean"]},
+          "insertedAt" : {"type" : ["null", "string"]},
+          "isPackage" : {"type" : ["null", "boolean"]},
+          "isSecretlyIncluded" : {"type" : ["null", "boolean"]},
+          "isTaxed" : {"type" : ["null", "boolean"]},
+          "lineDiscount" : {"type" : ["null","number"]},
+          "lineDiscountType" : {"type" : ["null", "string"]},
+          "lowPrice" : {"type" : ["null", "string"]},
+          "lowQuantity" : {"type" : ["null", "string"]},
+          "lowSubtotalCents" : {"type" : ["null", "integer"]},
+          "lowTotalBeforeTaxCents" : {"type" : ["null", "integer"]},
+          "minimumPrice" : {"type" : ["null","number"]},
+          "name" : {"type" : ["null", "string"]},
+          "package" : {"type" : ["null", "string"]},
+          "percentDiscounted" : {"type" : ["null", "number"]},
+          "position" : {"type" : ["null", "integer"]},
+          "priceIncluded" : {"type" : ["null", "boolean"]},
+          "productId" : {"type" : ["null", "string"]},
+          "sourceEstimateItemId" : {"type" : "null"},
+          "undeletable" : {"type" : ["null", "boolean"]},
+          "unitPrice" : {"type" : ["null", "string"]},
+          "volumeTiers" : {"type" : ["null", "string"]}
+        }
+        }
+      ]
+    },
+    "status" : {"type" : ["null", "string"]},
+    "discountType" : {"type" : ["null", "string"]},
+    "patient" :  {"id" : {"type" : ["null", "number"]}},
+    "highSubtotalCents" : {"type" : ["null", "integer"]},
+    "datetime" : {"type" : ["null", "string"],
+                  "format" : "date-time"},
+    "lowTotal" : {"type" : ["null", "string"]},
+    "payLink" : {"type" : ["null", "string"]},
+    "lowTotalDiscountCents" : {"type" : ["null", "integer"]},
+    "order" : {"type" : ["null", "string"]},
+    "location" : {"type" : ["null", "string"]},
+    "updatedAt" : {"type" : ["null", "string"],
+                  "format" : "date-time"},
+    "encounter" : {"type" : ["null", "string"]},
+    "patients" : {
+      "type" : ["array","null"],
+      "items" : [
+        {
+          "type" : "object",
+          "properties" : {"id" : {"type" : ["null", "string"]}}
+        }
+      ]
+    },
+    "provider" : {"id" : {"type" : ["null", "string"]}},
+    "lowSubtotalCents" : {"type" : ["null", "integer"]},
+    "boardRows" : {
+      "type" : "array",
+      "items" : [
+        {"type" : "object",
+          "properties" : {"id" : {"type" : ["null", "string"]}}}]
+    },
+    "estimateType" : {"type" : ["null", "string"]},
+    "discount" : {"type" : ["null", "string"]},
+    "client" : {
+      "type" : ["object","null"],
+      "properties" : {"id" : {"type" : ["null", "string"]}}
+    },
+    "lowTotalTaxCents" : {"type" : ["null", "integer"]},
+    "taxRate" : {"type" : ["null", "string"]},
+    "ordered" : {"type" : ["null", "boolean"]},
+    "totalPaid" : {"type" : ["null", "string"]},
+    "insertedAt" : {"type" : ["null", "string"]},
+    "appliedCoupons" : {"type" : "array",
+      "additionalProperties" : true,
+      "items" : {}},
+    "payments" :
+    {"type" : ["array","null"],
+      "items" : [{"type" : "object", "properties" : {"id" : {"type" : ["null", "string"]}}}]
+      },
+    "clientConsents" : {"type" : ["array","null"],
+      "items" : [{"type" : "object", "properties" : {"id" : {"type" : ["null", "string"]}}}]
+      },
+    "highTotalAfterTaxCents" : {"type" : ["null", "integer"]},
+    "highTotal" : {"type" : ["null", "string"]}
+  }
+}

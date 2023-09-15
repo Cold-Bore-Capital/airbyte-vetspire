@@ -1,0 +1,35 @@
+{
+  "type" : "object",
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "properties" : {
+    "amount" : {"type" : ["number","null"]},
+    "client" : {
+      "type" : ["array","null"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "datetime" : {"type" : ["string", "null"], "format" : "date-time"},
+    "id" : {"type" : ["string", "null"]},
+    "location" : {
+      "type" : ["array","null"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "note" : {"type" : ["string", "null"]},
+    "orderItem": {
+      "type" : ["array","null"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "provider": {
+      "type" : ["array","null"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "type": {"type" : ["string", "null"]}
+  }
+}

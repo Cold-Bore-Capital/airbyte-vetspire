@@ -1,0 +1,42 @@
+{
+  "type" : "object",
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "properties" : {
+    "assignees" :
+        {"type" : ["array", "null"],
+          "properties" : {
+          "id": {"type" : ["string", "null"]}}
+    },
+    "completedBy" :
+        {"type" : ["array", "null"],
+          "properties" : {
+        "id": {"type" : ["string", "null"]}}
+    },
+    "creator" :
+        {"type" : ["array", "null"],
+          "properties" : {
+          "id": {"type" : ["string", "null"]}}
+    },
+    "deleted" : {"type" : ["boolean", "null"]},
+    "done" : {"type" : ["boolean", "null"]},
+    "dueDate" : {"type" : ["string", "null"], "format":  "date-time`"},
+    "encounter" : {"type" : ["array", "null"],
+          "properties" : {
+          "id": {"type" : ["string", "null"]}}
+    },
+    "id" : {"type" : ["string", "null"]},
+    "insertedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "patient" :
+        {"type" : ["array", "null"],
+          "properties" : {
+        "id": {"type" : ["string", "null"]}}
+    },
+   "snoozeUntilDueDate" : {"type" : ["string", "null"], "format": "date-time"},
+    "taskCategory" :
+        {"type" : ["array", "null"],
+          "properties" : {"name": {"type" : ["string", "null"]}}
+     },
+    "text" : {"type" : ["string", "null"]},
+    "updatedAt " : {"type" : ["string", "null"], "format": "date-time"}
+  }
+}

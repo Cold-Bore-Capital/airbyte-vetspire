@@ -1,0 +1,21 @@
+{
+  "streams" : [
+    {
+      "stream" : {
+        "name" : "credit_memos",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "cursor_field" : [
+        "updatedAt"
+      ],
+      "destination_sync_mode" : "append_dedup"
+    }
+  ]
+}
