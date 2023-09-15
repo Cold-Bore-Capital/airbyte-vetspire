@@ -40,6 +40,7 @@
       "itemDiscountWithOrderDiscountCents" : {"type" : ["integer", "null"]},
       "itemDiscountWithoutOrderDiscountCents" : {"type" : ["integer", "null"]},
       "insertedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+       "date" : {"type" : ["string", "null"], "format" : "date"},
       "memberDiscountCents" : {"type" : ["number", "null"]},
       "name" : {"type" : ["string", "null"]},
       "quantity" : {"type" : ["number", "null"]},

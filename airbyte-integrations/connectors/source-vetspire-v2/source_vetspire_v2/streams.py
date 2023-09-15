@@ -120,6 +120,10 @@ class VetspireV2Stream(HttpStream, ABC):
             if self.locations:
                 object_list.append(f"locationIds: [{','.join(self.locations)}]")
 
+            if self.object_name == 'creditMemos':
+                object_list.append("start : \"2023-04-01T00:00:00Z\"")
+                object_list.append(f"end : \"{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}\"")
+
             if self.object_name == 'patientPlans':
                 object_list.append(
                     "filters: {updatedAtStart: \"" + object_arguments["updatedAtStart"] + "\", updatedAtEnd: \"" + object_arguments[
@@ -383,6 +387,8 @@ class Locations(VetspireV2StreamWithReq):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'locations'
+        self.locations = None
+
 
 
 # Basic incremental stream
@@ -430,7 +436,7 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
 
     @property
     def slice_step(self):
-        return self._slice_step # or self.slice_step_default
+        return self._slice_step  # or self.slice_step_default
 
     @property
     # @abstractmethod
@@ -744,6 +750,22 @@ class ProductPackages(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'productPackages'
+        self.locations = stream_kwargs.get('locations')
+
+
+class CreditMemos(IncrementalVetspireV2Stream):
+    cursor_field = "datetime"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    name = 'credit_memos'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
+        self.object_name = 'creditMemos'
         self.locations = stream_kwargs.get('locations')
 
 

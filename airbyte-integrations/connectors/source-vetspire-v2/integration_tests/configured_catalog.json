@@ -2,7 +2,7 @@
   "streams" : [
     {
       "stream" : {
-        "name" : "appointments",
+        "name" : "credit_memos",
         "json_schema" : {},
         "supported_sync_modes" : [
           "incremental"
