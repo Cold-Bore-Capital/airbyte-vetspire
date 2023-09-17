@@ -9,7 +9,7 @@
       "type": ["string","null"]
     },
     "createdBy": {
-      "type": ["object","null"],
+      "type": ["array","null"],
       "properties": {
         "id": {
           "type": ["string","null"]
@@ -22,7 +22,7 @@
     },
     "endTime": {
       "type": ["string","null"],
-      "format": "time"
+      "format": "date-time"
     },
     "nightsReserved": {
       "type": ["integer","null"]
@@ -31,7 +31,7 @@
       "type": ["string","null"]
     },
     "order": {
-      "type": ["object","null"],
+      "type": ["array","null"],
       "properties": {
         "id": {
           "type": ["string","null"]
@@ -40,17 +40,14 @@
     },
     "patients": {
       "type": ["array","null"],
-      "items": {
-        "type": ["object","null"],
         "properties": {
           "id": {
             "type": ["string","null"]
           }
         }
-      }
     },
     "product": {
-      "type": ["object","null"],
+      "type": ["array","null"],
       "properties": {
         "id": {
           "type": ["string","null"]
@@ -58,7 +55,7 @@
       }
     },
     "reservationType": {
-      "type": ["object","null"],
+      "type": ["array","null"],
       "properties": {
         "name": {
           "type": ["string","null"]
@@ -71,7 +68,7 @@
     },
     "startTime": {
       "type": ["string","null"],
-      "format": "time"
+      "format": "date-time"
     },
     "status": {
       "type": ["string","null"]
