@@ -2,18 +2,18 @@
   "streams" : [
     {
       "stream" : {
-        "name" : "credit_memos",
+        "name" : "reservations_DAB010",
         "json_schema" : {},
         "supported_sync_modes" : [
           "incremental"
         ],
         "default_cursor_field" : [
-          "updatedAt"
+          "startDate"
         ]
       },
       "sync_mode" : "incremental",
       "cursor_field" : [
-        "updatedAt"
+        "startDate"
       ],
       "destination_sync_mode" : "append_dedup"
     }
