@@ -28,6 +28,7 @@
     "items": {
       "type" : ["array","null"],
       "properties" : {
+      "notRendered" : {"type" : ["boolean", "null"]},
       "historicalId" : {"type" : ["string", "null"]},
       "lineDiscountReason" : {"type" : ["string", "null"]},
       "planDiscountCents" : {"type" : ["number", "null"]},
@@ -43,6 +44,12 @@
        "date" : {"type" : ["string", "null"], "format" : "date"},
       "memberDiscountCents" : {"type" : ["number", "null"]},
       "name" : {"type" : ["string", "null"]},
+        "patient": {
+          "type" : ["array","null"],
+          "properties" : {
+            "id" : {"type" : ["string", "null"]}
+          }
+        },
       "quantity" : {"type" : ["number", "null"]},
       "quantityRemaining" : {"type" : ["number", "null"]},
       "quantityCredited" : {"type" : ["number", "null"]},

@@ -196,7 +196,7 @@ class VetspireV2Stream(HttpStream, ABC):
         elif 'reservations' in self.object_name:
             if pendulum.parse(stream_slice.get('startDate', None)) > pendulum.now():
                 # The code below makes sure we include the last 2 weeks of reservations.
-                pendulum.now() - pendulum.duration(days=self.lookback_window_days)
+                startDate = pendulum.now() - pendulum.duration(days=self.lookback_window_days)
             else:
                 startDate =  pendulum.parse(stream_slice.get('startDate', None)) - pendulum.duration(days=self.lookback_window_days)
             query = self._build_query(
@@ -273,8 +273,9 @@ class VetspireV2Stream(HttpStream, ABC):
             if self.offset is None:
                 pagination_complete = True
             # Add limit to offset to get next set of records and continue pagination
-            elif len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
-                self.offset = str(int(self.offset) + int(self.limit))
+            elif self.limit:
+                if len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
+                    self.offset = str(int(self.offset) + int(self.limit))
             else:
                 self.offset = '0'
                 pagination_complete = True
@@ -418,6 +419,7 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
     slice_granularity = pendulum.duration(microseconds=1)
     # state_checkpoint_interval = 300
     sync_mode = SyncMode.incremental
+    _slice_step = pendulum.duration(days=1)
 
     def __init__(
             self,
