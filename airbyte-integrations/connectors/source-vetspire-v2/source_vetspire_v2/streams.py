@@ -276,6 +276,9 @@ class VetspireV2Stream(HttpStream, ABC):
             elif self.limit:
                 if len(response.json()['data'].get(self.object_name, [])) == int(self.limit):
                     self.offset = str(int(self.offset) + int(self.limit))
+                else:
+                    self.offset = '0'
+                    pagination_complete = True
             else:
                 self.offset = '0'
                 pagination_complete = True
@@ -651,7 +654,7 @@ class Orders(IncrementalVetspireV2Stream):
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
-        self.limit = 10
+        self.limit = 100
         self.object_name = 'orders'
         self.locations = stream_kwargs.get('locations')
 
