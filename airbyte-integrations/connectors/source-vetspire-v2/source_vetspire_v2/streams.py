@@ -394,6 +394,7 @@ class EncounterTypes(VetspireV2StreamWithReq):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'encounterTypes'
+        self.locations = stream_kwargs.get('locations')
 
 
 class Locations(VetspireV2StreamWithReq):
@@ -408,7 +409,7 @@ class Locations(VetspireV2StreamWithReq):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'locations'
-        self.locations = None
+        self.locations = stream_kwargs.get('locations')
 
 
 
@@ -640,7 +641,7 @@ class Encounters(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'encounters'
-        self.locations = stream_kwargs.get('locations')
+        self.locations = None
 
 
 class Orders(IncrementalVetspireV2Stream):

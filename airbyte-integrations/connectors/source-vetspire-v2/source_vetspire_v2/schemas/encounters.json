@@ -350,6 +350,14 @@
           "type" : ["string", "null"]
         }
       }
+    },
+    "plan" :  {
+      "type" : ["array","null"],
+      "properties" : {
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
     }
   }
 }
