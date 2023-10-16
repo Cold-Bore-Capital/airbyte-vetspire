@@ -2,19 +2,16 @@
   "streams" : [
     {
       "stream" : {
-        "name" : "reservations_DAB010",
+        "name" : "encounters",
         "json_schema" : {},
         "supported_sync_modes" : [
           "incremental"
         ],
         "default_cursor_field" : [
-          "startDate"
+          "updatedAt"
         ]
       },
       "sync_mode" : "incremental",
-      "cursor_field" : [
-        "startDate"
-      ],
       "destination_sync_mode" : "append_dedup"
     }
   ]

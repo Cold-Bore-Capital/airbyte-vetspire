@@ -366,6 +366,7 @@ class Providers(VetspireV2StreamWithReq):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'providers'
+        self.locations = stream_kwargs.get('locations')
 
 
 class AppointmentTypes(VetspireV2StreamWithReq):
@@ -380,6 +381,7 @@ class AppointmentTypes(VetspireV2StreamWithReq):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'appointmentTypes'
+        self.locations = stream_kwargs.get('locations')
 
 
 class EncounterTypes(VetspireV2StreamWithReq):

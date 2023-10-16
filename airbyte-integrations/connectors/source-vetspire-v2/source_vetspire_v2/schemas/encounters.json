@@ -3,7 +3,7 @@
   "type" : "object",
   "properties" : {
     "additionalProviders" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -11,7 +11,7 @@
       }
     },
     "appointment" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -22,7 +22,7 @@
       "type" : ["string", "null"]
     },
     "checkedInBy" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -30,7 +30,7 @@
       }
     },
     "clientConsents" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -38,7 +38,7 @@
       }
     },
     "diagnostics" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -49,7 +49,7 @@
       }
     },
     "encounterProducts" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -57,7 +57,7 @@
       }
     },
     "encounterType" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -65,7 +65,7 @@
       }
     },
     "encounterVersions" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -73,7 +73,7 @@
       }
     },
     "estimates" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["number", "null"]
@@ -90,7 +90,7 @@
       "type" : ["string", "null"]
     },
     "immunizations" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -102,7 +102,7 @@
       "format" : "date-time"
     },
     "labOrders" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -110,7 +110,7 @@
       }
     },
     "labResults" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -118,7 +118,7 @@
       }
     },
     "linkedClinicalNotes" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -126,7 +126,7 @@
       }
     },
     "linkedEncounters" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -134,7 +134,7 @@
       }
     },
     "location" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -142,7 +142,7 @@
       }
     },
     "medications" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -160,7 +160,7 @@
       "type" : ["string", "null"]
     },
     "order" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -168,7 +168,7 @@
       }
     },
     "org" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -176,7 +176,7 @@
       }
     },
     "patient" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -184,7 +184,7 @@
       }
     },
     "patientComplications" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -192,7 +192,7 @@
       }
     },
     "problems" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -200,7 +200,7 @@
       }
     },
     "provider" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -211,67 +211,67 @@
       "type" : ["string", "null"]
     },
     "sections" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "addable" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "educable" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "immunable" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isAttachments" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isComplications" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isConsents" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isDiagnostics" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isDischarge" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isFollowup" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isImmunizations" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isIntake" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isLinkedEncounters" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isMedications" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isMonitoring" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isOrders" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isPrivate" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isProblems" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "isRequired" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "labable" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "medicable" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "metadata" : {
           "type" : ["string", "null"]
@@ -280,13 +280,13 @@
           "type" : ["string", "null"]
         },
         "onReferral" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "treatable" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         },
         "vitals" : {
-          "type" : ["string", "null"]
+          "type" : ["boolean", "null"]
         }
       }
     },
@@ -298,7 +298,7 @@
       "format" : "date-time"
     },
     "signer" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -313,7 +313,7 @@
       "type" : ["boolean", "null"]
     },
     "tasks" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -321,7 +321,7 @@
       }
     },
     "technician" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -332,7 +332,7 @@
       "type" : ["string", "null"]
     },
     "treatments" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -344,15 +344,23 @@
       "format" : "date-time"
     },
     "vitals" : {
-      "type" : ["array","null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
         }
       }
     },
-    "plan" :  {
-      "type" : ["array","null"],
+    "plan" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "assessment" : {
+      "type" : ["array", "null"],
       "properties" : {
         "value" : {
           "type" : ["string", "null"]

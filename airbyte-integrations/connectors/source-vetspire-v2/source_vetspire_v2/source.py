@@ -147,7 +147,7 @@ class SourceVetspireV2(AbstractSource):
 
         return [Appointments(authenticator=auth, **stream_kwargs),
                 AppointmentsDeleted(authenticator=auth, **stream_kwargs),
-                AppointmentTypes(authenticator=auth, **stream_kwargs),
+                AppointmentTypes(authenticator=auth, **stream_kwargs_no_limit),
                 Clients(authenticator=auth, **stream_kwargs),
                 CreditMemos(authenticator=auth, **stream_kwargs_with_locations),
                 Encounters(authenticator=auth, **stream_kwargs_with_locations),
