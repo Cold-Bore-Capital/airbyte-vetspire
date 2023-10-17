@@ -21,8 +21,7 @@
       "format": "date"
     },
     "endTime": {
-      "type": ["string","null"],
-      "format": "date-time"
+      "type": ["string","null"]
     },
     "nightsReserved": {
       "type": ["integer","null"]
@@ -67,8 +66,7 @@
       "format": "date"
     },
     "startTime": {
-      "type": ["string","null"],
-      "format": "date-time"
+      "type": ["string","null"]
     },
     "status": {
       "type": ["string","null"]

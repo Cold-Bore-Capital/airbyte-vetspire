@@ -99,7 +99,7 @@ class SourceVetspireV2(AbstractSource):
         """
         auth = VetAuth(config)
         locations = ["23860", "23771", "23770", "23769", "23768", "23859", "23858", "23857", "23864", "23863", "23069", "23597", "23862",
-                     "23861"]
+                     "23861","24069"]
 
         # Use this stream if the stream has limit and offset parameters but no location parameters
         stream_kwargs = {
@@ -128,22 +128,11 @@ class SourceVetspireV2(AbstractSource):
         stream_kwargs_reservations_DAB010["limit"] = None
         stream_kwargs_reservations_DAB010["locationId"] = 23860
 
-        stream_kwargs_reservations_DAB011 = stream_kwargs.copy()
-        stream_kwargs_reservations_DAB011["limit"] = None
-        stream_kwargs_reservations_DAB011["locationId"] = 23861
-
-        stream_kwargs_reservations_DAB012 = stream_kwargs.copy()
-        stream_kwargs_reservations_DAB012["limit"] = None
-        stream_kwargs_reservations_DAB012["locationId"] = 23862
-
         # Set DFW010 AND DFW012
         stream_kwargs_reservations_DFW010 = stream_kwargs.copy()
         stream_kwargs_reservations_DFW010["limit"] = None
         stream_kwargs_reservations_DFW010["locationId"] = 23597
 
-        stream_kwargs_reservations_DFW012 = stream_kwargs.copy()
-        stream_kwargs_reservations_DFW012["limit"] = None
-        stream_kwargs_reservations_DFW012["locationId"] = 23069
 
         return [Appointments(authenticator=auth, **stream_kwargs),
                 AppointmentsDeleted(authenticator=auth, **stream_kwargs),
@@ -163,9 +152,9 @@ class SourceVetspireV2(AbstractSource):
                 Products(authenticator=auth, **stream_kwargs),
                 Providers(authenticator=auth, **stream_kwargs_no_limit),
                 Reservations_DAB010(authenticator=auth, **stream_kwargs_reservations_DAB010),
-                Reservations_DAB011(authenticator=auth, **stream_kwargs_reservations_DAB011),
-                Reservations_DAB012(authenticator=auth, **stream_kwargs_reservations_DAB012),
+                # Reservations_DAB011(authenticator=auth, **stream_kwargs_reservations_DAB011),
+                # Reservations_DAB012(authenticator=auth, **stream_kwargs_reservations_DAB012),
                 Reservations_DFW010(authenticator=auth, **stream_kwargs_reservations_DFW010),
-                Reservations_DFW012(authenticator=auth, **stream_kwargs_reservations_DFW012),
+                # Reservations_DFW012(authenticator=auth, **stream_kwargs_reservations_DFW012),
                 Tasks(authenticator=auth, **stream_kwargs)
                 ]
