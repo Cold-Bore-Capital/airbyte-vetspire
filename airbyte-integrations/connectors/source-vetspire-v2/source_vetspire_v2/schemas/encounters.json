@@ -366,6 +366,22 @@
           "type" : ["string", "null"]
         }
       }
+    },
+    "objective" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "subjective" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
     }
   }
 }
