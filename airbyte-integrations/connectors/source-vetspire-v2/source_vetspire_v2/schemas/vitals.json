@@ -1,0 +1,23 @@
+{
+  "type" : "object",
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "properties" : {
+    "encounterId" : {"type" : ["string", "null"]},
+    "datetime" : {"type" : ["string", "null"], "format" : "date-time"},
+    "insertedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "updatedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "heartRate" : {"type" : ["number", "null"]},
+    "pain" : {"type" : ["number", "null"]},
+    "respRate" : {"type" : ["number", "null"]},
+    "temp" : {"type" : ["number", "null"]},
+    "weight" : {"type" : ["number", "null"]},
+    "weightUnit" : {"type" : ["string", "null"]},
+    "customs" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "name" : {"type" : ["string", "null"]},
+        "value" : {"type" : ["string", "null"]}
+      }
+    }
+  }
+}

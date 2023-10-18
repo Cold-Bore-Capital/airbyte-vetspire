@@ -37,6 +37,7 @@ from source_vetspire_v2.streams import (
     Reservations_DFW012,
     Reservations_DFW010,
     Tasks,
+    Vitals,
     IncrementalVetspireV2Stream,
     VetspireV2Stream,
 )
@@ -152,9 +153,7 @@ class SourceVetspireV2(AbstractSource):
                 Products(authenticator=auth, **stream_kwargs),
                 Providers(authenticator=auth, **stream_kwargs_no_limit),
                 Reservations_DAB010(authenticator=auth, **stream_kwargs_reservations_DAB010),
-                # Reservations_DAB011(authenticator=auth, **stream_kwargs_reservations_DAB011),
-                # Reservations_DAB012(authenticator=auth, **stream_kwargs_reservations_DAB012),
                 Reservations_DFW010(authenticator=auth, **stream_kwargs_reservations_DFW010),
-                # Reservations_DFW012(authenticator=auth, **stream_kwargs_reservations_DFW012),
+                Vitals(authenticator=auth, **stream_kwargs),
                 Tasks(authenticator=auth, **stream_kwargs)
                 ]
