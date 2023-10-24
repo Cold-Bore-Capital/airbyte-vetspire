@@ -222,6 +222,16 @@ class VetspireV2Stream(HttpStream, ABC):
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties()
             )
+        elif self.object_name == 'encounters':
+            query = self._build_query(
+                object_name=self.object_name,
+                field_schema=self._get_schema_root_properties(),
+                limit=self.limit,
+                offset=self.offset,
+                updatedAtStart=stream_slice.get('updatedAtStart', None),
+                updatedAtEnd=stream_slice.get('updatedAtEnd', None)
+            )
+            query = query.replace('intake{label,value}','intake {... on FieldDatum {label,value}}')
         else:
             query = self._build_query(
                 object_name=self.object_name,

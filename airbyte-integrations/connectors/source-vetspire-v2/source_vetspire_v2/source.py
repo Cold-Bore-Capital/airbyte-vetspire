@@ -101,6 +101,7 @@ class SourceVetspireV2(AbstractSource):
         auth = VetAuth(config)
         locations = ["23860", "23771", "23770", "23769", "23768", "23859", "23858", "23857", "23864", "23863", "23069", "23597", "23862",
                      "23861","24069","23889"]
+        # test location: "23079"
 
         # Use this stream if the stream has limit and offset parameters but no location parameters
         stream_kwargs = {

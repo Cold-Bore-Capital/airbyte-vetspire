@@ -382,6 +382,17 @@
           "type" : ["string", "null"]
         }
       }
+    },
+    "intake" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "label": {
+          "type" : ["string", "null"]
+        },
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
     }
   }
 }
