@@ -16,6 +16,7 @@
     "neuterDate" : {"type" : ["null", "string"]},
     "clientId" : {"type" : ["null", "string"]},
     "age" : {"type" : ["string", "null"]},
+    "identification" : {"type" : ["string", "null"]},
     "immunizations" : {
       "type" : ["array","null"],
           "properties" : {
