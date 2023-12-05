@@ -131,6 +131,9 @@ class VetspireV2Stream(HttpStream, ABC):
             if self.object_name == 'vitals':
                 object_list.append("from : \"2023-04-01T00:00:00Z\"")
 
+            if self.object_name == 'payments':
+                object_list.append("methods : [ACCOUNT_CREDIT, BAD_DEBT, REFUND]")
+
             if self.object_name == 'patientPlans':
                 object_list.append(
                     "filters: {updatedAtStart: \"" + object_arguments["updatedAtStart"] + "\", updatedAtEnd: \"" + object_arguments[

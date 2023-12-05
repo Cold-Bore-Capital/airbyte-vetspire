@@ -150,6 +150,7 @@ class SourceVetspireV2(AbstractSource):
                 PatientProtocols(authenticator=auth, **stream_kwargs_with_locations),
                 Patients(authenticator=auth, **stream_kwargs),
                 PatientPlans(authenticator=auth, **stream_kwargs),
+                Payments(authenticator=auth, **stream_kwargs_with_locations),
                 PreventionPlans(authenticator=auth, **stream_kwargs_no_limit),
                 ProductPackages(authenticator=auth, **stream_kwargs_no_limit),
                 ProductTypes(authenticator=auth, **stream_kwargs_no_limit),
