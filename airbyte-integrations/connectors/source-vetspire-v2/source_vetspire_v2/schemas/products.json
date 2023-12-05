@@ -39,12 +39,6 @@
           ],
           "format" : "date-time"
         },
-        "isActive" : {
-          "type" : [
-            "null",
-            "boolean"
-          ]
-        },
         "minimumPrice" : {
           "type" : [
             "null",
