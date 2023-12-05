@@ -232,6 +232,7 @@ class VetspireV2Stream(HttpStream, ABC):
                 updatedAtEnd=stream_slice.get('updatedAtEnd', None)
             )
             query = query.replace('intake{label,value}','intake {... on FieldDatum {label,value}}')
+            query = query.replace('sections{data{value,label}}', 'sections{name, data{ ... on ValuesetDatum {value,label}}}')
         else:
             query = self._build_query(
                 object_name=self.object_name,
@@ -736,6 +737,21 @@ class Products(IncrementalVetspireV2Stream):
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
         self.object_name = 'products'
+        self.locations = stream_kwargs.get('locations')
+
+class PatientProtocols(IncrementalVetspireV2Stream):
+    cursor_field = "dueDate" # "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    name = 'patient_protocols'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
+        self.object_name = 'patientProtocols'
         self.locations = stream_kwargs.get('locations')
 
 
