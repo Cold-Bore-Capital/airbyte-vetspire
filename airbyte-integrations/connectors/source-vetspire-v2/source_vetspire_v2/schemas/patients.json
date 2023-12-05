@@ -12,7 +12,7 @@
     "goalWeight" : {"type" : ["null", "integer"]},
     "isEstimatedWeight" : {"type" : ["null", "boolean"]},
     "firstHeatDate" : {"type" : ["null", "string"]},
-    "microchip" : {"type" : ["null", "boolean"]},
+    "microchip" : {"type" : ["null", "string"]},
     "neuterDate" : {"type" : ["null", "string"]},
     "clientId" : {"type" : ["null", "string"]},
     "age" : {"type" : ["string", "null"]},

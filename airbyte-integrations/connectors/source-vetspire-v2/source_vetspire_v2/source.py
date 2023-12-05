@@ -25,16 +25,24 @@ from source_vetspire_v2.streams import (
     OrderItems,
     Patients,
     PatientPlans,
+    PatientProtocols,
     Payments,
     PreventionPlans,
     Products,
     ProductTypes,
     ProductPackages,
     Providers,
+    Reservations_DAB011,
+    Reservations_DAB012,
+    Reservations_DAB010,
+    Reservations_DFW012,
+    Reservations_DFW010,
     Tasks,
+    Vitals,
     IncrementalVetspireV2Stream,
     VetspireV2Stream,
 )
+
 
 ## Create authentication method used for Vetspire API
 class VetAuth(AbstractHeaderAuthenticator):
@@ -92,7 +100,9 @@ class SourceVetspireV2(AbstractSource):
         :param config: A Mapping of the user input configuration as defined in the connector spec.
         """
         auth = VetAuth(config)
-        locations = ["23860", "23771", "23770", "23769", "23768", "23859", "23858", "23857", "23864", "23863", "23069", "23597", "23862", "23861"]
+        locations = ["23860", "23771", "23770", "23769", "23768", "23859", "23858", "23857", "23864", "23863", "23069", "23597", "23862",
+                     "23861","24069","23889"]
+        # test location: "23079"
 
         # Use this stream if the stream has limit and offset parameters but no location parameters
         stream_kwargs = {
@@ -115,9 +125,21 @@ class SourceVetspireV2(AbstractSource):
             "offset": None,
             "locations": None
         }
+
+        # Set DAB010, DAB011, and DAB012
+        stream_kwargs_reservations_DAB010 = stream_kwargs.copy()
+        stream_kwargs_reservations_DAB010["limit"] = None
+        stream_kwargs_reservations_DAB010["locationId"] = 23860
+
+        # Set DFW010 AND DFW012
+        stream_kwargs_reservations_DFW010 = stream_kwargs.copy()
+        stream_kwargs_reservations_DFW010["limit"] = None
+        stream_kwargs_reservations_DFW010["locationId"] = 23597
+
+
         return [Appointments(authenticator=auth, **stream_kwargs),
                 AppointmentsDeleted(authenticator=auth, **stream_kwargs),
-                AppointmentTypes(authenticator=auth, **stream_kwargs),
+                AppointmentTypes(authenticator=auth, **stream_kwargs_no_limit),
                 Clients(authenticator=auth, **stream_kwargs),
                 CreditMemos(authenticator=auth, **stream_kwargs_with_locations),
                 Encounters(authenticator=auth, **stream_kwargs_with_locations),
@@ -125,6 +147,7 @@ class SourceVetspireV2(AbstractSource):
                 Locations(authenticator=auth, **stream_kwargs_no_limit),
                 Orders(authenticator=auth, **stream_kwargs_with_locations),
                 OrderItems(authenticator=auth, **stream_kwargs_with_locations),
+                PatientProtocols(authenticator=auth, **stream_kwargs_with_locations),
                 Patients(authenticator=auth, **stream_kwargs),
                 PatientPlans(authenticator=auth, **stream_kwargs),
                 PreventionPlans(authenticator=auth, **stream_kwargs_no_limit),
@@ -132,5 +155,8 @@ class SourceVetspireV2(AbstractSource):
                 ProductTypes(authenticator=auth, **stream_kwargs_no_limit),
                 Products(authenticator=auth, **stream_kwargs),
                 Providers(authenticator=auth, **stream_kwargs_no_limit),
+                Reservations_DAB010(authenticator=auth, **stream_kwargs_reservations_DAB010),
+                Reservations_DFW010(authenticator=auth, **stream_kwargs_reservations_DFW010),
+                Vitals(authenticator=auth, **stream_kwargs),
                 Tasks(authenticator=auth, **stream_kwargs)
                 ]

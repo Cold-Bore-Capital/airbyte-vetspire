@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": ["string", "null"]
+    },
+    "boardingCageId": {
+      "type": ["string","null"]
+    },
+    "createdBy": {
+      "type": ["array","null"],
+      "properties": {
+        "id": {
+          "type": ["string","null"]
+        }
+      }
+    },
+    "endDate": {
+      "type": ["string","null"],
+      "format": "date"
+    },
+    "endTime": {
+      "type": ["string","null"],
+      "format": "date-time"
+    },
+    "nightsReserved": {
+      "type": ["integer","null"]
+    },
+    "notes": {
+      "type": ["string","null"]
+    },
+    "order": {
+      "type": ["array","null"],
+      "properties": {
+        "id": {
+          "type": ["string","null"]
+        }
+      }
+    },
+    "patients": {
+      "type": ["array","null"],
+        "properties": {
+          "id": {
+            "type": ["string","null"]
+          }
+        }
+    },
+    "product": {
+      "type": ["array","null"],
+      "properties": {
+        "id": {
+          "type": ["string","null"]
+        }
+      }
+    },
+    "reservationType": {
+      "type": ["array","null"],
+      "properties": {
+        "name": {
+          "type": ["string","null"]
+        }
+      }
+    },
+    "startDate": {
+      "type": ["string","null"],
+      "format": "date"
+    },
+    "startTime": {
+      "type": ["string","null"],
+      "format": "date-time"
+    },
+    "status": {
+      "type": ["string","null"]
+    }
+  }
+}

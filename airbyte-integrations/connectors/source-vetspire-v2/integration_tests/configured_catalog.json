@@ -2,7 +2,7 @@
   "streams" : [
     {
       "stream" : {
-        "name" : "credit_memos",
+        "name" : "encounters",
         "json_schema" : {},
         "supported_sync_modes" : [
           "incremental"
@@ -12,9 +12,6 @@
         ]
       },
       "sync_mode" : "incremental",
-      "cursor_field" : [
-        "updatedAt"
-      ],
       "destination_sync_mode" : "append_dedup"
     }
   ]

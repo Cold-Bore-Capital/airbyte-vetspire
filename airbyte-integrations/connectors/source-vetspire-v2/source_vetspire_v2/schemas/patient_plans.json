@@ -30,6 +30,7 @@
               }
             }
           },
+          "productIds": {"type" : ["array","null"], "additionalProperties" : true},
           "quantity" : {"type" : ["null", "number"]},
           "quantityUsed" : {"type" : ["null", "number"]},
           "unitTotal" : {"type" : ["null", "number"]}
