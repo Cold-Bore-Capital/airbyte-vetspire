@@ -386,11 +386,23 @@
     "intake" : {
       "type" : ["array", "null"],
       "properties" : {
-        "label": {
+        "label" : {
           "type" : ["string", "null"]
         },
         "value" : {
           "type" : ["string", "null"]
+        }
+      }
+    },
+    "sections" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "data" : {
+          "type" : ["array", "null"],
+          "properties" : {
+            "value" : {"type" : ["string", "null"]},
+            "label" : {"type" : ["string", "null"]}
+          }
         }
       }
     }
