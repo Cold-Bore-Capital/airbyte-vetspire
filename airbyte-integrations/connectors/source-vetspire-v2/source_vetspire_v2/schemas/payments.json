@@ -5,7 +5,10 @@
       "type" : ["null","number"]
     },
     "client" : {
-      "type" : ["null","number"]
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
     },
     "datetime" : {
       "type" : ["null","string"],
@@ -41,7 +44,10 @@
       "type" : ["null","string"]
     },
     "location" : {
-      "type" : ["null","number"]
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
     },
     "methodType" : {
       "type" : ["null","string"]
@@ -50,10 +56,16 @@
       "type" : ["null","string"]
     },
     "orders" : {
-      "type" : ["null","number"]
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
     },
     "provider" : {
-      "type" : ["null","number"]
+      "type" : ["null","array"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
     },
     "reference" : {
       "type" : ["null","string"]

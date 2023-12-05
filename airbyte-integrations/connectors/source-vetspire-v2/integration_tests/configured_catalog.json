@@ -2,7 +2,7 @@
   "streams" : [
     {
       "stream" : {
-        "name" : "encounters",
+        "name" : "payments",
         "json_schema" : {},
         "supported_sync_modes" : [
           "incremental"
