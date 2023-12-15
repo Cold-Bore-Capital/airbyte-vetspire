@@ -11,7 +11,7 @@
       }
     },
     "appointment" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -22,7 +22,7 @@
       "type" : ["string", "null"]
     },
     "checkedInBy" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -57,7 +57,7 @@
       }
     },
     "encounterType" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -65,7 +65,7 @@
       }
     },
     "encounterVersions" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -134,7 +134,7 @@
       }
     },
     "location" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -160,7 +160,7 @@
       "type" : ["string", "null"]
     },
     "order" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -168,7 +168,7 @@
       }
     },
     "org" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -176,7 +176,7 @@
       }
     },
     "patient" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -200,7 +200,7 @@
       }
     },
     "provider" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -298,7 +298,7 @@
       "format" : "date-time"
     },
     "signer" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -321,7 +321,7 @@
       }
     },
     "technician" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -352,7 +352,7 @@
       }
     },
     "plan" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "value" : {
           "type" : ["string", "null"]
@@ -360,7 +360,7 @@
       }
     },
     "assessment" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "value" : {
           "type" : ["string", "null"]
@@ -368,7 +368,7 @@
       }
     },
     "objective" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "value" : {
           "type" : ["string", "null"]
@@ -376,19 +376,8 @@
       }
     },
     "subjective" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
-        "value" : {
-          "type" : ["string", "null"]
-        }
-      }
-    },
-    "intake" : {
-      "type" : ["array", "null"],
-      "properties" : {
-        "label" : {
-          "type" : ["string", "null"]
-        },
         "value" : {
           "type" : ["string", "null"]
         }

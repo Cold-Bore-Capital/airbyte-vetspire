@@ -84,7 +84,7 @@
     "estimateType" : {"type" : ["null", "string"]},
     "discount" : {"type" : ["null", "string"]},
     "client" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {"id" : {"type" : ["null", "string"]}}
     },
     "lowTotalTaxCents" : {"type" : ["null", "integer"]},

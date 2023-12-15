@@ -13,7 +13,7 @@
     "status" : {"type" : ["string", "null"]},
     "discountType" : {"type" : ["string", "null"]},
     "patient" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
@@ -43,7 +43,7 @@
       "memberDiscountCents" : {"type" : ["number", "null"]},
       "name" : {"type" : ["string", "null"]},
         "patient": {
-          "type" : ["array","null"],
+          "type" : ["object","null"],
           "properties" : {
             "id" : {"type" : ["string", "null"]}
           }
@@ -76,14 +76,14 @@
     "memberDiscountCents" : {"type" : ["integer", "null"]},
     "stateTaxCents" : {"type" : ["integer", "null"]},
     "provider" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
     },
     "discount" : {"type" : ["number", "null"]},
     "client" : {
-      "type" : ["null","array"],
+      "type" : ["null","object"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }

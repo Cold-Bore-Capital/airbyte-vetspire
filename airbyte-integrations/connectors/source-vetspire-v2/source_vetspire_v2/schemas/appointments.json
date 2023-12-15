@@ -2,353 +2,141 @@
   "$schema" : "http://json-schema.org/draft-07/schema#",
   "type" : "object",
   "properties" : {
-    "checkInLink" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "checkInLink" : {"type" : ["string","null"]
     },
-    "historicalId" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "historicalId" : {"type" : ["string","null"]
     },
-    "checkingOutAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "checkingOutAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "comments" : {
-      "type" : [
-        "array",
-        "null"
-      ],
+    "comments" : {"type" : ["array","null"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     },
-    "note" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "note" : {"type" : ["string","null"]
     },
-    "id" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "id" : {"type" : ["string","null"]
     },
-    "status" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "status" : {"type" : ["string","null"]
     },
-    "deleted" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
+    "deleted" : {"type" : ["boolean","null"]
     },
-    "admittedAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "admittedAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "repeatingEvent" : {
-      "type" : [
-        "null",
-        "array"
-      ],
+    "repeatingEvent" : {"type" : ["null","object"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     },
-    "pickupTime" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "pickupTime" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "isConfirmed" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
+    "isConfirmed" : {"type" : ["boolean","null"]
     },
-    "type" : {
-      "type" : [
-        "null",
-        "array"
-      ],
+    "type" : {"type" : ["null","object"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     },
-    "sentPickup" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
+    "sentPickup" : {"type" : ["boolean","null"]
     },
-    "startedAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "startedAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "vitals" : {
-      "type" : [
-        "null",
-        "array"
-      ],
+    "vitals" : {"type" : ["null","object"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     },
-    "duration" : {
-      "type" : [
-        "integer",
-        "null"
-      ]
+    "duration" : {"type" : ["integer","null"]
     },
-    "scheduleId" : {
-      "type" : [
-        "integer",
-        "null"
-      ]
+    "scheduleId" : {"type" : ["integer","null"]
     },
-    "readyAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "readyAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "completedAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "completedAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "selfCheckInSent" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
+    "selfCheckInSent" : {"type" : ["boolean","null"]
     },
-    "location" : {
-      "type" : [
-        "null",
-        "array"
-      ],
+    "location" : {"type" : ["null","object"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     },
-    "contagionRisk" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
+    "contagionRisk" : {"type" : ["boolean","null"]
     },
-    "teleSessionCreated" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
+    "teleSessionCreated" : {"type" : ["boolean","null"]
     },
-    "updatedAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "updatedAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "arrivalTimeAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "arrivalTimeAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "confirmedAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "confirmedAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "checkedInAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "checkedInAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "npsScore" : {
-      "type" : [
-        "integer",
-        "null"
-      ]
+    "npsScore" : {"type" : ["integer","null"]
     },
-    "cage" : {
-      "type" : [
-        "null",
-        "array"
-      ],
+    "cage" : {"type" : ["null","array"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     },
-    "encounters" : {
-      "type" : [
-        "array",
-        "null"
-      ],
+    "encounters" : {"type" : ["array","null"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     },
-    "bookedOnline" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
+    "bookedOnline" : {"type" : ["boolean","null"]
     },
-    "checkedOutAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "checkedOutAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "providerId" : {
-      "type" : [
-        "integer",
-        "null"
-      ]
+    "providerId" : {"type" : ["integer","null"]
     },
-    "creator" : {
-      "type" : [
-        "null",
-        "array"
-      ],
+    "creator" : {"type" : ["null","object"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     },
-    "deletionReason" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "deletionReason" : {"type" : ["string","null"]
     },
-    "waitedAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "waitedAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "reason" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "reason" : {"type" : ["string","null"]
     },
-    "start" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "start" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "insertedAt" : {
-      "type" : [
-        "string",
-        "null"
-      ],
+    "insertedAt" : {"type" : ["string","null"],
       "format" : "date-time"
     },
-    "selfCheckedIn" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
+    "selfCheckedIn" : {"type" : ["boolean","null"]
     },
-    "room" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "room" : {"type" : ["string","null"]
     },
-    "patientId" : {
-      "type" : [
-        "string",
-        "null"
-      ]
+    "patientId" : {"type" : ["string","null"]
     },
-    "deletedBy" : {
-      "type" : [
-        "null",
-        "array"
-      ],
+    "deletedBy" : {"type" : ["null","array"],
       "properties" : {
-        "id" : {
-          "type" : [
-            "string",
-            "null"
-          ]
+        "id" : {"type" : ["string","null"]
         }
       }
     }

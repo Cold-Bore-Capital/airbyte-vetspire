@@ -73,7 +73,7 @@
       "type": ["string","null"]
     },
     "tags": {
-      "type": ["object","null"],
+      "type": ["array","null"],
       "properties" : {
         "id": {
           "type": ["string","null"]

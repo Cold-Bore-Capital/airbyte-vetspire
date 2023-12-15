@@ -1,6 +1,6 @@
 {
-  "type" : "object",
   "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
   "properties" : {
       "historicalId" : {"type" : ["string", "null"]},
       "lineDiscountReason" : {"type" : ["string", "null"]},
@@ -17,11 +17,11 @@
       "memberDiscountCents" : {"type" : ["number", "null"]},
       "name" : {"type" : ["string", "null"]},
       "order" : {
-        "type" : ["array", "null"],
+        "type" : ["object", "null"],
         "properties" : {
           "id" : {"type" : ["string", "null"]},
           "location": {
-          "type": ["array","null"],
+          "type": ["object","null"],
             "properties" : {
             "id": {"type" : ["string", "null"]}
             }

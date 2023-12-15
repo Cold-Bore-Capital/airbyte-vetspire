@@ -2,158 +2,31 @@
   "$schema" : "http://json-schema.org/draft-07/schema#",
   "type" : "object",
   "properties" : {
-    "historicalId" : {
-      "type" : [
-        "null",
-        "string"
-      ]
-    },
-    "id" : {
-      "type" : [
-        "null",
-        "string"
-      ]
-    },
-    "insertedAt" : {
-      "type" : [
-        "null",
-        "string"
-      ]
-    },
-    "invoiceBlurb" : {
-      "type" : "null"
-    },
-    "isBoarding" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isBoardingAddon" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isDefault" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isExam" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isFood" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isImmunization" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isInhouseDiagnostic" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isInjectable" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isMedication" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isRefDiagnostic" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isService" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isTaxed" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isTaxedCity" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isTaxedCounty" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isTaxedOther" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isTaxedState" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "isTreatment" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "name" : {
-      "type" : [
-        "null",
-        "string"
-      ]
-    },
-    "numberOfDeletedProducts" : {
-      "type" : [
-        "null",
-        "integer"
-      ]
-    },
-    "numberOfProducts" : {
-      "type" : [
-        "null",
-        "integer"
-      ]
-    },
-    "onlyInventory" : {
-      "type" : [
-        "boolean",
-        "null"
-      ]
-    },
-    "updatedAt" : {
-      "type" : [
-        "null",
-        "string"
-      ]
-    }
+    "historicalId" : {"type" : ["null","string"]},
+    "id" : {"type" : ["null","string"]},
+    "insertedAt" : {"type" : ["null","string"]},
+    "invoiceBlurb" : {"type" : ["string","null"]},
+    "isBoarding" : {"type" : ["boolean","null"]},
+    "isBoardingAddon" : {"type" : ["boolean","null"]},
+    "isDefault" : {"type" : ["boolean","null"]},
+    "isExam" : {"type" : ["boolean","null"]},
+    "isFood" : {"type" : ["boolean","null"]},
+    "isImmunization" : {"type" : ["boolean","null"]},
+    "isInhouseDiagnostic" : {"type" : ["boolean","null"]},
+    "isInjectable" : {"type" : ["boolean","null"]},
+    "isMedication" : {"type" : ["boolean","null"]},
+    "isRefDiagnostic" : {"type" : ["boolean","null"]},
+    "isService" : {"type" : ["boolean","null"]},
+    "isTaxed" : {"type" : ["boolean","null"]},
+    "isTaxedCity" : {"type" : ["boolean","null"]},
+    "isTaxedCounty" : {"type" : ["boolean","null"]},
+    "isTaxedOther" : {"type" : ["boolean","null"]},
+    "isTaxedState" : {"type" : ["boolean","null"]},
+    "isTreatment" : {"type" : ["boolean","null"]},
+    "name" : {"type" : ["null","string"]},
+    "numberOfDeletedProducts" : {"type" : ["null","integer"]},
+    "numberOfProducts" : {"type" : ["null","integer"]},
+    "onlyInventory" : {"type" : ["boolean","null"]},
+    "updatedAt" : {"type" : ["null","string"]}
   }
 }
