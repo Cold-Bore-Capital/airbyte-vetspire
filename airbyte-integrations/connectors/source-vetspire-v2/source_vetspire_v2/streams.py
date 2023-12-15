@@ -234,8 +234,8 @@ class VetspireV2Stream(HttpStream, ABC):
                 updatedAtStart=stream_slice.get('updatedAtStart', None),
                 updatedAtEnd=stream_slice.get('updatedAtEnd', None)
             )
-            query = query.replace('intake{label,value}','intake {... on FieldDatum {label,value}}')
-            query = query.replace('sections{data{value,label}}', 'sections{name, data{ ... on ValuesetDatum {value,label}}}')
+            # query = query.replace('intake{label,value}','intake {... on FieldDatum {label,value}}')
+            query = query.replace('sections{data{value,label}}', 'sections{name, data{ ... on ValuesetDatum {value,label} ... on FieldDatum {value, label}}}')
         else:
             query = self._build_query(
                 object_name=self.object_name,
