@@ -10,7 +10,43 @@ Images must be built with the correct platform for the target environment.  The 
 - Push Image:
     - docker push coldborecapital/source-vetspire:x.x.x
 
+## Json Schema 
+We use Json Schema version 7 for this repository. With graphql, 
+we drill into objects in a given query. For example, in 
+the appointments graphql query, we need to extract locationId. 
+We do this with the following example: 
 
+```query {appointments {location {id}}}```
+
+In order to define a json schema to extract the locationId, one must use an object type
+as follows: 
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#", "type": "object", "properties": {
+    "location": {
+      "type": ["object", "null"], "properties": {
+        "id": {"type": ["string", "null"]}
+      }
+    }
+  }
+}
+```
+
+There are other instances where we might expect more than one id to be returned. An example is if we want to extract 
+encounters from appointments as an appointment can have more than one encounter.  
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#", "type": "object", "properties": {
+    "encounters": {
+      "type": ["array", "null"], "properties": {
+        "id": {"type": ["string", "null"]}
+      }
+    }
+  }
+}
+```
 ## Local development
 
 ### Prerequisites
