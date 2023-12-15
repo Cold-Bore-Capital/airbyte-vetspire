@@ -5,7 +5,7 @@
       "type" : ["null","number"]
     },
     "client" : {
-      "type" : ["null","array"],
+      "type" : ["null","object"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
@@ -44,7 +44,7 @@
       "type" : ["null","string"]
     },
     "location" : {
-      "type" : ["null","array"],
+      "type" : ["null","object"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }
@@ -62,7 +62,7 @@
       }
     },
     "provider" : {
-      "type" : ["null","array"],
+      "type" : ["null","object"],
       "properties" : {
         "id" : {"type" : ["string", "null"]}
       }

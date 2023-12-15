@@ -1,103 +1,38 @@
   {"$schema" : "http://json-schema.org/draft-07/schema#",
   "type" : "object",
   "properties" : {
-    "defaultLocationId": {
-      "type": ["null","number"]
-    },
-    "email" : {
-      "type" : ["null", "string"]
-    },
-    "name" : {
-      "type" : ["null", "string"]
-    },
-    "id" : {
-      "type" : ["null", "integer"]
-    },
-    "isActive" : {
-      "type" : ["null", "boolean"]
-    },
-    "insertedAt" : {
-      "type" : ["null", "string"],
-      "format" : "date-time"
-    },
-    "familyName" : {
-      "type": ["null","string"]
-    },
-    "givenName" : {
-      "type" : ["null","string"]
-    },
-    "historicalId" : {
-      "type" : ["null","string"]
-    },
-    "isCallCenter" : {
-      "type" : ["null","boolean"]
-    },
-    "isGroomer" : {
-      "type" : ["null","boolean"]
-    },
-    "isOrgAdmin" : {
-      "type" : ["null","boolean"]
-    },
-    "isRelief" : {
-      "type" : ["null","boolean"]
-    },
-    "isSsoEnabled" : {
-      "type" : ["null","boolean"]
-    },
-    "isVeterinarian" : {
-      "type" : ["null","boolean"]
-    },
-    "licenses" : {
-      "type" : ["array","null"],
-        "properties" : {
-          "id" : {
-            "type" : ["null","integer"]
-          },
-          "isActive" : {
-            "type" : ["null","boolean"]
-          },
-          "expirationDate" : {
-            "type" : ["null","string"],
-            "format" : "date-time"
-          }
-        }
-    },
-    "missingVetLicense" : {
-      "type" : ["null","boolean"]
-    },
-    "payrollId" : {
-      "type" : ["null","string"]
-    },
-    "position" : {
-      "type" : ["null","integer"]
-    },
-    "profileImageUrl" : {
-      "type" : ["null","string"]
-    },
-    "providerRoleId" : {
-      "type" : ["null","integer"]
-    },
-    "scheduleTemplate" : {
-      "type" : ["null","string"]
-    },
-    "shortBio" : {
-      "type" : ["null","string"]
-    },
-    "suffix" : {
-      "type" : ["null","string"]
-    },
-    "title" : {
-      "type" : ["null","string"]
-    },
-    "updatedAt" : {
-      "type" : ["null", "string"],
-      "format" : "date-time"
-    },
-    "username" : {
-      "type" : ["null","string"]
-    },
-    "verified" : {
-      "type" : ["null","boolean"]
-    }
+    "defaultLocationId": {"type": ["null","number"]},
+    "email" : {"type" : ["null", "string"]},
+    "name" : {"type" : ["null", "string"]},
+    "id" : {"type" : ["null", "integer"]},
+    "isActive" : {"type" : ["null", "boolean"]},
+    "insertedAt" : {"type" : ["null", "string"],"format" : "date-time"},
+    "familyName" : {"type": ["null","string"]},
+    "givenName" : {"type" : ["null","string"]},
+    "historicalId" : {"type" : ["null","string"]},
+    "isCallCenter" : {"type" : ["null","boolean"]},
+    "isGroomer" : {"type" : ["null","boolean"]},
+    "isOrgAdmin" : {"type" : ["null","boolean"]},
+    "isRelief" : {"type" : ["null","boolean"]},
+    "isSsoEnabled" : {"type" : ["null","boolean"]},
+    "isVeterinarian" : {"type" : ["null","boolean"]},
+    "licenses" : {"type" : ["array","null"],
+      "properties" : {
+        "id" : {"type" : ["null","integer"]    },
+        "isActive" : {"type" : ["null","boolean"]},
+        "expirationDate" : {"type" : ["null","string"],
+          "format" : "date-time"}  }},
+    "missingVetLicense" : {"type" : ["null","boolean"]},
+    "payrollId" : {"type" : ["null","string"]},
+    "position" : {"type" : ["null","integer"]},
+    "profileImageUrl" : {"type" : ["null","string"]},
+    "providerRoleId" : {"type" : ["null","integer"]},
+    "scheduleTemplate" : {"type" : ["null","string"]},
+    "shortBio" : {"type" : ["null","string"]},
+    "suffix" : {"type" : ["null","string"]},
+    "title" : {"type" : ["null","string"]},
+    "updatedAt" : {"type" : ["null", "string"],"format" : "date-time"},
+    "username" : {"type" : ["null","string"]},
+    "verified" : {"type" : ["null","boolean"]}
   }
 }

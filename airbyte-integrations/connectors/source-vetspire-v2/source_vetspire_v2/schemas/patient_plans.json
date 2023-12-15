@@ -15,7 +15,7 @@
           "id" : {"type" : ["string", "null"]},
           "name" : {"type" : ["null", "string"]},
           "package" : {
-            "type" : ["array","null"],
+            "type" : ["object","null"],
             "properties" : {
               "id" : {
                 "type" : ["integer", "null"]
@@ -23,7 +23,7 @@
             }
           },
           "product" : {
-            "type" : ["array","null"],
+            "type" : ["object","null"],
             "properties" : {
               "id" : {
                 "type" : ["string", "null"]
@@ -38,7 +38,7 @@
     },
     "startDate" : {"type" : ["null", "string"], "format" : "date"},
     "location" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -46,7 +46,7 @@
       }
     },
     "patient" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -57,7 +57,7 @@
     "planDiscountPercent" : {"type" : ["null", "string"]},
     "planInterval" : {"type" : ["null", "string"]},
     "preventionPlan" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -65,7 +65,7 @@
       }
     },
     "renewalPlan" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]

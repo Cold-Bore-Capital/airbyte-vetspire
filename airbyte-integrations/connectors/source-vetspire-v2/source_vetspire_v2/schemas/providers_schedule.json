@@ -9,7 +9,7 @@
       "type" : ["null", "integer"]
     },
     "provider" : {
-      "type" : ["array","null"],
+      "type" : ["object","null"],
       "properties" : {
         "id" : {
           "type" : ["null", "integer"]
