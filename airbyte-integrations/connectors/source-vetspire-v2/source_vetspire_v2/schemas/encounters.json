@@ -65,7 +65,7 @@
       }
     },
     "encounterVersions" : {
-      "type" : ["object", "null"],
+      "type" : ["array", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
@@ -84,7 +84,7 @@
       }
     },
     "historicalId" : {
-      "type" : ["integer", "null"]
+      "type" : ["string", "null"]
     },
     "id" : {
       "type" : ["string", "null"]
@@ -352,7 +352,7 @@
       }
     },
     "plan" : {
-      "type" : ["object", "null"],
+      "type" : ["array", "null"],
       "properties" : {
         "value" : {
           "type" : ["string", "null"]
@@ -360,7 +360,7 @@
       }
     },
     "assessment" : {
-      "type" : ["object", "null"],
+      "type" : ["array", "null"],
       "properties" : {
         "value" : {
           "type" : ["string", "null"]
@@ -368,7 +368,7 @@
       }
     },
     "objective" : {
-      "type" : ["object", "null"],
+      "type" : ["array", "null"],
       "properties" : {
         "value" : {
           "type" : ["string", "null"]
@@ -376,7 +376,7 @@
       }
     },
     "subjective" : {
-      "type" : ["object", "null"],
+      "type" : ["array", "null"],
       "properties" : {
         "value" : {
           "type" : ["string", "null"]

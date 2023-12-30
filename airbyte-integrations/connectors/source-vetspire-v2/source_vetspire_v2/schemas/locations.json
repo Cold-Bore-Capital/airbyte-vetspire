@@ -8,7 +8,26 @@
         "integer"
       ]
     },
-    "address" : {
+    "addressString" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "email":
+    {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "name" : {
+      "type" : [
+        "null",
+        "string"
+      ]
+    },
+    "phoneNumber": {
       "type" : [
         "null",
         "string"
