@@ -344,7 +344,7 @@
       "format" : "date-time"
     },
     "vitals" : {
-      "type" : ["array", "null"],
+      "type" : ["object", "null"],
       "properties" : {
         "id" : {
           "type" : ["string", "null"]
