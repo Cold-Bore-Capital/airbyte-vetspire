@@ -27,6 +27,6 @@
     "numberOfDeletedProducts" : {"type" : ["null","integer"]},
     "numberOfProducts" : {"type" : ["null","integer"]},
     "onlyInventory" : {"type" : ["boolean","null"]},
-    "updatedAt" : {"type" : ["null","string"]}
+    "updatedAt" : {"type" : ["null","string"], "format": "date-time"}
   }
 }

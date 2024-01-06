@@ -4,17 +4,17 @@
 
 from unittest.mock import MagicMock
 
-from source_vetspire.source import SourceVetspire
+from source_vetspire_v2.source import SourceVetspireV2
 
 
 def test_check_connection(mocker):
-    source = SourceVetspire()
+    source = SourceVetspireV2()
     logger_mock, config_mock = MagicMock(), MagicMock()
     assert source.check_connection(logger_mock, config_mock) == (True, None)
 
 
 def test_streams(mocker):
-    source = SourceVetspire()
+    source = SourceVetspireV2()
     config_mock = MagicMock()
     streams = source.streams(config_mock)
     # TODO: replace this with your streams number

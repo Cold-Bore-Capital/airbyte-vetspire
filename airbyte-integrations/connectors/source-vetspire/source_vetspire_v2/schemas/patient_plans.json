@@ -76,7 +76,7 @@
     "total" : {"type" : ["null", "number"]},
     "usedRevenue": {"type" : ["null", "number"]},
     "value" : {"type" : ["null", "number"]},
-    "updatedAt": {"type" : ["null", "string"], "format" : "date"}
+    "updatedAt": {"type" : ["null", "string"], "format" : "date-time"}
   }
 }
 

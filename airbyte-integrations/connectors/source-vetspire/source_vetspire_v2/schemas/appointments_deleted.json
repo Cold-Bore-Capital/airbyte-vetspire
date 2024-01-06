@@ -134,7 +134,7 @@
     },
     "patientId" : {"type" : ["string","null"]
     },
-    "deletedBy" : {"type" : ["null","array"],
+    "deletedBy" : {"type" : ["null","object"],
       "properties" : {
         "id" : {"type" : ["string","null"]
         }

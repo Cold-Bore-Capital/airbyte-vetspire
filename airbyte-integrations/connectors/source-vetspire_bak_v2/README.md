@@ -1,52 +1,8 @@
-# Vetspire V2 Source
+# Vetspire Source
 
-This is the repository for the Vetspire V2 source connector, written in Python.
-For information about how to use this connector within Airbyte, see [the documentation](https://docs.airbyte.com/integrations/sources/vetspire-v2).
+This is the repository for the Vetspire source connector, written in Python.
+For information about how to use this connector within Airbyte, see [the documentation](https://docs.airbyte.com/integrations/sources/vetspire).
 
-## Create a docker image
-Images must be built with the correct platform for the target environment.  The following commands will build and push the image for the target platform.
-- Build Image:
-    - docker build . -t coldborecapital/source-vetspire:x.x.x --platform linux/amd64
-- Push Image:
-    - docker push coldborecapital/source-vetspire:x.x.x
-
-## Json Schema 
-We use Json Schema version 7 for this repository. With graphql, 
-we drill into objects in a given query. For example, in 
-the appointments graphql query, we need to extract locationId. 
-We do this with the following example: 
-
-```query {appointments {location {id}}}```
-
-In order to define a json schema to extract the locationId, one must use an object type
-as follows: 
-
-```json
-{
-  "$schema": "http://json-schema.org/draft-07/schema#", "type": "object", "properties": {
-    "location": {
-      "type": ["object", "null"], "properties": {
-        "id": {"type": ["string", "null"]}
-      }
-    }
-  }
-}
-```
-
-There are other instances where we might expect more than one id to be returned. An example is if we want to extract 
-encounters from appointments as an appointment can have more than one encounter.  
-
-```json
-{
-  "$schema": "http://json-schema.org/draft-07/schema#", "type": "object", "properties": {
-    "encounters": {
-      "type": ["array", "null"], "properties": {
-        "id": {"type": ["string", "null"]}
-      }
-    }
-  }
-}
-```
 ## Local development
 
 ### Prerequisites
@@ -79,16 +35,16 @@ You can also build the connector in Gradle. This is typically used in CI and not
 
 To build using Gradle, from the Airbyte repository root, run:
 ```
-./gradlew :airbyte-integrations:connectors:source-vetspire-v2:build
+./gradlew :airbyte-integrations:connectors:source-vetspire:build
 ```
 
 #### Create credentials
-**If you are a community contributor**, follow the instructions in the [documentation](https://docs.airbyte.com/integrations/sources/vetspire-v2)
-to generate the necessary credentials. Then create a file `secrets/config.json` conforming to the `source_vetspire_v2/spec.yaml` file.
+**If you are a community contributor**, follow the instructions in the [documentation](https://docs.airbyte.com/integrations/sources/vetspire)
+to generate the necessary credentials. Then create a file `secrets/config.json` conforming to the `source_vetspire/spec.yaml` file.
 Note that any directory named `secrets` is gitignored across the entire Airbyte repo, so there is no danger of accidentally checking in sensitive information.
 See `integration_tests/sample_config.json` for a sample config file.
 
-**If you are an Airbyte core member**, copy the credentials in Lastpass under the secret name `source vetspire-v2 test creds`
+**If you are an Airbyte core member**, copy the credentials in Lastpass under the secret name `source vetspire test creds`
 and place them into `secrets/config.json`.
 
 ### Locally running the connector
@@ -104,7 +60,7 @@ python main.py read --config secrets/config.json --catalog integration_tests/con
 #### Build
 First, make sure you build the latest Docker image:
 ```
-docker build . -t airbyte/source-vetspire-v2:dev
+docker build . -t airbyte/source-vetspire:dev
 ```
 
 If you want to build the Docker image with the CDK on your local machine (rather than the most recent package published to pypi), from the airbyte base directory run:
@@ -115,7 +71,7 @@ CONNECTOR_TAG=<TAG_NAME> CONNECTOR_NAME=<CONNECTOR_NAME> sh airbyte-integrations
 
 You can also build the connector image via Gradle:
 ```
-./gradlew :airbyte-integrations:connectors:source-vetspire-v2:airbyteDocker
+./gradlew :airbyte-integrations:connectors:source-vetspire:airbyteDocker
 ```
 When building via Gradle, the docker image name and tag, respectively, are the values of the `io.airbyte.name` and `io.airbyte.version` `LABEL`s in
 the Dockerfile.
@@ -123,10 +79,10 @@ the Dockerfile.
 #### Run
 Then run any of the connector commands as follows:
 ```
-docker run --rm airbyte/source-vetspire-v2:dev spec
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-vetspire-v2:dev check --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-vetspire-v2:dev discover --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-vetspire-v2:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
+docker run --rm airbyte/source-vetspire:dev spec
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-vetspire:dev check --config /secrets/config.json
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-vetspire:dev discover --config /secrets/config.json
+docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-vetspire:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
 ```
 ## Testing
 Make sure to familiarize yourself with [pytest test discovery](https://docs.pytest.org/en/latest/goodpractices.html#test-discovery) to know how your test files and methods should be named.
@@ -160,11 +116,11 @@ To run your integration tests with docker
 All commands should be run from airbyte project root.
 To run unit tests:
 ```
-./gradlew :airbyte-integrations:connectors:source-vetspire-v2:unitTest
+./gradlew :airbyte-integrations:connectors:source-vetspire:unitTest
 ```
 To run acceptance and custom integration tests:
 ```
-./gradlew :airbyte-integrations:connectors:source-vetspire-v2:integrationTest
+./gradlew :airbyte-integrations:connectors:source-vetspire:integrationTest
 ```
 
 ## Dependency Management

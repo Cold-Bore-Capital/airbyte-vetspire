@@ -40,6 +40,12 @@
         "name" : {"type" : ["string","null"]}
       }
     },
+    "revenueCenter" : {
+      "type" : ["object","null"],
+      "properties" : {
+        "id" : {"type" : ["string","null"]}
+      }
+    },
     "url" : {"type" : ["null","string"]},
     "onlyInventory" : {"type" : ["null","boolean"]},
     "ageRestriction" : {"type" : ["null","string"]},

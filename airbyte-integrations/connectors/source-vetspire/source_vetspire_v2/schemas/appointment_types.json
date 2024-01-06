@@ -70,7 +70,7 @@
       "type": ["boolean","null"]
     },
     "updatedAt": {
-      "type": ["string","null"]
+      "type": ["string","null"], "format": "date-time"
     },
     "tags": {
       "type": ["array","null"],

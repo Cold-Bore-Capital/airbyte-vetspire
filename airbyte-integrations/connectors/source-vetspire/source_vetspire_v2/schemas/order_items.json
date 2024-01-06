@@ -1,0 +1,59 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "historicalId" : {"type" : ["string", "null"]},
+    "lineDiscountReason" : {"type" : ["string", "null"]},
+    "planDiscountCents" : {"type" : ["number", "null"]},
+    "date" : {"type" : ["string", "null"], "format" : "date"},
+    "discountAmount" : {"type" : ["number", "null"]},
+    "discounted" : {"type" : ["boolean", "null"]},
+    "dispenseFee" : {"type" : ["number", "null"]},
+    "id" : {"type" : ["string", "null"]},
+    "productId" : {"type" : ["string", "null"]},
+    "inPackage" : {"type" : ["boolean", "null"]},
+    "itemDiscountWithOrderDiscountCents" : {"type" : ["integer", "null"]},
+    "itemDiscountWithoutOrderDiscountCents" : {"type" : ["integer", "null"]},
+    "insertedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "memberDiscountCents" : {"type" : ["number", "null"]},
+    "name" : {"type" : ["string", "null"]},
+    "notRendered" : {"type" : ["boolean", "null"]},
+    "order" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]},
+        "location" : {
+          "type" : ["object", "null"],
+          "properties" : {
+            "id" : {"type" : ["string", "null"]}
+          }
+        }
+      }
+    },
+    "package" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "quantity" : {"type" : ["number", "null"]},
+    "quantityRemaining" : {"type" : ["number", "null"]},
+    "quantityCredited" : {"type" : ["number", "null"]},
+    "refunded" : {"type" : ["boolean", "null"]},
+    "refundedAt" : {"type" : ["string", "null"], "format" : "date-time"},
+    "refundedQuantity" : {"type" : ["number", "null"]},
+    "subtotalCents" : {"type" : ["integer", "null"]},
+    "totalBeforeTaxCents" : {"type" : ["integer", "null"]},
+    "totalAfterTaxCents" : {"type" : ["integer", "null"]},
+    "totalDiscountCents" : {"type" : ["integer", "null"]},
+    "unitPrice" : {"type" : ["number", "null"]},
+    "volumeTiers" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "tier" : {"type" : ["integer", "null"]},
+        "unitFee" : {"type" : ["string", "null"]}
+      }
+    },
+    "updatedAt" : {"type" : ["string", "null"], "format" : "date-time"}
+  }
+}

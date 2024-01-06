@@ -46,7 +46,7 @@
     },
     "stopReminders" : {"type" : ["null","boolean"]
     },
-    "updatedAt" : {"type" : ["null","string"]
+    "updatedAt" : {"type" : ["null","string"], "format": "date-time"
     },
     "isActive" : {
       "type" : "boolean"
