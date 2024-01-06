@@ -5,5 +5,5 @@ plugins {
 }
 
 airbytePython {
-    moduleDirectory 'source_vetspire'
+    moduleDirectory 'source_vetspire_v2'
 }

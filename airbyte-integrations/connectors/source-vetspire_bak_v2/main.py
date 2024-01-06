@@ -6,8 +6,8 @@
 import sys
 
 from airbyte_cdk.entrypoint import launch
-from source_vetspire_v2 import SourceVetspireV2
+from source_vetspire import SourceVetspire
 
 if __name__ == "__main__":
-    source = SourceVetspireV2()
+    source = SourceVetspire()
     launch(source, sys.argv[1:])

@@ -7,16 +7,16 @@ data:
       enabled: false
   connectorSubtype: api
   connectorType: source
-  definitionId: 349415d6-e8bd-4a99-a0d5-ce3684361c5b
+  definitionId: eb0d56f5-0f78-4605-8371-c513a2c57ad3
   dockerImageTag: 0.1.0
-  dockerRepository: airbyte/source-vetspire-v2
-  githubIssueLabel: source-vetspire-v2
-  icon: vetspire-v2.svg
+  dockerRepository: airbyte/source-vetspire
+  githubIssueLabel: source-vetspire
+  icon: vetspire.svg
   license: MIT
-  name: Vetspire V2
+  name: Vetspire
   releaseDate: TODO
   releaseStage: alpha
-  documentationUrl: https://docs.airbyte.com/integrations/sources/vetspire-v2
+  documentationUrl: https://docs.airbyte.com/integrations/sources/vetspire
   tags:
     - language:python
 metadataSpecVersion: "1.0"

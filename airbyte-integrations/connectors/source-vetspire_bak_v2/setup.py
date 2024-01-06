@@ -16,8 +16,8 @@ TEST_REQUIREMENTS = [
 ]
 
 setup(
-    name="source_vetspire_v2",
-    description="Source implementation for Vetspire V2.",
+    name="source_vetspire",
+    description="Source implementation for Vetspire.",
     author="Airbyte",
     author_email="contact@airbyte.io",
     packages=find_packages(),
