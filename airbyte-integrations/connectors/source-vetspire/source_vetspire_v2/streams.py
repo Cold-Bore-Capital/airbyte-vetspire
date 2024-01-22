@@ -33,6 +33,7 @@ class VetspireV2Stream(HttpStream, ABC):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
+        self.object_name = None
         self._next_page_token = None
         self.lookback_window_days = 14
 
@@ -151,7 +152,7 @@ class VetspireV2Stream(HttpStream, ABC):
                 #     raise Exception(f"Unknown argument {k} for object {self.object_name}")
         return ",".join(object_list)
 
-    def _build_query(self, object_name: str, field_schema: dict, **object_arguments) -> str:
+    def _build_query(self, object_name: str, field_schema: dict, **object_arguments: object) -> str:
         """
         Recursive function that builds a GraphQL query string by traversing given stream schema properties.
         Attributes
@@ -209,7 +210,7 @@ class VetspireV2Stream(HttpStream, ABC):
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties(),
                 startDate=startDate.format(self.date_filter_template),
-                endDate=(pendulum.now() + pendulum.duration(days=180)).format(self.date_filter_template),
+                endDate=(pendulum.now() + pendulum.duration(days=60)).format(self.date_filter_template),
                 locationId=self.locationId,
             )
         elif self.object_name in ['encounterTypes', 'appointmentTypes', 'productPackages', 'preventionPlans', 'productTypes', 'providers',
@@ -857,14 +858,14 @@ class Tasks(IncrementalVetspireV2Stream):
 class Reservations_DAB010(IncrementalVetspireV2Stream):
     name = 'reservations_DAB010'
     cursor_field = "startDate"
-    _slice_step = pendulum.duration(days=365)
+    _slice_step = pendulum.duration(days=60)
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "startDate"
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
@@ -876,14 +877,14 @@ class Reservations_DAB010(IncrementalVetspireV2Stream):
 class Reservations_DAB011(IncrementalVetspireV2Stream):
     name = 'reservations_DAB011'
     cursor_field = "startDate"
-    _slice_step = pendulum.duration(days=365)
+    _slice_step = pendulum.duration(days=60)
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "startDate"
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
@@ -894,14 +895,14 @@ class Reservations_DAB011(IncrementalVetspireV2Stream):
 class Reservations_DAB012(IncrementalVetspireV2Stream):
     name = 'reservations_DAB012'
     cursor_field = "startDate"
-    _slice_step = pendulum.duration(days=365)
+    _slice_step = pendulum.duration(days=60)
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "startDate"
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
@@ -912,14 +913,14 @@ class Reservations_DAB012(IncrementalVetspireV2Stream):
 class Reservations_DFW012(IncrementalVetspireV2Stream):
     name = 'reservations_DFW012'
     cursor_field = "startDate"
-    _slice_step = pendulum.duration(days=365)
+    _slice_step = pendulum.duration(days=60)
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "startDate"
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
@@ -930,14 +931,14 @@ class Reservations_DFW012(IncrementalVetspireV2Stream):
 class Reservations_DFW010(IncrementalVetspireV2Stream):
     name = 'reservations_DFW010'
     cursor_field = "startDate"
-    _slice_step = pendulum.duration(days=365)
+    _slice_step = pendulum.duration(days=60)
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "startDate"
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
