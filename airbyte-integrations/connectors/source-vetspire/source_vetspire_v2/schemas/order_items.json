@@ -36,6 +36,18 @@
         "id" : {"type" : ["string", "null"]}
       }
     },
+    "provider" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
+    "patient" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {"type" : ["string", "null"]}
+      }
+    },
     "quantity" : {"type" : ["number", "null"]},
     "quantityRemaining" : {"type" : ["number", "null"]},
     "quantityCredited" : {"type" : ["number", "null"]},

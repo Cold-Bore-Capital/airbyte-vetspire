@@ -2,16 +2,16 @@
   "streams" : [
     {
       "stream" : {
-        "name" : "locations",
+        "name" : "reservations_DAB010",
         "json_schema" : {},
         "supported_sync_modes" : [
-          "full_refresh"
+          "incremental"
         ],
         "default_cursor_field" : [
           "updatedAt"
         ]
       },
-      "sync_mode" : "full_refresh",
+      "sync_mode" : "incremental",
       "destination_sync_mode" : "append_dedup"
     }
   ]
