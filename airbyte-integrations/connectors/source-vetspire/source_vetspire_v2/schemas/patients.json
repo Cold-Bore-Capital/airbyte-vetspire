@@ -33,6 +33,19 @@
           }
         }
     },
+    "tags" : {
+      "type" : ["array","null"],
+          "properties" : {
+            "id" : {"type" : ["null", "string"]},
+            "name" : { "type" : ["null", "string"]},
+            "coupon": {
+              "type": ["object", "null"],
+              "properties" : {
+                "id": {"type": ["null", "string"]}
+              }
+            }
+        }
+    },
     "microchipRegistered" : {"type" : ["null", "boolean"]},
     "updatedAt" : {"type" : ["null", "string"], "format" : "date-time"},
     "isActive" : {"type" : ["null", "boolean"]},
