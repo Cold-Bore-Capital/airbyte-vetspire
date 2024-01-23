@@ -58,6 +58,19 @@
         "preferred" : {"type" : ["boolean", "null"]}
       }
     },
+    "tags" : {
+      "type" : ["array","null"],
+          "properties" : {
+            "id" : {"type" : ["null", "string"]},
+            "name" : { "type" : ["null", "string"]},
+            "coupons": {
+              "type": ["object", "null"],
+              "properties" : {
+                "id": {"type": ["null", "string"]}
+              }
+            }
+        }
+    },
     "lastSyncedAt" : {"type" : ["null","string"],
       "format" : "date-time"
     },
