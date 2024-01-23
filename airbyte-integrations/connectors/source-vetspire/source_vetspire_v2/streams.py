@@ -9,7 +9,8 @@ from airbyte_cdk.sources.streams.core import Stream, StreamData
 from airbyte_cdk.sources.streams import Stream, IncrementalMixin
 from airbyte_cdk.sources.streams.http.auth.core import HttpAuthenticator
 from airbyte_cdk.sources.streams.http.rate_limiting import default_backoff_handler, user_defined_backoff_handler
-from airbyte_cdk.sources.streams.http.exceptions import DefaultBackoffException, RequestBodyException, UserDefinedBackoffException
+from airbyte_cdk.sources.streams.http.exceptions import DefaultBackoffException, RequestBodyException, \
+    UserDefinedBackoffException
 from datetime import datetime, timezone
 from typing import Any, Callable, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Union
 import requests
@@ -26,7 +27,8 @@ class VetspireV2Stream(HttpStream, ABC):
     This is an abstract base class meant to contain all the common functionality at the API level e.g: the API base URL, pagination strategy,
     parsing responses etc..
     """
-    transformer: TypeTransformer = TypeTransformer(TransformConfig.DefaultSchemaNormalization | TransformConfig.CustomSchemaNormalization)
+    transformer: TypeTransformer = TypeTransformer(
+        TransformConfig.DefaultSchemaNormalization | TransformConfig.CustomSchemaNormalization)
     url_base = "https://api2.vetspire.com/graphql"
     # state_checkpoint_interval = 300
     backoff_sleep = 30
@@ -35,7 +37,7 @@ class VetspireV2Stream(HttpStream, ABC):
         super().__init__(*args)
         self.object_name = None
         self._next_page_token = None
-        self.lookback_window_days = 14
+        self.lookback_window_days = 7
 
     def backoff_time(self, response: requests.Response):
         """
@@ -137,16 +139,19 @@ class VetspireV2Stream(HttpStream, ABC):
 
             if self.object_name == 'patientPlans':
                 object_list.append(
-                    "filters: {updatedAtStart: \"" + object_arguments["updatedAtStart"] + "\", updatedAtEnd: \"" + object_arguments[
+                    "filters: {updatedAtStart: \"" + object_arguments["updatedAtStart"] + "\", updatedAtEnd: \"" +
+                    object_arguments[
                         "updatedAtEnd"] + "\"}")
             elif self.name == 'appointments_deleted':
                 object_list.append('onlyDeleted: true')
             for k in object_arguments.keys():
-                if k in ['updatedAtStart', 'updatedAtEnd','startDate','endDate'] and self.object_name != 'patientPlans':
+                if k in ['updatedAtStart', 'updatedAtEnd', 'startDate',
+                         'endDate'] and self.object_name != 'patientPlans':
                     object_list.append(f'{k}: "{object_arguments[k]}"')
                 elif k in ['start', 'end', 'after', 'before', 'locationId'] and object_arguments[k] is not None:
                     object_list.append(f'{k}: "{object_arguments[k]}"')
-                elif k in ["limit", "offset", "excludeProtocols", "excludeEmpty", "locationId"] and object_arguments[k] is not None:
+                elif k in ["limit", "offset", "excludeProtocols", "excludeEmpty", "locationId"] and object_arguments[
+                    k] is not None:
                     object_list.append(f'{k}: {object_arguments[k]}')
                 # else:
                 #     raise Exception(f"Unknown argument {k} for object {self.object_name}")
@@ -205,15 +210,17 @@ class VetspireV2Stream(HttpStream, ABC):
                 # The code below makes sure we include the last 2 weeks of reservations.
                 startDate = pendulum.now() - pendulum.duration(days=self.lookback_window_days)
             else:
-                startDate =  pendulum.parse(stream_slice.get('startDate', None)) - pendulum.duration(days=self.lookback_window_days)
+                startDate = pendulum.parse(stream_slice.get('startDate', None)) - pendulum.duration(
+                    days=self.lookback_window_days)
             query = self._build_query(
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties(),
-                startDate=startDate.format(self.date_filter_template),
+                startDate=pendulum.now().format(self.date_filter_template),
                 endDate=(pendulum.now() + pendulum.duration(days=60)).format(self.date_filter_template),
                 locationId=self.locationId,
             )
-        elif self.object_name in ['encounterTypes', 'appointmentTypes', 'productPackages', 'preventionPlans', 'productTypes', 'providers',
+        elif self.object_name in ['encounterTypes', 'appointmentTypes', 'productPackages', 'preventionPlans',
+                                  'productTypes', 'providers',
                                   'locations']:
             query = self._build_query(
                 object_name=self.object_name,
@@ -236,7 +243,8 @@ class VetspireV2Stream(HttpStream, ABC):
                 updatedAtEnd=stream_slice.get('updatedAtEnd', None)
             )
             # query = query.replace('intake{label,value}','intake {... on FieldDatum {label,value}}')
-            query = query.replace('sections{data{value,label}}', 'sections{name, data{ ... on ValuesetDatum {value,label} ... on FieldDatum {value, label}}}')
+            query = query.replace('sections{data{value,label}}',
+                                  'sections{name, data{ ... on ValuesetDatum {value,label} ... on FieldDatum {value, label}}}')
         else:
             query = self._build_query(
                 object_name=self.object_name,
@@ -249,7 +257,8 @@ class VetspireV2Stream(HttpStream, ABC):
         return {"query": f"query{{{query}}}"}
 
     def path(
-            self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None, next_page_token: Mapping[str, Any] = None
+            self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None,
+            next_page_token: Mapping[str, Any] = None
     ) -> str:
         """
         There is no path but this method needs to be instantiated.
@@ -259,7 +268,8 @@ class VetspireV2Stream(HttpStream, ABC):
     def _read_pages(
             self,
             records_generator_fn: Callable[
-                [requests.PreparedRequest, requests.Response, Mapping[str, Any], Mapping[str, Any]], Iterable[StreamData]
+                [requests.PreparedRequest, requests.Response, Mapping[str, Any], Mapping[str, Any]], Iterable[
+                    StreamData]
             ],
             stream_slice: Mapping[str, Any] = None,
             stream_state: Mapping[str, Any] = None,
@@ -362,13 +372,15 @@ class VetspireV2Stream(HttpStream, ABC):
 
 class VetspireV2StreamWithReq(VetspireV2Stream):
     def request_params(
-            self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+            self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None,
+            next_page_token: Mapping[str, Any] = None
     ) -> MutableMapping[str, Any]:
         """
         TODO: Override this method to define any query parameters to be set. Remove this method if you don't need to define request params.
         Usually contains common params e.g. pagination size etc.
         """
-        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
+        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice,
+                                        next_page_token=next_page_token)
         return params
 
 
@@ -432,7 +444,6 @@ class Locations(VetspireV2StreamWithReq):
         self.locations = stream_kwargs.get('locations')
 
 
-
 # Basic incremental stream
 class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
     """
@@ -449,7 +460,7 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             self,
             authenticator: Union[AuthBase, HttpAuthenticator],
             start_datetime: str = None,
-            _slice_step = pendulum.duration(days=1),
+            _slice_step=pendulum.duration(days=1),
             slice_step_map: Mapping[str, int] = None
     ):
         super().__init__(authenticator)
@@ -492,7 +503,8 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
         """
 
     def generate_date_ranges(self) -> Iterable[Optional[MutableMapping[str, Any]]]:
-        end_datetime = pendulum.now("utc")
+        if self.object_name in ['reservations']: end_datetime = pendulum.now() + pendulum.duration(days=60)
+        else: end_datetime = pendulum.now("utc")
         start_datetime = min(end_datetime, self.state.get(self.cursor_field, self._start_datetime))
 
         current_start = start_datetime
@@ -520,7 +532,8 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
     def stream_slices(
             self, sync_mode: SyncMode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None
     ) -> Iterable[Optional[Mapping[str, Any]]]:
-        for super_slice in super().stream_slices(sync_mode=sync_mode, cursor_field=cursor_field, stream_state=stream_state):
+        for super_slice in super().stream_slices(sync_mode=sync_mode, cursor_field=cursor_field,
+                                                 stream_state=stream_state):
             for dt_range in self.generate_date_ranges():
                 slice_ = copy.deepcopy(super_slice) if super_slice else {}
                 slice_.update(dt_range)
@@ -532,7 +545,8 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> MutableMapping[str, Any]:
-        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice, next_page_token=next_page_token)
+        params = super().request_params(stream_state=stream_state, stream_slice=stream_slice,
+                                        next_page_token=next_page_token)
         lower_bound = stream_slice and stream_slice.get(self.lower_boundary_filter_field)
         upper_bound = stream_slice and stream_slice.get(self.upper_boundary_filter_field)
         if lower_bound:
@@ -557,10 +571,14 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
         for record in sorted_records:
             if isinstance(record[self.cursor_field], str):
                 record[self.cursor_field] = pendulum.parse(record[self.cursor_field])
-
+            # If the record is newer than the latest record returned from state, yield the record
             if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_datetime):
                 self._cursor_value = record[self.cursor_field]
                 yield record
+            # # Always return reservations even if they are in the future.
+            # elif self.object_name == 'reservations':
+            #     self._cursor_value = record[self.cursor_field]
+            #     yield record
 
 
 class PatientPlans(IncrementalVetspireV2Stream):
@@ -743,8 +761,9 @@ class Products(IncrementalVetspireV2Stream):
         self.object_name = 'products'
         self.locations = stream_kwargs.get('locations')
 
+
 class PatientProtocols(IncrementalVetspireV2Stream):
-    cursor_field = "dueDate" # "updatedAt"
+    cursor_field = "dueDate"  # "updatedAt"
     _cursor_value = None
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
@@ -817,8 +836,8 @@ class Vitals(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset =  stream_kwargs.get('offset')
-        self.limit =  stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'vitals'
         self.locations = None
 
@@ -865,13 +884,12 @@ class Reservations_DAB010(IncrementalVetspireV2Stream):
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
+        super().__init__(authenticator=authenticator, start_datetime=str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
-        self.offset=None
+        self.offset = None
         self.locationId = stream_kwargs.get('locationId')
-
 
 
 class Reservations_DAB011(IncrementalVetspireV2Stream):
@@ -884,11 +902,11 @@ class Reservations_DAB011(IncrementalVetspireV2Stream):
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
+        super().__init__(authenticator=authenticator, start_datetime=str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
-        self.offset=None
+        self.offset = None
         self.locationId = stream_kwargs.get('locationId')
 
 
@@ -902,11 +920,11 @@ class Reservations_DAB012(IncrementalVetspireV2Stream):
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
+        super().__init__(authenticator=authenticator, start_datetime=str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
-        self.offset=None
+        self.offset = None
         self.locationId = stream_kwargs.get('locationId')
 
 
@@ -920,11 +938,11 @@ class Reservations_DFW012(IncrementalVetspireV2Stream):
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
+        super().__init__(authenticator=authenticator, start_datetime=str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
-        self.offset=None
+        self.offset = None
         self.locationId = stream_kwargs.get('locationId')
 
 
@@ -938,11 +956,9 @@ class Reservations_DFW010(IncrementalVetspireV2Stream):
     upper_boundary_filter_field = "endDate"
 
     def __init__(self, authenticator, **stream_kwargs):
-        super().__init__(authenticator=authenticator, start_datetime= str(datetime.today()))
+        super().__init__(authenticator=authenticator, start_datetime=str(datetime.today()))
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
-        self.offset=None
+        self.offset = None
         self.locationId = stream_kwargs.get('locationId')
-
-
