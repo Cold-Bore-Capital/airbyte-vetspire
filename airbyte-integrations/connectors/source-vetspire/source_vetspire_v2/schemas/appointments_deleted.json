@@ -90,7 +90,7 @@
     },
     "npsScore" : {"type" : ["integer","null"]
     },
-    "cage" : {"type" : ["null","array"],
+    "cage" : {"type" : ["null","object"],
       "properties" : {
         "id" : {"type" : ["string","null"]
         }

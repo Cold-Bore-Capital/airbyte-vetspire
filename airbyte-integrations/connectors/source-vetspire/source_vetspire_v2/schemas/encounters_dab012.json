@@ -1,0 +1,399 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "additionalProviders" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "appointment" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "category" : {
+      "type" : ["string", "null"]
+    },
+    "checkedInBy" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "clientConsents" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "diagnostics" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        },
+        "productId" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "encounterProducts" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "encounterType" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "encounterVersions" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "estimates" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["number", "null"]
+        },
+        "totalPaid" : {
+          "type" : ["number", "null"]
+        }
+      }
+    },
+    "historicalId" : {
+      "type" : ["string", "null"]
+    },
+    "id" : {
+      "type" : ["string", "null"]
+    },
+    "immunizations" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "insertedAt" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "labOrders" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "labResults" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "linkedClinicalNotes" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "linkedEncounters" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "location" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "medications" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "metadata" : {
+      "type" : ["string", "null"]
+    },
+    "nextVisitDate" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "nextVisitReason" : {
+      "type" : ["string", "null"]
+    },
+    "order" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "org" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "patient" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "patientComplications" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "problems" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "provider" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "requiredSectionsNotFilledOut" : {
+      "type" : ["string", "null"]
+    },
+    "sections" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "addable" : {
+          "type" : ["boolean", "null"]
+        },
+        "educable" : {
+          "type" : ["boolean", "null"]
+        },
+        "immunable" : {
+          "type" : ["boolean", "null"]
+        },
+        "isAttachments" : {
+          "type" : ["boolean", "null"]
+        },
+        "isComplications" : {
+          "type" : ["boolean", "null"]
+        },
+        "isConsents" : {
+          "type" : ["boolean", "null"]
+        },
+        "isDiagnostics" : {
+          "type" : ["boolean", "null"]
+        },
+        "isDischarge" : {
+          "type" : ["boolean", "null"]
+        },
+        "isFollowup" : {
+          "type" : ["boolean", "null"]
+        },
+        "isImmunizations" : {
+          "type" : ["boolean", "null"]
+        },
+        "isIntake" : {
+          "type" : ["boolean", "null"]
+        },
+        "isLinkedEncounters" : {
+          "type" : ["boolean", "null"]
+        },
+        "isMedications" : {
+          "type" : ["boolean", "null"]
+        },
+        "isMonitoring" : {
+          "type" : ["boolean", "null"]
+        },
+        "isOrders" : {
+          "type" : ["boolean", "null"]
+        },
+        "isPrivate" : {
+          "type" : ["boolean", "null"]
+        },
+        "isProblems" : {
+          "type" : ["boolean", "null"]
+        },
+        "isRequired" : {
+          "type" : ["boolean", "null"]
+        },
+        "labable" : {
+          "type" : ["boolean", "null"]
+        },
+        "medicable" : {
+          "type" : ["boolean", "null"]
+        },
+        "metadata" : {
+          "type" : ["string", "null"]
+        },
+        "name" : {
+          "type" : ["string", "null"]
+        },
+        "onReferral" : {
+          "type" : ["boolean", "null"]
+        },
+        "treatable" : {
+          "type" : ["boolean", "null"]
+        },
+        "vitals" : {
+          "type" : ["boolean", "null"]
+        }
+      }
+    },
+    "signed" : {
+      "type" : ["boolean", "null"]
+    },
+    "signedDatetime" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "signer" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "start" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "surveyLinkSent" : {
+      "type" : ["boolean", "null"]
+    },
+    "tasks" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "technician" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "title" : {
+      "type" : ["string", "null"]
+    },
+    "treatments" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "updatedAt" : {
+      "type" : ["string", "null"],
+      "format" : "date-time"
+    },
+    "vitals" : {
+      "type" : ["object", "null"],
+      "properties" : {
+        "id" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "plan" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "assessment" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "objective" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "subjective" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "value" : {
+          "type" : ["string", "null"]
+        }
+      }
+    },
+    "sections" : {
+      "type" : ["array", "null"],
+      "properties" : {
+        "data" : {
+          "type" : ["array", "null"],
+          "properties" : {
+            "value" : {"type" : ["string", "null"]},
+            "label" : {"type" : ["string", "null"]}
+          }
+        }
+      }
+    }
+  }
+}
