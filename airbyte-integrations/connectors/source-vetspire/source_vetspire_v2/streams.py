@@ -124,7 +124,9 @@ class VetspireV2Stream(HttpStream, ABC):
         """
         object_list = []
         if len(object_arguments.items()) > 0:
-            if self.locations:
+            if self.object_name == 'encounters' and not self.name == 'encounters':
+                object_list.append(f"locationId: {self.locations}")
+            elif self.locations:
                 object_list.append(f"locationIds: [{','.join(self.locations)}]")
 
             if self.object_name == 'creditMemos':
@@ -233,7 +235,7 @@ class VetspireV2Stream(HttpStream, ABC):
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties()
             )
-        elif 'encounters' in self.object_name:
+        elif self.object_name in ['encounters']:
             query = self._build_query(
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties(),
@@ -474,7 +476,10 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
 
     @state.setter
     def state(self, value: Mapping[str, Any]):
-        self._cursor_value = pendulum.parse(value[self.cursor_field]).in_timezone('UTC')
+        if isinstance(value[self.cursor_field], pendulum.DateTime):
+            self._cursor_value = value[self.cursor_field]
+        else:
+            self._cursor_value = pendulum.parse(value[self.cursor_field]).in_timezone('UTC')
 
     @property
     def sync_mode(self):
@@ -571,8 +576,11 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             unsorted_records.append(record)
         sorted_records = sorted(unsorted_records, key=lambda x: x[self.cursor_field])
 
-        self.logger.info(
-            f"{self.object_name} Min inserted at: {sorted_records[0]['insertedAt']}          Max inserted at: {sorted_records[-1]['insertedAt']}")
+        # Error logging
+        if sorted_records:
+            self.logger.info(
+                f"{self.object_name} Min inserted at: {sorted_records[0]['insertedAt']}          Max inserted at: {sorted_records[-1]['insertedAt']}")
+
         for record in sorted_records:
             if isinstance(record[self.cursor_field], str):
                 record[self.cursor_field] = pendulum.parse(record[self.cursor_field])
@@ -670,6 +678,23 @@ class Clients(IncrementalVetspireV2Stream):
         self.object_name = 'clients'
         self.locations = stream_kwargs.get('locations')
 
+
+class Encounters(IncrementalVetspireV2Stream):
+    cursor_field = "updatedAt"
+    _cursor_value = None
+    primary_key = "id"
+    lower_boundary_filter_field = "updatedAtStart"
+    upper_boundary_filter_field = "updatedAtEnd"
+    name = 'encounters'
+
+    def __init__(self, authenticator, **stream_kwargs):
+        super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
+        self.offset = stream_kwargs.get('offset')
+        self.limit = stream_kwargs.get('limit')
+        self.object_name = 'encounters'
+        self.locations = None
+
+
 class Encounters_DAB012(IncrementalVetspireV2Stream):
     cursor_field = "updatedAt"
     _cursor_value = None
@@ -677,13 +702,12 @@ class Encounters_DAB012(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_dab012'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_dab012'
+        self.object_name = 'encounters'
         self.locations = 23862
 
 
@@ -694,13 +718,12 @@ class Encounters_DAB010(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_dab010'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_dab010'
+        self.object_name = 'encounters'
         self.locations = 23860
 
 
@@ -711,13 +734,12 @@ class Encounters_DFW012(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_dfw012'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_dfw012'
+        self.object_name = 'encounters'
         self.locations = 23069
 
 
@@ -728,13 +750,12 @@ class Encounters_NSH013(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_nsh013'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_nsh013'
+        self.object_name = 'encounters'
         self.locations = 23771
 
 
@@ -745,13 +766,12 @@ class Encounters_NSH011(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_nsh011'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_nsh011'
+        self.object_name = 'encounters'
         self.locations = 23769
 
 
@@ -761,14 +781,13 @@ class Encounters_KNX012(IncrementalVetspireV2Stream):
     primary_key = "id"
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
-    name = 'encountersE_knx012'
-    slice_step = pendulum.duration(days=10)
+    name = 'encounters_knx012'
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_knx012'
+        self.object_name = 'encounters'
         self.locations = 23859
 
 
@@ -779,13 +798,12 @@ class Encounters_KNX010(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_knx010'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_knx010'
+        self.object_name = 'encounters'
         self.locations = 23857
 
 
@@ -796,13 +814,12 @@ class Encounters_GVL010(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_gvl010'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_gvl010'
+        self.object_name = 'encounters'
         self.locations = 23863
 
 
@@ -813,13 +830,12 @@ class Encounters_DAB011(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_dab011'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_dab011'
+        self.object_name = 'encounters'
         self.locations = 23861
 
 
@@ -830,13 +846,12 @@ class Encounters_DFW010(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_dfw010'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_dfw010'
+        self.object_name = 'encounters'
         self.locations = 23597
 
 
@@ -847,13 +862,12 @@ class Encounters_NSH012(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_nsh012'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_nsh012'
+        self.object_name = 'encounters'
         self.locations = 23770
 
 
@@ -864,13 +878,12 @@ class Encounters_NSH010(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_nsh010'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_nsh010'
+        self.object_name = 'encounters'
         self.locations = 23768
 
 
@@ -881,13 +894,12 @@ class Encounters_KNX011(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_knx011'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_knx011'
+        self.object_name = 'encounters'
         self.locations = 23858
 
 
@@ -898,13 +910,12 @@ class Encounters_GVL011(IncrementalVetspireV2Stream):
     lower_boundary_filter_field = "updatedAtStart"
     upper_boundary_filter_field = "updatedAtEnd"
     name = 'encounters_gvl011'
-    slice_step = pendulum.duration(days=10)
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
         self.limit = stream_kwargs.get('limit')
-        self.object_name = 'encounters_gvl011'
+        self.object_name = 'encounters'
         self.locations = 23864
 
 

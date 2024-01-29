@@ -125,6 +125,12 @@ class SourceVetspireV2(AbstractSource):
             "offset": config.get("offset", "0"),
             "locations": None
         }
+        # Encounters where location is already provided
+        stream_kwargs_no_location_argument = {
+            "start_datetime": config.get("start_datetime", None),
+            "limit": config.get("limit", "300"),
+            "offset": config.get("offset", "0"),
+        }
         # Use this stream if the stream has limit, offset, and location parameters
         stream_kwargs_with_locations = {
             "start_datetime": config.get("start_datetime", None),
@@ -157,6 +163,20 @@ class SourceVetspireV2(AbstractSource):
                 Clients(authenticator=auth, **stream_kwargs),
                 CreditMemos(authenticator=auth, **stream_kwargs_with_locations),
                 Encounters(authenticator=auth, **stream_kwargs_with_locations),
+                Encounters_DAB012(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_DAB010(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_DFW012(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_NSH013(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_NSH011(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_KNX012(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_KNX010(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_GVL010(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_DAB011(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_DFW010(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_NSH012(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_NSH010(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_KNX011(authenticator=auth, **stream_kwargs_no_location_argument),
+                Encounters_GVL011(authenticator=auth, **stream_kwargs_no_location_argument),
                 EncounterTypes(authenticator=auth, **stream_kwargs_no_limit),
                 Locations(authenticator=auth, **stream_kwargs_no_limit),
                 Orders(authenticator=auth, **stream_kwargs_with_locations),

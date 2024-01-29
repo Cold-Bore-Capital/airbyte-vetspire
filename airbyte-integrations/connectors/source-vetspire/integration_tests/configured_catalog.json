@@ -1,9 +1,8 @@
 {
   "streams" : [
-
     {
       "stream" : {
-        "name" : "encounters",
+        "name" : "encounters_dab010",
         "json_schema" : {},
         "supported_sync_modes" : [
           "incremental"
@@ -14,8 +13,204 @@
       },
       "sync_mode" : "incremental",
       "destination_sync_mode" : "append_dedup"
-    }
-    ,{
+    },
+    {
+      "stream" : {
+        "name" : "encounters_dab010",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_dab011",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_dab012",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_dfw010",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_dfw012",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_gvl010",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_gvl011",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_knx010",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_knx011",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_knx012",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_nsh010",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_nsh011",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_nsh012",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
+      "stream" : {
+        "name" : "encounters_nsh013",
+        "json_schema" : {},
+        "supported_sync_modes" : [
+          "incremental"
+        ],
+        "default_cursor_field" : [
+          "updatedAt"
+        ]
+      },
+      "sync_mode" : "incremental",
+      "destination_sync_mode" : "append_dedup"
+    },
+    {
       "stream" : {
         "name" : "patients",
         "json_schema" : {},
