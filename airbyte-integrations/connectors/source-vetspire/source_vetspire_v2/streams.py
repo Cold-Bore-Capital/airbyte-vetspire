@@ -35,7 +35,7 @@ class VetspireV2Stream(HttpStream, ABC):
         super().__init__(*args)
         self.object_name = None
         self._next_page_token = None
-        self.lookback_window_days = 14
+        self.lookback_window_days = 7
 
     def backoff_time(self, response: requests.Response):
         """
@@ -226,7 +226,7 @@ class VetspireV2Stream(HttpStream, ABC):
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties()
             )
-        elif self.object_name == 'encounters':
+        elif self.object_name in ['encounters']:
             query = self._build_query(
                 object_name=self.object_name,
                 field_schema=self._get_schema_root_properties(),
@@ -463,7 +463,10 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
 
     @state.setter
     def state(self, value: Mapping[str, Any]):
-        self._cursor_value = pendulum.parse(value[self.cursor_field]).in_timezone('UTC')
+        if isinstance(value[self.cursor_field], pendulum.DateTime):
+            self._cursor_value = value[self.cursor_field]
+        else:
+            self._cursor_value = pendulum.parse(value[self.cursor_field]).in_timezone('UTC')
 
     @property
     def sync_mode(self):
@@ -492,7 +495,10 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
         """
 
     def generate_date_ranges(self) -> Iterable[Optional[MutableMapping[str, Any]]]:
-        end_datetime = pendulum.now("utc")
+        if self.object_name in ['reservations']:
+            end_datetime = pendulum.now() + pendulum.duration(days=60)
+        else:
+            end_datetime = pendulum.now("utc")
         start_datetime = min(end_datetime, self.state.get(self.cursor_field, self._start_datetime))
 
         current_start = start_datetime
@@ -554,10 +560,20 @@ class IncrementalVetspireV2Stream(VetspireV2Stream, IncrementalMixin):
             record[self.cursor_field] = pendulum.parse(record[self.cursor_field], strict=False).to_iso8601_string()
             unsorted_records.append(record)
         sorted_records = sorted(unsorted_records, key=lambda x: x[self.cursor_field])
+
+        # Error logging
+        try:
+            if len(sorted_records):
+                self.logger.info(
+                    f"{self.object_name} Min inserted at: {sorted_records[0][self.cursor_field]}          Max inserted at: {sorted_records[-1][self.cursor_field]}")
+        except Exception as e:
+            self.logger.error(f"Error logging: {e}")
+
+
         for record in sorted_records:
             if isinstance(record[self.cursor_field], str):
                 record[self.cursor_field] = pendulum.parse(record[self.cursor_field])
-
+            # If the record is newer than the latest record returned from state, yield the record
             if record[self.cursor_field] >= self.state.get(self.cursor_field, self._start_datetime):
                 self._cursor_value = record[self.cursor_field]
                 yield record
@@ -675,7 +691,7 @@ class Orders(IncrementalVetspireV2Stream):
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
-        self.limit = 100
+        self.limit = stream_kwargs.get('limit')
         self.object_name = 'orders'
         self.locations = stream_kwargs.get('locations')
 

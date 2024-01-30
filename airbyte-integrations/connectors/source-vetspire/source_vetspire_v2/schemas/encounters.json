@@ -191,14 +191,6 @@
         }
       }
     },
-    "problems" : {
-      "type" : ["array", "null"],
-      "properties" : {
-        "id" : {
-          "type" : ["string", "null"]
-        }
-      }
-    },
     "provider" : {
       "type" : ["object", "null"],
       "properties" : {
@@ -209,86 +201,6 @@
     },
     "requiredSectionsNotFilledOut" : {
       "type" : ["string", "null"]
-    },
-    "sections" : {
-      "type" : ["array", "null"],
-      "properties" : {
-        "addable" : {
-          "type" : ["boolean", "null"]
-        },
-        "educable" : {
-          "type" : ["boolean", "null"]
-        },
-        "immunable" : {
-          "type" : ["boolean", "null"]
-        },
-        "isAttachments" : {
-          "type" : ["boolean", "null"]
-        },
-        "isComplications" : {
-          "type" : ["boolean", "null"]
-        },
-        "isConsents" : {
-          "type" : ["boolean", "null"]
-        },
-        "isDiagnostics" : {
-          "type" : ["boolean", "null"]
-        },
-        "isDischarge" : {
-          "type" : ["boolean", "null"]
-        },
-        "isFollowup" : {
-          "type" : ["boolean", "null"]
-        },
-        "isImmunizations" : {
-          "type" : ["boolean", "null"]
-        },
-        "isIntake" : {
-          "type" : ["boolean", "null"]
-        },
-        "isLinkedEncounters" : {
-          "type" : ["boolean", "null"]
-        },
-        "isMedications" : {
-          "type" : ["boolean", "null"]
-        },
-        "isMonitoring" : {
-          "type" : ["boolean", "null"]
-        },
-        "isOrders" : {
-          "type" : ["boolean", "null"]
-        },
-        "isPrivate" : {
-          "type" : ["boolean", "null"]
-        },
-        "isProblems" : {
-          "type" : ["boolean", "null"]
-        },
-        "isRequired" : {
-          "type" : ["boolean", "null"]
-        },
-        "labable" : {
-          "type" : ["boolean", "null"]
-        },
-        "medicable" : {
-          "type" : ["boolean", "null"]
-        },
-        "metadata" : {
-          "type" : ["string", "null"]
-        },
-        "name" : {
-          "type" : ["string", "null"]
-        },
-        "onReferral" : {
-          "type" : ["boolean", "null"]
-        },
-        "treatable" : {
-          "type" : ["boolean", "null"]
-        },
-        "vitals" : {
-          "type" : ["boolean", "null"]
-        }
-      }
     },
     "signed" : {
       "type" : ["boolean", "null"]
@@ -331,14 +243,6 @@
     "title" : {
       "type" : ["string", "null"]
     },
-    "treatments" : {
-      "type" : ["array", "null"],
-      "properties" : {
-        "id" : {
-          "type" : ["string", "null"]
-        }
-      }
-    },
     "updatedAt" : {
       "type" : ["string", "null"],
       "format" : "date-time"
@@ -347,38 +251,6 @@
       "type" : ["object", "null"],
       "properties" : {
         "id" : {
-          "type" : ["string", "null"]
-        }
-      }
-    },
-    "plan" : {
-      "type" : ["array", "null"],
-      "properties" : {
-        "value" : {
-          "type" : ["string", "null"]
-        }
-      }
-    },
-    "assessment" : {
-      "type" : ["array", "null"],
-      "properties" : {
-        "value" : {
-          "type" : ["string", "null"]
-        }
-      }
-    },
-    "objective" : {
-      "type" : ["array", "null"],
-      "properties" : {
-        "value" : {
-          "type" : ["string", "null"]
-        }
-      }
-    },
-    "subjective" : {
-      "type" : ["array", "null"],
-      "properties" : {
-        "value" : {
           "type" : ["string", "null"]
         }
       }
