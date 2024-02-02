@@ -48,6 +48,7 @@
         "id" : {"type" : ["string", "null"]}
       }
     },
+    "notRendered": {"type" : ["boolean", "null"]},
     "quantity" : {"type" : ["number", "null"]},
     "quantityRemaining" : {"type" : ["number", "null"]},
     "quantityCredited" : {"type" : ["number", "null"]},

@@ -38,7 +38,7 @@
           "properties" : {
             "id" : {"type" : ["null", "string"]},
             "name" : { "type" : ["null", "string"]},
-            "coupon": {
+            "coupons": {
               "type": ["object", "null"],
               "properties" : {
                 "id": {"type": ["null", "string"]}

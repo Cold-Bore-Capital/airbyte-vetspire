@@ -25,41 +25,6 @@
     "itemDiscountWithoutOrderDiscountCents" : {"type" : ["integer", "null"]},
     "invoiceReference" : {"type" : ["string", "null"]},
     "datetime" : {"type" : ["string", "null"], "format" : "date-time"},
-    "items": {
-      "type" : ["array","null"],
-      "properties" : {
-      "notRendered" : {"type" : ["boolean", "null"]},
-      "historicalId" : {"type" : ["string", "null"]},
-      "lineDiscountReason" : {"type" : ["string", "null"]},
-      "planDiscountCents" : {"type" : ["number", "null"]},
-      "discountAmount" : {"type" : ["number", "null"]},
-      "discounted" : {"type" : ["boolean", "null"]},
-      "dispenseFee" : {"type" : ["number", "null"]},
-      "id" : {"type" : ["string", "null"]},
-      "productId" : {"type" : ["string", "null"]},
-      "inPackage" : {"type" : ["boolean", "null"]},
-      "insertedAt" : {"type" : ["string", "null"], "format" : "date-time"},
-       "date" : {"type" : ["string", "null"], "format" : "date"},
-      "memberDiscountCents" : {"type" : ["number", "null"]},
-      "name" : {"type" : ["string", "null"]},
-        "patient": {
-          "type" : ["object","null"],
-          "properties" : {
-            "id" : {"type" : ["string", "null"]}
-          }
-        },
-      "quantity" : {"type" : ["number", "null"]},
-      "quantityRemaining" : {"type" : ["number", "null"]},
-      "quantityCredited" : {"type" : ["number", "null"]},
-      "refunded" : {"type" : ["boolean", "null"]},
-      "refundedAt" : {"type" : ["string", "null"], "format" : "date-time"},
-      "refundedQuantity" : {"type" : ["number", "null"]},
-      "subtotalCents" : {"type" : ["integer", "null"]},
-      "totalBeforeTaxCents" : {"type" : ["integer", "null"]},
-      "totalAfterTaxCents" : {"type" : ["integer", "null"]},
-      "totalDiscountCents" : {"type" : ["integer", "null"]}
-      }
-    },
     "isCredit" : {"type" : ["boolean", "null"]},
     "orderDiscountCents" : {"type" : ["integer", "null"]},
     "invoicedAt" : {"type" : ["string", "null"], "format" : "date-time"},

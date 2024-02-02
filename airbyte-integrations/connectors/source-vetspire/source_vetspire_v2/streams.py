@@ -213,7 +213,7 @@ class VetspireV2Stream(HttpStream, ABC):
                 endDate=(pendulum.now() + pendulum.duration(days=60)).format(self.date_filter_template),
                 locationId=self.locationId,
             )
-        elif self.object_name in ['encounterTypes', 'appointmentTypes', 'productPackages', 'preventionPlans', 'productTypes', 'providers',
+        elif self.object_name in ['encounterTypes', 'appointmentTypes',  'preventionPlans', 'providers',
                                   'locations']:
             query = self._build_query(
                 object_name=self.object_name,
@@ -237,6 +237,13 @@ class VetspireV2Stream(HttpStream, ABC):
             )
             # query = query.replace('intake{label,value}','intake {... on FieldDatum {label,value}}')
             query = query.replace('sections{data{value,label}}', 'sections{name, data{ ... on ValuesetDatum {value,label} ... on FieldDatum {value, label}}}')
+        elif self.object_name in ['productTypes','productPackages']:
+            query = self._build_query(
+                object_name=self.object_name,
+                field_schema=self._get_schema_root_properties(),
+                updatedAtStart=stream_slice.get('updatedAtStart', None),
+                updatedAtEnd=stream_slice.get('updatedAtEnd', None)
+            )
         else:
             query = self._build_query(
                 object_name=self.object_name,
@@ -590,8 +597,8 @@ class PatientPlans(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'patientPlans'
         self.locations = stream_kwargs.get('locations')
 
@@ -608,8 +615,8 @@ class ConversationsPaginated(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'conversationsPaginated'
         self.locations = stream_kwargs.get('locations')
 
@@ -625,8 +632,8 @@ class Appointments(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'appointments'
         self.locations = stream_kwargs.get('locations')
 
@@ -642,8 +649,8 @@ class AppointmentsDeleted(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'appointments'
         self.locations = stream_kwargs.get('locations')
 
@@ -658,8 +665,8 @@ class Clients(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'clients'
         self.locations = stream_kwargs.get('locations')
 
@@ -674,8 +681,8 @@ class Encounters(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'encounters'
         self.locations = None
 
@@ -691,7 +698,7 @@ class Orders(IncrementalVetspireV2Stream):
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
         self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'orders'
         self.locations = stream_kwargs.get('locations')
 
@@ -706,8 +713,8 @@ class OrderItems(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset',0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'orderItems'
         self.locations = stream_kwargs.get('locations')
 
@@ -722,8 +729,8 @@ class Patients(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset',0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'patients'
         self.locations = stream_kwargs.get('locations')
 
@@ -738,8 +745,8 @@ class Payments(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'payments'
         self.locations = stream_kwargs.get('locations')
 
@@ -754,8 +761,8 @@ class Products(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'products'
         self.locations = stream_kwargs.get('locations')
 
@@ -769,8 +776,8 @@ class PatientProtocols(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'patientProtocols'
         self.locations = stream_kwargs.get('locations')
 
@@ -785,8 +792,8 @@ class PreventionPlans(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'preventionPlans'
         self.locations = stream_kwargs.get('locations')
 
@@ -817,8 +824,8 @@ class ProductPackages(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'productPackages'
         self.locations = stream_kwargs.get('locations')
 
@@ -849,8 +856,8 @@ class CreditMemos(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'creditMemos'
         self.locations = stream_kwargs.get('locations')
 
@@ -865,8 +872,8 @@ class Tasks(IncrementalVetspireV2Stream):
 
     def __init__(self, authenticator, **stream_kwargs):
         super().__init__(authenticator=authenticator, start_datetime=stream_kwargs.get('start_datetime'))
-        self.offset = stream_kwargs.get('offset')
-        self.limit = stream_kwargs.get('limit')
+        self.offset = stream_kwargs.get('offset', 0)
+        self.limit = stream_kwargs.get('limit', 300)
         self.object_name = 'tasks'
         self.locations = stream_kwargs.get('locations')
 
@@ -958,7 +965,7 @@ class Reservations_DFW010(IncrementalVetspireV2Stream):
         self.locations = None
         self.object_name = 'reservations'
         self.limit = None
-        self.offset=None
+        self.offset = None
         self.locationId = stream_kwargs.get('locationId')
 
 
